@@ -1,0 +1,115 @@
+{
+  "brand": {
+    "name": "Love 4 Detailing",
+    "tagline": "Premium Car Care Services",
+    "description": "Professional car detailing services delivered with passion and precision"
+  },
+  "contact": {
+    "phone": "+44 123 456 7890",
+    "email": "info@love4detailing.com",
+    "address": "123 Detail Street, London, UK",
+    "businessHours": {
+      "monday": "9:00 - 18:00",
+      "tuesday": "9:00 - 18:00",
+      "wednesday": "9:00 - 18:00",
+      "thursday": "9:00 - 18:00",
+      "friday": "9:00 - 18:00",
+      "saturday": "10:00 - 16:00",
+      "sunday": "Closed"
+    },
+    "social": {
+      "instagram": "https://instagram.com/love4detailing",
+      "facebook": "https://facebook.com/love4detailing",
+      "twitter": "https://twitter.com/love4detailing"
+    }
+  },
+  "navigation": {
+    "header": {
+      "cta": "Book Service"
+    },
+    "footer": {
+      "sections": [
+        {
+          "title": "Contact",
+          "items": [
+            "Phone",
+            "Email",
+            "Address"
+          ]
+        },
+        {
+          "title": "Business Hours",
+          "items": [
+            "Opening Times",
+            "Holiday Schedule"
+          ]
+        },
+        {
+          "title": "Follow Us",
+          "items": [
+            "Instagram",
+            "Facebook",
+            "Twitter"
+          ]
+        }
+      ]
+    }
+  },
+  "booking": {
+    "steps": {
+      "vehicle": {
+        "title": "Vehicle Details",
+        "description": "Enter your registration number for instant vehicle lookup"
+      },
+      "service": {
+        "title": "Select Service",
+        "description": "Choose from our range of professional detailing services"
+      },
+      "datetime": {
+        "title": "Pick Date & Time",
+        "description": "Select your preferred appointment slot"
+      },
+      "contact": {
+        "title": "Your Details",
+        "description": "Tell us how to reach you"
+      },
+      "confirmation": {
+        "title": "Confirm Booking",
+        "description": "Review and confirm your appointment"
+      }
+    },
+    "success": {
+      "title": "Booking Confirmed!",
+      "description": "Thank you for choosing Love 4 Detailing",
+      "nextSteps": [
+        "Check your email for booking confirmation",
+        "Save your booking details",
+        "Add to your calendar"
+      ]
+    }
+  },
+  "dashboard": {
+    "welcome": {
+      "title": "Welcome to Your Dashboard",
+      "description": "Manage your bookings and vehicle details"
+    },
+    "sections": {
+      "bookings": {
+        "title": "Your Bookings",
+        "empty": "No bookings yet"
+      },
+      "vehicles": {
+        "title": "Your Vehicles",
+        "empty": "No vehicles added"
+      },
+      "rewards": {
+        "title": "Loyalty Points",
+        "description": "Earn points with every booking"
+      }
+    }
+  },
+  "legal": {
+    "terms": "Terms and conditions apply. See full terms for details.",
+    "privacy": "We respect your privacy. View our privacy policy for more information."
+  }
+} 

@@ -1,0 +1,118 @@
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+
+export function Footer() {
+  return (
+    <footer className="w-full border-t border-stone bg-white">
+      <div className="container py-12 md:py-16">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Love4Detailing</h3>
+            <p className="text-sm text-muted">
+              Professional car detailing services in London. Transform your vehicle with our expert care.
+            </p>
+            <div className="flex space-x-4">
+              <Link href="/book">
+                <Button>Book Service</Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/services" className="text-sm text-muted hover:text-primary-500">
+                  Our Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-sm text-muted hover:text-primary-500">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-sm text-muted hover:text-primary-500">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="text-sm text-muted hover:text-primary-500">
+                  Customer Dashboard
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="font-semibold mb-4">Services</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/services#basic-wash" className="text-sm text-muted hover:text-primary-500">
+                  Basic Wash
+                </Link>
+              </li>
+              <li>
+                <Link href="/services#full-valet" className="text-sm text-muted hover:text-primary-500">
+                  Full Valet
+                </Link>
+              </li>
+              <li>
+                <Link href="/services#premium-detail" className="text-sm text-muted hover:text-primary-500">
+                  Premium Detail
+                </Link>
+              </li>
+              <li>
+                <Link href="/services#ceramic-coating" className="text-sm text-muted hover:text-primary-500">
+                  Ceramic Coating
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-semibold mb-4">Contact Us</h4>
+            <ul className="space-y-2">
+              <li className="text-sm text-muted">
+                123 Detail Street
+                <br />
+                London, SW1A 1AA
+              </li>
+              <li>
+                <a href="tel:+442012345678" className="text-sm text-muted hover:text-primary-500">
+                  020 1234 5678
+                </a>
+              </li>
+              <li>
+                <a href="mailto:info@love4detailing.com" className="text-sm text-muted hover:text-primary-500">
+                  info@love4detailing.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-8 border-t border-stone">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-sm text-muted">
+              © {new Date().getFullYear()} Love4Detailing. All rights reserved.
+            </p>
+            <div className="flex space-x-6">
+              <Link href="/privacy" className="text-sm text-muted hover:text-primary-500">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-sm text-muted hover:text-primary-500">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+} 
