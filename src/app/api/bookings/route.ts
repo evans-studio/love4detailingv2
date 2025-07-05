@@ -144,7 +144,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create booking
+    // Generate booking reference manually
+    const bookingRef = `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
+    
+    // Create booking (simplified select to avoid join issues)
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
@@ -159,19 +162,9 @@ export async function POST(request: NextRequest) {
         status: 'pending',
         payment_status: 'pending',
         payment_method: 'cash',
+        booking_reference: bookingRef,
       })
-      .select(`
-        *,
-        vehicles!inner(
-          registration,
-          make,
-          model,
-          year,
-          color,
-          vehicle_sizes!inner(label, price_pence)
-        ),
-        time_slots!inner(slot_date, slot_time)
-      `)
+      .select('*')
       .single();
 
     if (bookingError || !booking) {
@@ -241,8 +234,18 @@ export async function POST(request: NextRequest) {
         status: booking.status,
         payment_status: booking.payment_status,
         total_price_pence: booking.total_price_pence,
-        vehicle: booking.vehicles,
-        time_slot: booking.time_slots,
+        vehicle: {
+          registration: vehicleRecord.registration,
+          make: vehicleRecord.make,
+          model: vehicleRecord.model,
+          year: vehicleRecord.year,
+          color: vehicleRecord.color,
+        },
+        time_slot: {
+          id: dateTime.timeSlotId,
+          date: dateTime.date,
+          time: dateTime.time,
+        },
         user_id: userId,
         is_new_user: !existingUser,
       }
