@@ -148,9 +148,28 @@ export default function AuthCallbackPage() {
           return;
         }
 
-        // Default redirect to dashboard
-        setStatus('Redirecting to dashboard...');
-        router.push('/dashboard');
+        // Default redirect - check if user is admin
+        setStatus('Redirecting...');
+        
+        // Check if user is admin and redirect appropriately
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: userProfile } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          if (userProfile && userProfile.role === 'admin') {
+            setStatus('Redirecting to admin portal...');
+            router.push('/admin');
+          } else {
+            setStatus('Redirecting to dashboard...');
+            router.push('/dashboard');
+          }
+        } else {
+          router.push('/dashboard');
+        }
 
       } catch (error) {
         console.error('Auth callback error:', error);

@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/lib/context/AuthContext';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -45,8 +46,25 @@ export function SignInForm() {
         sessionStorage.removeItem('pendingBooking');
       }
 
-      // Redirect back to the original page or dashboard
-      router.push(redirect || '/dashboard');
+      // Check if user is admin and redirect appropriately
+      const supabase = createClientComponentClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { data: userProfile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (userProfile && userProfile.role === 'admin') {
+          router.push(redirect || '/admin');
+        } else {
+          router.push(redirect || '/dashboard');
+        }
+      } else {
+        router.push(redirect || '/dashboard');
+      }
     } catch (err) {
       setError('Invalid email or password');
     } finally {
