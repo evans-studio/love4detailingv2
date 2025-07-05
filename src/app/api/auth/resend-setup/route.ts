@@ -33,42 +33,56 @@ export async function POST(request: Request) {
       );
     }
 
-    // For existing users, use password reset instead of invite
-    const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery&booking=${bookingId}`
-      }
-    );
-
-    if (resetError) {
-      console.error('Failed to send password reset email:', resetError);
-      
-      // If the user doesn't exist yet, try the invite approach
-      if (resetError.message.includes('not found') || resetError.message.includes('Invalid email')) {
-        const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
-          email,
-          {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${bookingId}`,
-            data: {
-              booking_id: bookingId,
-            }
-          }
-        );
-        
-        if (inviteError) {
-          console.error('Failed to send invite email:', inviteError);
-          return NextResponse.json(
-            { error: 'Failed to send setup email', details: inviteError.message },
-            { status: 500 }
-          );
+    // Check if user exists in auth table
+    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+    const authUser = authUsers?.users?.find(u => u.email === email);
+    
+    let emailSent = false;
+    let setupMethod = '';
+    
+    if (authUser) {
+      // User exists in auth, send password reset
+      const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery&booking=${bookingId}`
         }
-      } else {
+      );
+      
+      if (resetError) {
+        console.error('Password reset failed:', resetError);
         return NextResponse.json(
-          { error: 'Failed to send setup email', details: resetError.message },
+          { error: 'Failed to send password reset email', details: resetError.message },
           { status: 500 }
         );
       }
+      
+      emailSent = true;
+      setupMethod = 'password_reset';
+    } else {
+      // User doesn't exist in auth, send invite
+      const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
+        email,
+        {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${bookingId}`,
+          data: {
+            booking_id: bookingId,
+            first_name: user.full_name?.split(' ')[0] || '',
+            last_name: user.full_name?.split(' ')[1] || '',
+          }
+        }
+      );
+      
+      if (inviteError) {
+        console.error('Invite failed:', inviteError);
+        return NextResponse.json(
+          { error: 'Failed to send setup invitation', details: inviteError.message },
+          { status: 500 }
+        );
+      }
+      
+      emailSent = true;
+      setupMethod = 'invite';
     }
 
     // Get the booking details for the email
@@ -96,11 +110,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // The invite email is sent automatically by Supabase
+    // Return success response
     return NextResponse.json({
       success: true,
-      message: 'Password setup email sent successfully',
-      setupLink: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery&booking=${bookingId}`
+      message: `Setup email sent successfully via ${setupMethod}`,
+      method: setupMethod,
+      email_sent: emailSent,
     });
   } catch (error) {
     console.error('Error resending setup email:', error);
