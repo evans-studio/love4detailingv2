@@ -202,15 +202,15 @@ export class AvailabilityService {
       const dateStr = currentDate.toISOString().split('T')[0];
       const dayOfWeek = currentDate.getDay() as DayOfWeek;
       
-      // Get config for this date
-      const dailyConfig = dailyConfigs?.find(c => c.date === dateStr);
-      const templateConfig = weeklyTemplate.find(t => t.day_of_week === dayOfWeek);
+      // Get config for this date - FIX: Add proper type annotations
+      const dailyConfig = dailyConfigs?.find((c: any) => c.date === dateStr);
+      const templateConfig = weeklyTemplate.find((t: any) => t.day_of_week === dayOfWeek);
       
       const isWorkingDay = dailyConfig?.working_day ?? templateConfig?.working_day ?? false;
       const maxSlots = dailyConfig?.available_slots ?? templateConfig?.max_slots ?? 0;
       
       // Get slots for this date using correct column name
-      const dateSlots = slots?.filter(s => s.slot_date === dateStr) || [];
+      const dateSlots = slots?.filter((s: any) => s.slot_date === dateStr) || [];
       
       const dayData: AvailabilityCalendarDay = {
         date: dateStr,
@@ -224,7 +224,7 @@ export class AvailabilityService {
       
       // Build slot data
       for (let slotNum = 1; slotNum <= 5; slotNum++) {
-        const slot = dateSlots.find(s => s.slot_number === slotNum);
+        const slot = dateSlots.find((s: any) => s.slot_number === slotNum);
         const booking = slot?.bookings?.find((b: any) => b.status !== 'cancelled');
         
         let status: 'available' | 'booked' | 'unavailable' = 'unavailable';
