@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
-import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/Badge';
+// Using alert() for notifications to match existing codebase pattern
+import { Card, CardContent } from '@/components/ui/Card';
 import { 
   Clock, 
   AlertCircle, 
@@ -95,7 +95,7 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
-  const { toast } = useToast();
+  // Using alert() for notifications
 
   const form = useForm<EditBookingFormData>({
     resolver: zodResolver(editBookingSchema),
@@ -141,11 +141,7 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
       setAvailableSlots(data);
     } catch (error) {
       console.error('Error loading available slots:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load available slots',
-        variant: 'destructive'
-      });
+      alert('Failed to load available slots. Please try again.');
     } finally {
       setLoadingSlots(false);
     }
@@ -182,20 +178,12 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
         );
         
         if (!selectedSlot) {
-          toast({
-            title: 'Slot Not Available',
-            description: 'Please select an available slot',
-            variant: 'destructive'
-          });
+          alert('Please select an available slot.');
           return;
         }
         
         if (selectedSlot.is_booked && selectedSlot.booking?.id !== booking.id) {
-          toast({
-            title: 'Slot Already Booked',
-            description: 'This slot is already booked by another customer',
-            variant: 'destructive'
-          });
+          alert('This slot is already booked by another customer.');
           return;
         }
       }
@@ -208,19 +196,12 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
         slot_number: data.slot_number,
       });
       
-      toast({
-        title: 'Success',
-        description: 'Booking updated successfully',
-      });
+      alert('Booking updated successfully!');
       
       onClose();
     } catch (error) {
       console.error('Error updating booking:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update booking',
-        variant: 'destructive'
-      });
+      alert('Failed to update booking. Please try again.');
     } finally {
       setSaving(false);
     }

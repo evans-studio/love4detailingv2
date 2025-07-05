@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+// Using alert() for notifications to match existing codebase pattern
 import { WeeklyScheduleConfig } from '@/components/admin/WeeklyScheduleConfig';
 import { AvailabilityCalendar } from '@/components/admin/AvailabilityCalendar';
 import { EditBookingModal } from '@/components/admin/EditBookingModal';
@@ -66,7 +66,7 @@ export default function AvailabilityManagement() {
   });
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const { toast } = useToast();
+  // Using alert() for notifications
   const supabase = createClientComponentClient();
 
   const handleScheduleUpdate = useCallback(() => {
@@ -137,20 +137,13 @@ export default function AvailabilityManagement() {
         setEditingBooking(booking);
         setShowEditModal(true);
       } else {
-        toast({
-          title: 'No Booking Found',
-          description: 'This slot is available but has no booking',
-        });
+        alert('This slot is available but has no booking.');
       }
     } catch (error) {
       console.error('Error fetching booking:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load booking details',
-        variant: 'destructive',
-      });
+      alert('Failed to load booking details. Please try again.');
     }
-  }, [supabase, toast]);
+  }, [supabase]);
 
   const handleBookingUpdate = useCallback(async (bookingId: string, updates: any) => {
     try {
@@ -172,15 +165,12 @@ export default function AvailabilityManagement() {
         handleScheduleUpdate();
       }
 
-      toast({
-        title: 'Success',
-        description: 'Booking updated successfully',
-      });
+      alert('Booking updated successfully!');
     } catch (error) {
       console.error('Error updating booking:', error);
       throw error;
     }
-  }, [supabase, toast, handleScheduleUpdate]);
+  }, [supabase, handleScheduleUpdate]);
 
   // Load initial stats
   React.useEffect(() => {
