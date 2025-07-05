@@ -92,9 +92,33 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
+    // Handle protected routes - redirect admin users to admin portal
+    if (isProtectedRoute && session) {
+      const { data: user } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (user && user.role === 'admin') {
+        return NextResponse.redirect(new URL('/admin', req.url));
+      }
+    }
+
     // Handle auth routes when user is logged in
     if (isAuthRoute && session) {
-      return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+      // Check if user is admin and redirect appropriately
+      const { data: user } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (user && user.role === 'admin') {
+        return NextResponse.redirect(new URL('/admin', req.url));
+      } else {
+        return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+      }
     }
 
     // Special handling for /book route
