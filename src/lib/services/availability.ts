@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { 
   DailyAvailability, 
@@ -11,8 +12,13 @@ import type {
 
 export class AvailabilityService {
   // Weekly Schedule Template Management
-  static async getWeeklyTemplate(client: SupabaseClient = supabase): Promise<WeeklyScheduleTemplate[]> {
-    const { data, error } = await client
+  static async getWeeklyTemplate(client?: any): Promise<WeeklyScheduleTemplate[]> {
+    const supabaseClient = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
+    const { data, error } = await supabaseClient
       .from('weekly_schedule_template')
       .select('*')
       .order('day_of_week');
@@ -24,9 +30,14 @@ export class AvailabilityService {
   static async updateWeeklyTemplate(
     dayOfWeek: DayOfWeek, 
     config: Partial<WeeklyScheduleTemplate>,
-    client: SupabaseClient = supabase
+    client?: any
   ): Promise<WeeklyScheduleTemplate> {
-    const { data, error } = await client
+    const supabaseClient = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
+    const { data, error } = await supabaseClient
       .from('weekly_schedule_template')
       .upsert({
         day_of_week: dayOfWeek,
