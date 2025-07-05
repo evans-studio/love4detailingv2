@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     // Get user by email from public profiles
     const { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, email')
+      .select('id, email, full_name')
       .eq('email', email)
       .single();
 
