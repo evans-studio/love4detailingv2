@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { LoadingState } from '@/components/ui/LoadingState';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { format } from 'date-fns';
 import { User, Shield, UserX, Crown } from 'lucide-react';
