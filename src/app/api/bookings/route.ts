@@ -86,7 +86,11 @@ export async function POST(request: NextRequest) {
       if (authError) {
         console.error('Auth user creation error:', authError);
         return NextResponse.json(
-          { error: 'Failed to create user account' },
+          { 
+            error: 'Failed to create user account',
+            details: authError?.message || 'Unknown error',
+            code: authError?.code || 'UNKNOWN'
+          },
           { status: 500 }
         );
       }
@@ -129,8 +133,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (vehicleError || !vehicleRecord) {
+      console.error('Vehicle creation error:', vehicleError);
       return NextResponse.json(
-        { error: 'Failed to create vehicle record' },
+        { 
+          error: 'Failed to create vehicle record',
+          details: vehicleError?.message || 'Unknown error',
+          code: vehicleError?.code || 'UNKNOWN'
+        },
         { status: 500 }
       );
     }
@@ -166,8 +175,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (bookingError || !booking) {
+      console.error('Booking creation error:', bookingError);
       return NextResponse.json(
-        { error: 'Failed to create booking' },
+        { 
+          error: 'Failed to create booking',
+          details: bookingError?.message || 'Unknown error',
+          code: bookingError?.code || 'UNKNOWN'
+        },
         { status: 500 }
       );
     }
