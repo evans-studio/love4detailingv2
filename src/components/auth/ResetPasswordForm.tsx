@@ -36,7 +36,9 @@ export function ResetPasswordForm() {
       await resetPassword(data.email);
       setSuccess(true);
     } catch (err) {
-      setError('An error occurred while sending the reset link. Please try again.');
+      // Use the specific error message from AuthContext, or fallback to generic
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while sending the reset link. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
