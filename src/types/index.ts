@@ -270,4 +270,85 @@ export type BookingStatus =
   | 'pending'
   | 'confirmed'
   | 'completed'
-  | 'cancelled'; 
+  | 'cancelled';
+
+// Time Slot Enhancement Types
+export interface TimeSlot {
+  id: string;
+  slot_date: string;
+  slot_time: string;
+  is_available: boolean;
+  is_booked: boolean;
+  created_at: string;
+}
+
+export interface DailyAvailability {
+  id: string;
+  date: string;
+  available_slots: number;
+  working_day: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WeeklyScheduleTemplate {
+  id: string;
+  day_of_week: number;
+  max_slots: number;
+  working_day: boolean;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+}
+
+export interface TimeSlotWithAvailability extends TimeSlot {
+  slot_number: number;
+  buffer_minutes: number;
+  is_available: boolean;
+  booking_count?: number;
+}
+
+export interface AvailabilityCalendarDay {
+  date: string;
+  dayName: string;
+  dayNumber: number;
+  isWorkingDay: boolean;
+  availableSlots: number;
+  maxSlots: number;
+  slots: {
+    slot_number: number;
+    time: string;
+    status: 'available' | 'booked' | 'unavailable';
+    booking?: {
+      id: string;
+      customer_name: string;
+      reference: string;
+    };
+  }[];
+}
+
+export interface SlotGenerationResult {
+  generated_date: string;
+  generated_slots: number;
+  message: string;
+}
+
+export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0=Sunday, 6=Saturday
+
+export const DAY_NAMES: Record<DayOfWeek, string> = {
+  0: 'Sunday',
+  1: 'Monday', 
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday'
+};
+
+export const SLOT_TIMES: Record<number, { time: string; display: string }> = {
+  1: { time: '10:00:00', display: '10:00 AM - 11:00 AM' },
+  2: { time: '11:30:00', display: '11:30 AM - 12:30 PM' },
+  3: { time: '13:00:00', display: '1:00 PM - 2:00 PM' },
+  4: { time: '14:30:00', display: '2:30 PM - 3:30 PM' },
+  5: { time: '16:00:00', display: '4:00 PM - 5:00 PM' }
+}; 
