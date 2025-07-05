@@ -23,15 +23,46 @@ export default function UpdatePasswordPage() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // Check if user is authenticated (session should be set by callback)
+    // Check multiple sources for authentication
     const checkAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // First check URL hash for tokens (direct from Supabase)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
       
-      if (error || !session) {
-        console.error('No valid session for password update:', error);
-        setError('Invalid password reset session. Please request a new password reset link.');
+      console.log('Update password page - checking auth:', {
+        hasHashTokens: !!(accessToken && refreshToken),
+        url: window.location.href
+      });
+
+      if (accessToken && refreshToken) {
+        console.log('Found tokens in URL, setting session...');
+        try {
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          
+          if (error) {
+            console.error('Error setting session from tokens:', error);
+            setError('Failed to establish session. Please try the password reset link again.');
+          } else {
+            console.log('Session established for password update:', data.user?.email);
+          }
+        } catch (err) {
+          console.error('Exception setting session:', err);
+          setError('Failed to establish session. Please try the password reset link again.');
+        }
       } else {
-        console.log('Valid session found for password update:', session.user.email);
+        // Check if session already exists
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
+          console.error('No valid session for password update:', error);
+          setError('Invalid password reset session. Please request a new password reset link.');
+        } else {
+          console.log('Valid existing session found for password update:', session.user.email);
+        }
       }
     };
     
