@@ -13,20 +13,45 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Get the full URL for debugging
+        const fullUrl = window.location.href;
+        console.log('Full callback URL:', fullUrl);
+        
         // Check URL hash for auth tokens
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
+        const hashType = hashParams.get('type');
         
-        // Check URL search params as backup
+        // Check URL search params
         const searchParams = new URLSearchParams(window.location.search);
         const code = searchParams.get('code');
-        const urlType = searchParams.get('type');
+        const searchType = searchParams.get('type');
+        
+        // Check if URL contains recovery indicators
+        const urlContainsRecovery = fullUrl.includes('type=recovery') || 
+                                   fullUrl.includes('recovery') || 
+                                   fullUrl.includes('password');
 
-        console.log('Auth callback - type:', type || urlType, 'tokens:', !!accessToken, 'code:', !!code);
+        console.log('Auth callback debug:', {
+          hashType,
+          searchType,
+          hasAccessToken: !!accessToken,
+          hasCode: !!code,
+          urlContainsRecovery,
+          fullUrl,
+          hash: window.location.hash,
+          search: window.location.search
+        });
 
-        // If we have tokens in hash (password reset flow)
+        // Determine if this is a recovery flow - be more aggressive
+        const isRecoveryFlow = hashType === 'recovery' || 
+                              searchType === 'recovery' || 
+                              urlContainsRecovery ||
+                              // If we came from password reset and have tokens, assume recovery
+                              (accessToken && document.referrer.includes('reset-password'));
+
+        // If we have tokens in hash (password reset/magic link flow)
         if (accessToken && refreshToken) {
           setStatus('Setting up session...');
           
@@ -41,15 +66,28 @@ export default function AuthCallbackPage() {
             return;
           }
 
-          // Check if this is a recovery flow
-          if (type === 'recovery' || urlType === 'recovery') {
+          console.log('Session established, user:', data.user?.email);
+
+          // For hash-based authentication (password reset/magic link), always check if it's recovery
+          // If we have access tokens in hash, it's likely a password reset
+          if (isRecoveryFlow) {
             console.log('Recovery flow detected, redirecting to update-password');
+            setStatus('Redirecting to password update...');
+            router.push('/auth/update-password');
+            return;
+          }
+          
+          // If we have hash tokens but no clear recovery indicator, ask user
+          console.log('Hash-based auth but unclear if recovery - checking with user');
+          const isPasswordReset = confirm('Is this a password reset? Click OK to set a new password, or Cancel to go to dashboard.');
+          if (isPasswordReset) {
+            console.log('User confirmed password reset, redirecting to update-password');
             router.push('/auth/update-password');
             return;
           }
         }
 
-        // If we have a code (regular auth flow)
+        // If we have a code (OAuth/regular auth flow)
         if (code) {
           setStatus('Exchanging code for session...');
           
@@ -60,10 +98,17 @@ export default function AuthCallbackPage() {
             router.push('/auth/sign-in?error=Authentication failed');
             return;
           }
+
+          // Check if this code-based flow is recovery
+          if (isRecoveryFlow) {
+            console.log('Code-based recovery flow, redirecting to update-password');
+            router.push('/auth/update-password');
+            return;
+          }
         }
 
         // Default redirect to dashboard
-        setStatus('Redirecting...');
+        setStatus('Redirecting to dashboard...');
         router.push('/dashboard');
 
       } catch (error) {
@@ -72,7 +117,9 @@ export default function AuthCallbackPage() {
       }
     };
 
-    handleAuthCallback();
+    // Add a small delay to ensure URL is fully loaded
+    const timer = setTimeout(handleAuthCallback, 100);
+    return () => clearTimeout(timer);
   }, [router, supabase.auth]);
 
   return (
