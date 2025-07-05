@@ -23,15 +23,20 @@ export default function UpdatePasswordPage() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // Check if we have the necessary tokens in the URL
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const accessToken = hashParams.get('access_token');
-    const refreshToken = hashParams.get('refresh_token');
+    // Check if user is authenticated (session should be set by callback)
+    const checkAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error || !session) {
+        console.error('No valid session for password update:', error);
+        setError('Invalid password reset session. Please request a new password reset link.');
+      } else {
+        console.log('Valid session found for password update:', session.user.email);
+      }
+    };
     
-    if (!accessToken || !refreshToken) {
-      setError('Invalid password reset link. Please request a new one.');
-    }
-  }, []);
+    checkAuth();
+  }, [supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
