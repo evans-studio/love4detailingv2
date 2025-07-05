@@ -278,7 +278,6 @@ export interface TimeSlot {
   slot_date: string;
   slot_time: string;
   is_available: boolean;
-  is_booked: boolean;
   created_at: string;
 }
 

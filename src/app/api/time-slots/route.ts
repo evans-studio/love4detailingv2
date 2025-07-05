@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       .from('time_slots')
       .select('*')
       .eq('slot_date', dateParam)
-      .eq('is_booked', false)
+      .eq('is_available', true)
       .order('slot_time');
 
     if (error) {
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       id: slot.id,
       slot_date: slot.slot_date,
       slot_time: slot.slot_time,
-      is_available: !slot.is_booked, // Convert is_booked to is_available for frontend
+      is_available: slot.is_available,
     })) || [];
 
     return NextResponse.json(formattedSlots);

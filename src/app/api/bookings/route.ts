@@ -40,11 +40,11 @@ export async function POST(request: NextRequest) {
     // Check time slot availability
     const { data: timeSlot, error: timeSlotError } = await supabase
       .from('time_slots')
-      .select('is_booked')
+      .select('is_available')
       .eq('id', dateTime.timeSlotId)
       .single();
 
-    if (timeSlotError || !timeSlot || timeSlot.is_booked) {
+    if (timeSlotError || !timeSlot || !timeSlot.is_available) {
       return NextResponse.json(
         { error: 'Selected time slot is no longer available' },
         { status: 400 }
