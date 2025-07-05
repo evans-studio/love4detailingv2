@@ -58,11 +58,12 @@ export function DialogHeader({ children }: DialogHeaderProps) {
 
 interface DialogTitleProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export function DialogTitle({ children }: DialogTitleProps) {
+export function DialogTitle({ children, className }: DialogTitleProps) {
   return (
-    <h2 className="text-lg font-semibold text-gray-900">
+    <h2 className={cn("text-lg font-semibold text-gray-900", className)}>
       {children}
     </h2>
   );

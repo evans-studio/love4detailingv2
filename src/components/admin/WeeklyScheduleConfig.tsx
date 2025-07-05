@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+// Using alert() for notifications to match existing codebase pattern
 import { Loader2, Save } from 'lucide-react';
 import type { WeeklyScheduleTemplate, DayOfWeek } from '@/types';
 import { DAY_NAMES } from '@/types';
@@ -21,7 +21,7 @@ export function WeeklyScheduleConfig({ onScheduleUpdate }: WeeklyScheduleConfigP
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<DayOfWeek | null>(null);
-  const { toast } = useToast();
+  // Using alert() for notifications
 
   useEffect(() => {
     loadScheduleTemplate();
@@ -45,11 +45,7 @@ export function WeeklyScheduleConfig({ onScheduleUpdate }: WeeklyScheduleConfigP
       setSchedule(scheduleMap);
     } catch (error) {
       console.error('Error loading schedule:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load weekly schedule',
-        variant: 'destructive'
-      });
+      alert('Failed to load weekly schedule. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -88,19 +84,13 @@ export function WeeklyScheduleConfig({ onScheduleUpdate }: WeeklyScheduleConfigP
         [dayOfWeek]: data
       }));
       
-      toast({
-        title: 'Success',
-        description: `${DAY_NAMES[dayOfWeek]} schedule updated`
-      });
+      // Success notification
+      console.log(`${DAY_NAMES[dayOfWeek]} schedule updated successfully`);
       
       onScheduleUpdate?.();
     } catch (error) {
       console.error('Error updating schedule:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update schedule',
-        variant: 'destructive'
-      });
+      alert('Failed to update schedule. Please try again.');
     } finally {
       setSaving(null);
     }

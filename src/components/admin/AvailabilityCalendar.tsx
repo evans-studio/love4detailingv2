@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+// Using alert() for notifications to match existing codebase pattern
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -41,7 +41,7 @@ export function AvailabilityCalendar({
     monday.setDate(now.getDate() - dayOfWeek + 1);
     return monday;
   });
-  const { toast } = useToast();
+  // Using alert() for notifications
 
   useEffect(() => {
     loadWeekData();
@@ -63,11 +63,7 @@ export function AvailabilityCalendar({
       setWeekData(data);
     } catch (error) {
       console.error('Error loading week data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load availability data',
-        variant: 'destructive'
-      });
+      alert('Failed to load availability data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -89,19 +85,12 @@ export function AvailabilityCalendar({
       
       const totalGenerated = data.reduce((sum, result) => sum + result.generated_slots, 0);
       
-      toast({
-        title: 'Success',
-        description: `Generated ${totalGenerated} slots for the week`,
-      });
+      alert(`Successfully generated ${totalGenerated} slots for the week!`);
       
       await loadWeekData();
     } catch (error) {
       console.error('Error generating week slots:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to generate week slots',
-        variant: 'destructive'
-      });
+      alert('Failed to generate week slots. Please try again.');
     } finally {
       setGenerating(null);
     }
