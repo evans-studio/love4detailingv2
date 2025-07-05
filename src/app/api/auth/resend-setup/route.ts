@@ -51,6 +51,27 @@ export async function POST(request: Request) {
       
       if (resetError) {
         console.error('Password reset failed:', resetError);
+        
+        // Handle rate limit errors more gracefully
+        if (resetError.message?.includes('rate limit') || resetError.message?.includes('too many')) {
+          return NextResponse.json(
+            { error: 'Email rate limit exceeded. Please wait a few minutes before requesting another setup email.' },
+            { status: 429 }
+          );
+        }
+        
+        // Handle general email sending errors
+        if (resetError.message?.includes('Error sending') || resetError.message?.includes('email')) {
+          return NextResponse.json(
+            { 
+              error: 'Email service temporarily unavailable. Please try again later or contact support.',
+              fallback: 'You can manually reset your password by visiting the sign-in page and clicking "Forgot Password".',
+              signInUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/sign-in`
+            },
+            { status: 503 }
+          );
+        }
+        
         return NextResponse.json(
           { error: 'Failed to send password reset email', details: resetError.message },
           { status: 500 }
@@ -75,6 +96,15 @@ export async function POST(request: Request) {
       
       if (inviteError) {
         console.error('Invite failed:', inviteError);
+        
+        // Handle rate limit errors more gracefully
+        if (inviteError.message?.includes('rate limit') || inviteError.message?.includes('too many')) {
+          return NextResponse.json(
+            { error: 'Email rate limit exceeded. Please wait a few minutes before requesting another setup email.' },
+            { status: 429 }
+          );
+        }
+        
         return NextResponse.json(
           { error: 'Failed to send setup invitation', details: inviteError.message },
           { status: 500 }
