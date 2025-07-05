@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
         const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
           personalDetails.email,
           {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/setup-password?booking=${booking.id}`,
+            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${booking.id}`,
             data: {
               first_name: personalDetails.firstName,
               last_name: personalDetails.lastName,

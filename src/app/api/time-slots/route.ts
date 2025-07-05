@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
 async function generateTimeSlotsIfNeeded(date: string): Promise<void> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/time-slots/generate`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/api/time-slots/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
