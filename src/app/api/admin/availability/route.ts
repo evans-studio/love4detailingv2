@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AvailabilityService } from '@/lib/services/availability';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
 // GET /api/admin/availability
@@ -35,7 +36,13 @@ export async function GET(request: Request) {
       );
     }
 
-    const calendarData = await AvailabilityService.getCalendarData(startDate, endDate);
+    // Create service role client for admin operations
+    const serviceClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const calendarData = await AvailabilityService.getCalendarData(startDate, endDate, serviceClient);
     
     return NextResponse.json({ data: calendarData });
   } catch (error) {
