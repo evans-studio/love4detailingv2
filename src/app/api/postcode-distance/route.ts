@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Configure route as dynamic
+export const dynamic = 'force-dynamic';
+
 // HQ postcode for distance calculation
 const HQ_POSTCODE = 'AL1 1AA'; // Replace with actual HQ postcode
 const MAX_DISTANCE_MILES = 10;
