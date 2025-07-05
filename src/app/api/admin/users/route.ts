@@ -4,6 +4,9 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { checkServerAdminAccess } from '@/lib/auth/admin';
 import { cookies } from 'next/headers';
 
+// Configure route as dynamic
+export const dynamic = 'force-dynamic';
+
 const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
