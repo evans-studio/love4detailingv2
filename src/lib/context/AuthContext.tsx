@@ -143,9 +143,18 @@ export function AuthProvider({ children, initialUser = null }: { children: React
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery`,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Handle specific error types with better messages
+        if (error.message?.includes('rate limit') || error.message?.includes('too many')) {
+          throw new Error('Email rate limit exceeded. Please wait a few minutes before requesting another password reset.');
+        } else if (error.message?.includes('Error sending') || error.message?.includes('email')) {
+          throw new Error('Email service temporarily unavailable. Please try again later or contact support.');
+        }
+        throw error;
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to reset password');
+      const errorMessage = e instanceof Error ? e.message : 'Failed to reset password';
+      setError(errorMessage);
       throw e;
     } finally {
       setLoading(false);

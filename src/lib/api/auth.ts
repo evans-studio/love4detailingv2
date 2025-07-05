@@ -69,6 +69,12 @@ export async function resetPassword(email: string) {
   });
 
   if (error) {
+    // Handle specific error types with better messages
+    if (error.message?.includes('rate limit') || error.message?.includes('too many')) {
+      throw new Error('Email rate limit exceeded. Please wait a few minutes before requesting another password reset.');
+    } else if (error.message?.includes('Error sending') || error.message?.includes('email')) {
+      throw new Error('Email service temporarily unavailable. Please try again later or contact support.');
+    }
     throw new Error(error.message);
   }
 }
