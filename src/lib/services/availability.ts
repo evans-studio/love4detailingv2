@@ -1,24 +1,21 @@
-import { supabase } from '@/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { 
   DailyAvailability, 
   WeeklyScheduleTemplate, 
   TimeSlotWithAvailability,
   AvailabilityCalendarDay,
-  SlotGenerationResult,
   DayOfWeek 
 } from '@/types';
 
 export class AvailabilityService {
   // Weekly Schedule Template Management
   static async getWeeklyTemplate(client?: any): Promise<WeeklyScheduleTemplate[]> {
-    const supabaseClient = client || createClient(
+    const supabase = client || createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('weekly_schedule_template')
       .select('*')
       .order('day_of_week');
@@ -32,12 +29,12 @@ export class AvailabilityService {
     config: Partial<WeeklyScheduleTemplate>,
     client?: any
   ): Promise<WeeklyScheduleTemplate> {
-    const supabaseClient = client || createClient(
+    const supabase = client || createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('weekly_schedule_template')
       .upsert({
         day_of_week: dayOfWeek,
@@ -51,81 +48,123 @@ export class AvailabilityService {
     return data;
   }
 
-  // Daily Availability Management
-  static async getDailyAvailability(date: string, client: SupabaseClient = supabase): Promise<DailyAvailability | null> {
-    const { data, error } = await client
-      .from('daily_availability')
-      .select('*')
-      .eq('date', date)
-      .single();
+  // Generate Week Slots - Using your existing schema
+  static async generateWeekSlots(startDate: string, client?: any): Promise<any[]> {
+    const supabase = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const result = [];
+    const slotTimes = ['10:00:00', '11:30:00', '13:00:00', '14:30:00', '16:00:00'];
     
-    if (error && error.code !== 'PGRST116') throw error;
-    return data;
+    // Get weekly template
+    const template = await this.getWeeklyTemplate(supabase);
+    
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + i);
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const dayOfWeek = currentDate.getDay();
+      
+      // Get template for this day
+      const dayTemplate = template.find(t => t.day_of_week === dayOfWeek);
+      
+      if (dayTemplate?.working_day && dayTemplate.max_slots > 0) {
+        // Create daily availability record
+        await supabase
+          .from('daily_availability')
+          .upsert({
+            date: dateStr,
+            available_slots: dayTemplate.max_slots,
+            working_day: true,
+            updated_at: new Date().toISOString()
+          });
+        
+        // Generate time slots using correct column names
+        for (let slotNum = 1; slotNum <= dayTemplate.max_slots; slotNum++) {
+          const { error } = await supabase
+            .from('time_slots')
+            .upsert({
+              slot_date: dateStr,          // ✅ Correct column name
+              slot_time: slotTimes[slotNum - 1], // ✅ Correct column name
+              slot_number: slotNum,
+              is_available: true,
+              buffer_minutes: 30
+            }, {
+              onConflict: 'slot_date,slot_time'
+            });
+          
+          if (error) console.log('Slot creation error:', error);
+        }
+        
+        result.push({
+          generated_date: dateStr,
+          generated_slots: dayTemplate.max_slots,
+          message: `Generated ${dayTemplate.max_slots} slots`
+        });
+      } else {
+        // Non-working day
+        await supabase
+          .from('daily_availability')
+          .upsert({
+            date: dateStr,
+            available_slots: 0,
+            working_day: false,
+            updated_at: new Date().toISOString()
+          });
+        
+        result.push({
+          generated_date: dateStr,
+          generated_slots: 0,
+          message: 'Non-working day'
+        });
+      }
+    }
+    
+    return result;
   }
 
-  static async updateDailyAvailability(
-    date: string, 
-    config: Partial<DailyAvailability>,
-    client: SupabaseClient = supabase
-  ): Promise<DailyAvailability> {
-    const { data, error } = await client
-      .from('daily_availability')
-      .upsert({
-        date,
-        ...config,
-        updated_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+  // Check Slot Availability - Using UUID time_slot_id
+  static async checkSlotAvailability(date: string, slotNumber: number, client?: any): Promise<boolean> {
+    const supabase = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     
-    if (error) throw error;
-    return data;
-  }
-
-  // Slot Generation
-  static async generateWeekSlots(startDate: string): Promise<SlotGenerationResult[]> {
-    const { data, error } = await supabase
-      .rpc('generate_week_slots', { start_date: startDate });
-    
-    if (error) throw error;
-    return data || [];
-  }
-
-  // Availability Checking
-  static async checkSlotAvailability(date: string, slotNumber: number): Promise<boolean> {
-    const { data, error } = await supabase
-      .rpc('check_slot_availability', { 
-        check_date: date, 
-        check_slot_number: slotNumber 
-      });
-    
-    if (error) throw error;
-    return data || false;
-  }
-
-  static async getAvailableSlots(date: string): Promise<TimeSlotWithAvailability[]> {
-    const { data, error } = await supabase
+    // Check if day is working and slot exists
+    const { data: slot, error: slotError } = await supabase
       .from('time_slots')
-      .select(`
-        *,
-        bookings!left(id, status)
-      `)
-      .eq('slot_date', date)
+      .select('id')
+      .eq('slot_date', date)              // ✅ Correct column name
+      .eq('slot_number', slotNumber)
       .eq('is_available', true)
-      .order('slot_number');
+      .single();
     
-    if (error) throw error;
+    if (slotError || !slot) return false;
     
-    return (data || []).map(slot => ({
-      ...slot,
-      booking_count: slot.bookings?.filter((b: any) => b.status !== 'cancelled').length || 0
-    })).filter(slot => slot.booking_count === 0);
+    // Check for existing bookings using UUID time_slot_id
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('time_slot_id', slot.id)        // ✅ Correct UUID reference
+      .not('status', 'eq', 'cancelled')
+      .single();
+    
+    if (bookingError && bookingError.code !== 'PGRST116') return false;
+    
+    return !booking; // Available if no booking exists
   }
 
-  // Calendar View Data
-  static async getCalendarData(startDate: string, endDate: string, client: SupabaseClient = supabase): Promise<AvailabilityCalendarDay[]> {
+  // Calendar View Data - Using proper schema with UUID relationships
+  static async getCalendarData(startDate: string, endDate: string, client?: any): Promise<AvailabilityCalendarDay[]> {
+    const supabase = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
     // Get availability config for date range
-    const { data: dailyConfigs, error: configError } = await client
+    const { data: dailyConfigs, error: configError } = await supabase
       .from('daily_availability')
       .select('*')
       .gte('date', startDate)
@@ -133,26 +172,26 @@ export class AvailabilityService {
     
     if (configError) throw configError;
 
-    // Get time slots with bookings for date range
-    const { data: slots, error: slotsError } = await client
+    // Get time slots with bookings using proper foreign key relationship
+    const { data: slots, error: slotsError } = await supabase
       .from('time_slots')
       .select(`
         *,
-        bookings!left(
+        bookings!time_slots_time_slot_id_fkey(
           id,
-          customer_name,
+          full_name,
           booking_reference,
           status
         )
       `)
-      .gte('slot_date', startDate)
-      .lte('slot_date', endDate)
+      .gte('slot_date', startDate)         // ✅ Correct column name
+      .lte('slot_date', endDate)           // ✅ Correct column name
       .order('slot_date, slot_number');
     
     if (slotsError) throw slotsError;
 
     // Get weekly template as fallback
-    const weeklyTemplate = await this.getWeeklyTemplate(client);
+    const weeklyTemplate = await this.getWeeklyTemplate(supabase);
     
     // Build calendar data
     const calendarDays: AvailabilityCalendarDay[] = [];
@@ -170,7 +209,7 @@ export class AvailabilityService {
       const isWorkingDay = dailyConfig?.working_day ?? templateConfig?.working_day ?? false;
       const maxSlots = dailyConfig?.available_slots ?? templateConfig?.max_slots ?? 0;
       
-      // Get slots for this date
+      // Get slots for this date using correct column name
       const dateSlots = slots?.filter(s => s.slot_date === dateStr) || [];
       
       const dayData: AvailabilityCalendarDay = {
@@ -190,7 +229,7 @@ export class AvailabilityService {
         
         let status: 'available' | 'booked' | 'unavailable' = 'unavailable';
         
-        if (slotNum <= maxSlots && isWorkingDay) {
+        if (slotNum <= maxSlots && isWorkingDay && slot?.is_available) {
           status = booking ? 'booked' : 'available';
         }
         
@@ -200,11 +239,11 @@ export class AvailabilityService {
         
         dayData.slots.push({
           slot_number: slotNum,
-          time: slot?.slot_time || '',
+          time: slot?.slot_time || '',    // ✅ Correct column name
           status,
           booking: booking ? {
             id: booking.id,
-            customer_name: booking.customer_name,
+            customer_name: booking.full_name,
             reference: booking.booking_reference
           } : undefined
         });
@@ -217,25 +256,28 @@ export class AvailabilityService {
     return calendarDays;
   }
 
-  // Bulk Operations
-  static async bulkDeleteSlots(slotIds: string[]): Promise<void> {
-    const { error } = await supabase
+  // Additional helper methods for seamless UX
+  static async getAvailableSlots(date: string, client?: any): Promise<any[]> {
+    const supabase = client || createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
+    const { data: slots, error } = await supabase
       .from('time_slots')
-      .delete()
-      .in('id', slotIds);
+      .select(`
+        *,
+        bookings!time_slots_time_slot_id_fkey(id, status)
+      `)
+      .eq('slot_date', date)              // ✅ Correct column name
+      .eq('is_available', true)
+      .order('slot_number');
     
     if (error) throw error;
-  }
-
-  static async bulkUpdateSlotAvailability(
-    slotIds: string[], 
-    isAvailable: boolean
-  ): Promise<void> {
-    const { error } = await supabase
-      .from('time_slots')
-      .update({ is_available: isAvailable })
-      .in('id', slotIds);
     
-    if (error) throw error;
+    return (slots || []).filter(slot => {
+      const activeBookings = slot.bookings?.filter((b: any) => b.status !== 'cancelled') || [];
+      return activeBookings.length === 0;
+    });
   }
 }
