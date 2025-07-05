@@ -38,10 +38,12 @@ interface ConfirmationDetailsProps {
 export function ConfirmationDetails({ booking, setupLink, userExists, hasPassword }: ConfirmationDetailsProps) {
   const [isResending, setIsResending] = useState(false);
   const [resendError, setResendError] = useState<string | null>(null);
+  const [fallbackInfo, setFallbackInfo] = useState<{ message: string; signInUrl?: string } | null>(null);
 
   const handleResendSetupEmail = async () => {
     setIsResending(true);
     setResendError(null);
+    setFallbackInfo(null);
 
     try {
       const response = await fetch('/api/auth/resend-setup', {
@@ -57,7 +59,16 @@ export function ConfirmationDetails({ booking, setupLink, userExists, hasPasswor
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to resend setup email');
+        
+        // Handle fallback scenarios
+        if (error.fallback && error.signInUrl) {
+          setFallbackInfo({
+            message: error.fallback,
+            signInUrl: error.signInUrl
+          });
+        }
+        
+        throw new Error(error.error || error.message || 'Failed to resend setup email');
       }
 
       // Update setupLink with new link from response
@@ -116,6 +127,18 @@ export function ConfirmationDetails({ booking, setupLink, userExists, hasPasswor
                 </Button>
                 {resendError && (
                   <p className="text-red-600 text-sm">{resendError}</p>
+                )}
+                {fallbackInfo && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-yellow-800 text-sm mb-3">{fallbackInfo.message}</p>
+                    {fallbackInfo.signInUrl && (
+                      <Link href={fallbackInfo.signInUrl}>
+                        <Button variant="outline" size="sm" className="w-full">
+                          Go to Sign In Page
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 )}
               </div>
             )}
