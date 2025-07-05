@@ -78,7 +78,7 @@ export default function AvailabilityManagement() {
     try {
       const { data: slotsData, error: slotsError } = await supabase
         .from('time_slots')
-        .select('is_available, is_booked')
+        .select('is_available')
         .gte('slot_date', new Date().toISOString().split('T')[0]);
 
       if (slotsError) throw slotsError;
@@ -92,8 +92,8 @@ export default function AvailabilityManagement() {
       if (bookingsError) throw bookingsError;
 
       const totalSlots = slotsData?.length || 0;
-      const bookedSlots = slotsData?.filter(slot => slot.is_booked).length || 0;
-      const availableSlots = slotsData?.filter(slot => slot.is_available && !slot.is_booked).length || 0;
+      const bookedSlots = slotsData?.filter(slot => !slot.is_available).length || 0;
+      const availableSlots = slotsData?.filter(slot => slot.is_available).length || 0;
       const upcomingBookings = bookingsData?.length || 0;
 
       setStats({ totalSlots, bookedSlots, availableSlots, upcomingBookings });
