@@ -30,6 +30,7 @@ interface VehicleSizeEntry {
 interface VehicleSize {
   id: string;
   label: string;
+  description: string | null;
   price_pence: number;
 }
 
@@ -130,7 +131,7 @@ export async function determineVehicleSize(
 export async function getVehicleSize(supabase: any, sizeLabel: VehicleSizeLabel): Promise<VehicleSize> {
   const { data, error } = await supabase
     .from('vehicle_sizes')
-    .select('id, label, price_pence')
+    .select('id, label, description, price_pence')
     .eq('label', sizeLabel)
     .single();
 
@@ -176,7 +177,7 @@ export async function calculateVehicleSize(
       // Get medium size
       const { data: mediumSize } = await supabase
         .from('vehicle_sizes')
-        .select('id, label, price_pence')
+        .select('id, label, description, price_pence')
         .eq('label', 'Medium')
         .single();
 
@@ -196,7 +197,7 @@ export async function calculateVehicleSize(
     // Get the corresponding size from the database
     const { data: vehicleSize } = await supabase
       .from('vehicle_sizes')
-      .select('id, label, price_pence')
+      .select('id, label, description, price_pence')
       .eq('label', sizeMap[mostCommonSize])
       .single();
 

@@ -144,6 +144,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create function to handle anonymous booking creation
+DROP FUNCTION IF EXISTS create_anonymous_booking;
 CREATE OR REPLACE FUNCTION create_anonymous_booking(
     p_vehicle_registration TEXT,
     p_vehicle_make TEXT,
@@ -168,14 +169,16 @@ BEGIN
         model,
         year,
         color,
-        size_id
+        size_id,
+        user_id
     ) VALUES (
         p_vehicle_registration,
         p_vehicle_make,
         p_vehicle_model,
         p_vehicle_year,
         p_vehicle_color,
-        p_vehicle_size_id
+        p_vehicle_size_id,
+        NULL -- Will be updated once user is created
     ) RETURNING id INTO v_vehicle_id;
 
     -- Create booking record
@@ -185,19 +188,28 @@ BEGIN
         total_price_pence,
         email,
         full_name,
-        phone
+        phone,
+        status,
+        payment_status,
+        booking_reference
     ) VALUES (
         v_vehicle_id,
         p_time_slot_id,
         p_total_price_pence,
         p_email,
         p_full_name,
-        p_phone
+        p_phone,
+        'pending',
+        'pending',
+        CONCAT('BK', TO_CHAR(NOW(), 'YYYYMMDD'), LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0'))
     ) RETURNING id INTO v_booking_id;
 
     RETURN v_booking_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute permission to public
+GRANT EXECUTE ON FUNCTION create_anonymous_booking TO public;
 
 -- Create function to calculate vehicle size
 CREATE OR REPLACE FUNCTION calculate_vehicle_size(

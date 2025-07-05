@@ -1,6 +1,10 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card } from '@/components/ui/Card';
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { ArrowUp, ArrowDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface RewardTransaction {
   id: string;
@@ -10,61 +14,79 @@ interface RewardTransaction {
   created_at: string;
 }
 
-interface RewardsHistoryProps {
-  transactions: RewardTransaction[];
-}
+export function RewardsHistory() {
+  const [mounted, setMounted] = useState(false);
+  const [transactions, setTransactions] = useState<RewardTransaction[]>([]);
 
-export function RewardsHistory({ transactions }: RewardsHistoryProps) {
-  return (
-    <Card className="divide-y divide-gray-100">
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">Points History</h3>
-      </div>
-      <div className="divide-y divide-gray-100">
-        {transactions.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
-            No transactions yet. Complete a booking to start earning points!
-          </div>
-        ) : (
-          transactions.map((transaction) => (
-            <div
-              key={transaction.id}
-              className="p-4 flex items-center justify-between"
-            >
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // During SSR and initial mount, render a simplified version
+  if (!mounted) {
+    return (
+      <Card className="p-4">
+        <h2 className="text-lg font-semibold mb-4">Points History</h2>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-gray-50">
               <div className="flex items-center gap-3">
-                <div
-                  className={`p-2 rounded-full ${
-                    transaction.type === 'earned'
-                      ? 'bg-green-50 text-green-600'
-                      : 'bg-amber-50 text-amber-600'
-                  }`}
-                >
-                  {transaction.type === 'earned' ? (
-                    <ArrowUpIcon className="w-4 h-4" />
-                  ) : (
-                    <ArrowDownIcon className="w-4 h-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium">{transaction.description}</p>
-                  <p className="text-sm text-gray-500">
-                    {format(new Date(transaction.created_at), 'MMM d, yyyy')}
-                  </p>
+                <div className="h-8 w-8 rounded-full bg-gray-200" />
+                <div className="space-y-1">
+                  <div className="h-4 w-32 bg-gray-200 rounded" />
+                  <div className="h-3 w-24 bg-gray-200 rounded" />
                 </div>
               </div>
+              <div className="h-4 w-16 bg-gray-200 rounded" />
+            </div>
+          ))}
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="p-4">
+      <h2 className="text-lg font-semibold mb-4">Points History</h2>
+      <div className="space-y-4">
+        {transactions.map((transaction) => (
+          <div
+            key={transaction.id}
+            className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
+          >
+            <div className="flex items-center gap-3">
               <div
-                className={`font-semibold ${
+                className={cn(
+                  'p-2 rounded-full',
                   transaction.type === 'earned'
-                    ? 'text-green-600'
-                    : 'text-amber-600'
-                }`}
+                    ? 'bg-green-100 text-green-600'
+                    : 'bg-red-100 text-red-600'
+                )}
               >
-                {transaction.type === 'earned' ? '+' : '-'}
-                {transaction.points}
+                {transaction.type === 'earned' ? (
+                  <ArrowUp className="h-4 w-4" />
+                ) : (
+                  <ArrowDown className="h-4 w-4" />
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{transaction.description}</p>
+                <p className="text-sm text-gray-500">
+                  {format(new Date(transaction.created_at), 'MMM d, yyyy')}
+                </p>
               </div>
             </div>
-          ))
-        )}
+            <div
+              className={cn(
+                'font-medium',
+                transaction.type === 'earned' ? 'text-green-600' : 'text-red-600'
+              )}
+            >
+              {transaction.type === 'earned' ? '+' : '-'}
+              {transaction.points} points
+            </div>
+          </div>
+        ))}
       </div>
     </Card>
   );

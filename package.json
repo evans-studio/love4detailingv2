@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run reset-session && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "reset-session": "ts-node scripts/reset-session.ts",
+    "reset-db": "ts-node -P tsconfig.test.json scripts/reset-database.ts",
     "setup-database": "supabase db reset && ts-node scripts/setup-database.ts",
-    "test:email": "ts-node -P tsconfig.test.json src/lib/test-email.ts"
+    "setup-admin": "ts-node scripts/setup-admin.ts",
+    "test:email": "ts-node -P tsconfig.test.json src/lib/test-email.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -29,12 +33,13 @@
     "@types/pg": "^8.15.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^3.3.1",
+    "date-fns": "^3.6.0",
     "gsap": "^3.12.5",
     "lucide-react": "^0.525.0",
     "next": "14.1.0",
     "pg": "^8.16.3",
     "react": "^18.2.0",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.59.0",
     "resend": "^4.6.0",
@@ -43,7 +48,7 @@
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
-    "@types/node": "^20.19.2",
+    "@types/node": "^20.19.4",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
     "autoprefixer": "^10.4.17",

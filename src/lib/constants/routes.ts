@@ -12,10 +12,16 @@ export const ROUTES = {
 
   // Dashboard Routes
   DASHBOARD: '/dashboard',
-  DASHBOARD_BOOK: '/dashboard/book',
   DASHBOARD_BOOKINGS: '/dashboard/bookings',
   DASHBOARD_PROFILE: '/dashboard/profile',
   DASHBOARD_REWARDS: '/dashboard/rewards',
+  DASHBOARD_VEHICLES: '/dashboard/vehicles',
+
+  // Admin Routes
+  ADMIN: '/admin',
+  ADMIN_BOOKINGS: '/admin/bookings',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_SETTINGS: '/admin/settings',
 
   // API Routes
   API_BOOKINGS: '/api/bookings',

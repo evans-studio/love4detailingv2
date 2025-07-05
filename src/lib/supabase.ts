@@ -1,22 +1,44 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '@/types/supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type { Database } from '@/types/supabase';
 
-// Regular client for authenticated and anonymous users
-export const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// For server-side operations with admin privileges
+export const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
+  ? createClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+  : null;
 
-// Admin client with full access (for seeding, testing, and admin operations)
-export const supabaseAdmin = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-);
+// For client-side operations with session persistence
+export const supabase = createClientComponentClient<Database>();
+
+// For server-side operations (non-admin)
+export const createServerClient = () =>
+  createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
 
 // Helper to check if we're connected to production
 export async function validateConnection() {
   try {
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client is not initialized');
+    }
+
     const { data, error } = await supabaseAdmin
       .from('users')
       .select('*', { count: 'exact' });
@@ -29,6 +51,20 @@ export async function validateConnection() {
     return true;
   } catch (error) {
     console.error('❌ Failed to connect to Supabase:', error);
+    return false;
+  }
+}
+
+// Helper to clear local session
+export async function clearLocalSession() {
+  try {
+    await supabase.auth.signOut();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('supabase.auth.token');
+    }
+    return true;
+  } catch (error) {
+    console.error('Failed to clear local session:', error);
     return false;
   }
 } 

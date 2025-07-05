@@ -7,6 +7,7 @@ interface LoadingStateProps {
   variant?: 'primary' | 'secondary' | 'ghost';
   text?: string;
   fullPage?: boolean;
+  children?: React.ReactNode;
 }
 
 export function LoadingState({
@@ -15,6 +16,7 @@ export function LoadingState({
   variant = 'primary',
   text,
   fullPage = false,
+  children,
 }: LoadingStateProps) {
   const sizeClasses = {
     sm: 'w-4 h-4 border-2',
@@ -50,6 +52,7 @@ export function LoadingState({
           {text}
         </span>
       )}
+      {children}
     </div>
   );
 

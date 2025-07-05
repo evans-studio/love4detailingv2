@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { ROUTES } from '@/lib/constants/routes';
 
 export function Footer() {
   return (
@@ -13,7 +14,7 @@ export function Footer() {
               Professional car detailing services in London. Transform your vehicle with our expert care.
             </p>
             <div className="flex space-x-4">
-              <Link href="/book">
+              <Link href={ROUTES.BOOK}>
                 <Button>Book Service</Button>
               </Link>
             </div>
@@ -24,50 +25,18 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/services" className="text-sm text-muted hover:text-primary-500">
-                  Our Services
+                <Link href={ROUTES.BOOK} className="text-sm text-muted hover:text-primary-500">
+                  Book Service
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm text-muted hover:text-primary-500">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-sm text-muted hover:text-primary-500">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="text-sm text-muted hover:text-primary-500">
+                <Link href={ROUTES.DASHBOARD} className="text-sm text-muted hover:text-primary-500">
                   Customer Dashboard
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="font-semibold mb-4">Services</h4>
-            <ul className="space-y-2">
               <li>
-                <Link href="/services#basic-wash" className="text-sm text-muted hover:text-primary-500">
-                  Basic Wash
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#full-valet" className="text-sm text-muted hover:text-primary-500">
-                  Full Valet
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#premium-detail" className="text-sm text-muted hover:text-primary-500">
-                  Premium Detail
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#ceramic-coating" className="text-sm text-muted hover:text-primary-500">
-                  Ceramic Coating
+                <Link href={ROUTES.SIGN_IN} className="text-sm text-muted hover:text-primary-500">
+                  Sign In
                 </Link>
               </li>
             </ul>
@@ -94,6 +63,28 @@ export function Footer() {
               </li>
             </ul>
           </div>
+
+          {/* Support */}
+          <div>
+            <h4 className="font-semibold mb-4">Support</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href={ROUTES.DASHBOARD_PROFILE} className="text-sm text-muted hover:text-primary-500">
+                  My Account
+                </Link>
+              </li>
+              <li>
+                <Link href={ROUTES.DASHBOARD_BOOKINGS} className="text-sm text-muted hover:text-primary-500">
+                  My Bookings
+                </Link>
+              </li>
+              <li>
+                <Link href={ROUTES.DASHBOARD_REWARDS} className="text-sm text-muted hover:text-primary-500">
+                  Loyalty Points
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Bottom Bar */}
@@ -102,14 +93,6 @@ export function Footer() {
             <p className="text-sm text-muted">
               © {new Date().getFullYear()} Love4Detailing. All rights reserved.
             </p>
-            <div className="flex space-x-6">
-              <Link href="/privacy" className="text-sm text-muted hover:text-primary-500">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-sm text-muted hover:text-primary-500">
-                Terms of Service
-              </Link>
-            </div>
           </div>
         </div>
       </div>

@@ -7,14 +7,16 @@ import { personalDetailsSchema, type PersonalDetails } from '@/lib/validation/bo
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { useEffect } from 'react';
 
-export function PersonalDetailsStep() {
+export default function PersonalDetailsStep() {
   const { state, dispatch } = useBooking();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, touchedFields, isSubmitted },
+    reset
   } = useForm<PersonalDetails>({
     resolver: zodResolver(personalDetailsSchema),
     defaultValues: {
@@ -26,16 +28,64 @@ export function PersonalDetailsStep() {
       address_line2: state.data.customer?.address_line2 || '',
       city: state.data.customer?.city || '',
       postcode: state.data.customer?.postcode || '',
-    }
+    },
+    mode: 'onTouched'
   });
 
+  // Reset form with persisted data when it changes
+  useEffect(() => {
+    if (state.data.customer) {
+      reset({
+        firstName: state.data.customer.firstName,
+        lastName: state.data.customer.lastName,
+        email: state.data.customer.email,
+        phone: state.data.customer.phone,
+        address_line1: state.data.customer.address_line1,
+        address_line2: state.data.customer.address_line2,
+        city: state.data.customer.city,
+        postcode: state.data.customer.postcode,
+      });
+    }
+  }, [state.data.customer, reset]);
+
   const onSubmit = async (data: PersonalDetails) => {
-    dispatch({ type: 'SET_CUSTOMER_DETAILS', payload: data });
-    dispatch({ type: 'SET_STEP', payload: BookingStep.VehicleSize });
+    try {
+      // Clear any previous errors
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      // Update customer details in context
+      dispatch({ type: 'SET_CUSTOMER_DETAILS', payload: data });
+      
+      // Proceed to next step
+      dispatch({ type: 'SET_STEP', payload: BookingStep.VehicleSize });
+    } catch (error) {
+      console.error('Error saving personal details:', error);
+      dispatch({ 
+        type: 'SET_ERROR', 
+        payload: error instanceof Error ? error.message : 'Failed to save personal details' 
+      });
+    }
   };
 
   const handleBack = () => {
+    // Save current form data before going back
+    const formData = {
+      firstName: state.data.customer?.firstName || '',
+      lastName: state.data.customer?.lastName || '',
+      email: state.data.customer?.email || '',
+      phone: state.data.customer?.phone || '',
+      address_line1: state.data.customer?.address_line1 || '',
+      address_line2: state.data.customer?.address_line2 || '',
+      city: state.data.customer?.city || '',
+      postcode: state.data.customer?.postcode || '',
+    };
+    dispatch({ type: 'SET_CUSTOMER_DETAILS', payload: formData });
     dispatch({ type: 'SET_STEP', payload: BookingStep.Registration });
+  };
+
+  // Helper function to determine if we should show error for a field
+  const shouldShowError = (fieldName: keyof PersonalDetails): boolean => {
+    return Boolean((touchedFields[fieldName] || isSubmitted) && errors[fieldName]);
   };
 
   return (
@@ -54,11 +104,11 @@ export function PersonalDetailsStep() {
             <Input
               id="firstName"
               {...register('firstName')}
-              name="given-name"
               autoComplete="given-name"
               placeholder="Enter your first name"
-              error={!!errors.firstName}
-              helperText={errors.firstName?.message}
+              error={shouldShowError('firstName')}
+              helperText={shouldShowError('firstName') ? errors.firstName?.message : undefined}
+              required
             />
           </div>
 
@@ -67,11 +117,11 @@ export function PersonalDetailsStep() {
             <Input
               id="lastName"
               {...register('lastName')}
-              name="family-name"
               autoComplete="family-name"
               placeholder="Enter your last name"
-              error={!!errors.lastName}
-              helperText={errors.lastName?.message}
+              error={shouldShowError('lastName')}
+              helperText={shouldShowError('lastName') ? errors.lastName?.message : undefined}
+              required
             />
           </div>
 
@@ -81,11 +131,11 @@ export function PersonalDetailsStep() {
               id="email"
               type="email"
               {...register('email')}
-              name="email"
               autoComplete="email"
               placeholder="Enter your email"
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={shouldShowError('email')}
+              helperText={shouldShowError('email') ? errors.email?.message : undefined}
+              required
             />
           </div>
 
@@ -95,11 +145,11 @@ export function PersonalDetailsStep() {
               id="phone"
               type="tel"
               {...register('phone')}
-              name="tel"
               autoComplete="tel"
               placeholder="Enter your phone number"
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
+              error={shouldShowError('phone')}
+              helperText={shouldShowError('phone') ? errors.phone?.message : undefined}
+              required
             />
           </div>
         </div>
@@ -110,11 +160,11 @@ export function PersonalDetailsStep() {
             <Input
               id="address_line1"
               {...register('address_line1')}
-              name="address-line1"
-              autoComplete="address-line1"
+              autoComplete="street-address"
               placeholder="Enter your street address"
-              error={!!errors.address_line1}
-              helperText={errors.address_line1?.message}
+              error={shouldShowError('address_line1')}
+              helperText={shouldShowError('address_line1') ? errors.address_line1?.message : undefined}
+              required
             />
           </div>
 
@@ -123,11 +173,10 @@ export function PersonalDetailsStep() {
             <Input
               id="address_line2"
               {...register('address_line2')}
-              name="address-line2"
               autoComplete="address-line2"
               placeholder="Apartment, suite, etc."
-              error={!!errors.address_line2}
-              helperText={errors.address_line2?.message}
+              error={shouldShowError('address_line2')}
+              helperText={shouldShowError('address_line2') ? errors.address_line2?.message : undefined}
             />
           </div>
 
@@ -137,11 +186,11 @@ export function PersonalDetailsStep() {
               <Input
                 id="city"
                 {...register('city')}
-                name="city"
                 autoComplete="address-level2"
                 placeholder="Enter your city"
-                error={!!errors.city}
-                helperText={errors.city?.message}
+                error={shouldShowError('city')}
+                helperText={shouldShowError('city') ? errors.city?.message : undefined}
+                required
               />
             </div>
 
@@ -150,16 +199,23 @@ export function PersonalDetailsStep() {
               <Input
                 id="postcode"
                 {...register('postcode')}
-                name="postal-code"
                 autoComplete="postal-code"
                 placeholder="Enter your postcode"
-                error={!!errors.postcode}
-                helperText={errors.postcode?.message}
+                error={shouldShowError('postcode')}
+                helperText={shouldShowError('postcode') ? errors.postcode?.message : undefined}
+                required
                 className="uppercase"
               />
             </div>
           </div>
         </div>
+
+        {/* Error Display */}
+        {state.error && (
+          <div className="p-4 bg-red-50 text-red-700 rounded-md">
+            {state.error}
+          </div>
+        )}
 
         <div className="flex justify-between pt-4">
           <Button type="button" variant="outline" onClick={handleBack}>

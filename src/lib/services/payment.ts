@@ -27,6 +27,12 @@ export type PaymentStatus =
   | 'failed'
   | 'refunded';
 
+export interface PaymentResult {
+  success: boolean;
+  transactionId?: string;
+  error?: string;
+}
+
 /**
  * Mock payment provider for development
  * This will be replaced with Stripe implementation when STRIPE_ENABLED feature is true
@@ -59,7 +65,7 @@ export class PaymentService {
 
   constructor(provider: PaymentProvider = new MockPaymentProvider()) {
     this.provider = provider;
-    this.isStripeEnabled = FEATURES.STRIPE_PAYMENTS;
+    this.isStripeEnabled = isFeatureEnabled('PAYMENTS.STRIPE_ENABLED');
   }
 
   /**
@@ -70,7 +76,12 @@ export class PaymentService {
    * @throws Error if payment initialization fails
    */
   async initializePayment(
-    booking: Booking,
+    booking: Booking & {
+      vehicle_sizes: {
+        label: string;
+        price_pence: number;
+      };
+    },
     amount: number
   ): Promise<PaymentDetails> {
     try {
@@ -89,7 +100,7 @@ export class PaymentService {
         status: 'pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        description: `Booking for ${booking.size} vehicle`,
+        description: `Booking for ${booking.vehicle_sizes.label} vehicle`,
       };
     } catch (error) {
       console.error('Failed to initialize payment:', error);
@@ -159,9 +170,13 @@ export class PaymentService {
    * @param booking - The booking to calculate price for
    * @returns Total price in pence/cents
    */
-  calculateBookingPrice(booking: Booking): number {
-    const multiplier = PAYMENT_CONFIG.SIZE_MULTIPLIERS[booking.size];
-    return Math.round(PAYMENT_CONFIG.BASE_PRICE * multiplier);
+  calculateBookingPrice(booking: Booking & {
+    vehicle_sizes: {
+      label: string;
+      price_pence: number;
+    };
+  }): number {
+    return booking.vehicle_sizes.price_pence;
   }
 
   async processPayment(details: PaymentDetails): Promise<PaymentResult> {
@@ -200,12 +215,13 @@ export class PaymentService {
   }
 
   getPaymentMethods(): string[] {
-    return this.isStripeEnabled ? ['card', 'cash'] : ['cash'];
+    return this.isStripeEnabled
+      ? ['card', 'cash']
+      : ['cash'];
   }
 
-  calculatePrice(size: keyof typeof PAYMENT_CONFIG.SIZE_MULTIPLIERS): number {
-    const multiplier = PAYMENT_CONFIG.SIZE_MULTIPLIERS[size];
-    return Math.round(PAYMENT_CONFIG.BASE_PRICE * multiplier);
+  calculatePrice(vehicleSize: { price_pence: number }): number {
+    return vehicleSize.price_pence;
   }
 }
 

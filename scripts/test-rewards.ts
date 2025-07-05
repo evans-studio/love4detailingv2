@@ -1,12 +1,25 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
-import { createClient } from '../src/lib/api/supabase';
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../src/lib/api/supabase';
 
 // Load environment variables
 config({ path: resolve(process.cwd(), '.env.local') });
 
+// Get environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing required environment variables');
+}
+
+// Since we check for null above, we can safely assert these are strings
+const url = supabaseUrl as string;
+const key = supabaseAnonKey as string;
+
 async function testRewardsSystem() {
-  const supabase = createClient();
+  const supabase = createClient<Database>(url, key);
   console.log('🔍 Testing Rewards System...');
 
   try {

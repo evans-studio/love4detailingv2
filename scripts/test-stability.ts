@@ -5,6 +5,13 @@ import { supabase, supabaseAdmin } from '../src/lib/api/supabase';
 // Load environment variables from .env.local
 config({ path: path.resolve(process.cwd(), '.env.local') });
 
+if (!supabaseAdmin) {
+  throw new Error('Supabase admin client is not initialized');
+}
+
+// Since we check for null above, we can safely assert supabaseAdmin is non-null
+const admin = supabaseAdmin;
+
 async function testStability() {
   console.log('Running stability tests...');
 
@@ -24,7 +31,7 @@ async function testStability() {
 
     // Test 2: Large data fetch
     console.log('\nTest 2: Large data fetch');
-    const { data: bookings, error: bookingsError } = await supabaseAdmin
+    const { data: bookings, error: bookingsError } = await admin
       .from('bookings')
       .select(`
         *,
@@ -49,7 +56,7 @@ async function testStability() {
       phone: '+44123456789'
     };
 
-    const { data: user, error: userError } = await supabaseAdmin
+    const { data: user, error: userError } = await admin
       .from('users')
       .insert(testUser)
       .select()
@@ -60,7 +67,7 @@ async function testStability() {
     } else {
       console.log('✅ Write operation successful');
       // Clean up test user
-      await supabaseAdmin.from('users').delete().eq('id', user.id);
+      await admin.from('users').delete().eq('id', user.id);
     }
 
   } catch (error) {

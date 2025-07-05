@@ -5,12 +5,19 @@ import { supabaseAdmin } from '../src/lib/api/supabase';
 // Load environment variables from .env.local
 config({ path: path.resolve(process.cwd(), '.env.local') });
 
+if (!supabaseAdmin) {
+  throw new Error('Supabase admin client is not initialized');
+}
+
+// Since we check for null above, we can safely assert supabaseAdmin is non-null
+const admin = supabaseAdmin;
+
 async function seedTestData() {
   console.log('Seeding test data...');
 
   try {
     // Create test user
-    const { data: user, error: userError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: user, error: userError } = await admin.auth.admin.createUser({
       email: 'test@love4detailing.com',
       password: 'testpass123',
       email_confirm: true
@@ -20,7 +27,7 @@ async function seedTestData() {
     console.log('✅ Created test user:', user.user.email);
 
     // Create test vehicle
-    const { data: vehicle, error: vehicleError } = await supabaseAdmin
+    const { data: vehicle, error: vehicleError } = await admin
       .from('vehicles')
       .insert({
         user_id: user.user.id,
@@ -37,7 +44,7 @@ async function seedTestData() {
     console.log('✅ Created test vehicle:', vehicle.registration);
 
     // Create test booking
-    const { data: booking, error: bookingError } = await supabaseAdmin
+    const { data: booking, error: bookingError } = await admin
       .from('bookings')
       .insert({
         user_id: user.user.id,

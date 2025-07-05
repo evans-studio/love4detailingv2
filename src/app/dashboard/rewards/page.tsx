@@ -1,28 +1,26 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { RewardsHistory } from '@/components/rewards/RewardsHistory';
 import { RewardsService } from '@/lib/services/rewards';
-import { createClient } from '@/lib/api/supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
-  GiftIcon,
-  SparklesIcon,
-  StarIcon,
-  TrophyIcon,
-} from '@heroicons/react/24/outline';
-
-export const metadata: Metadata = {
-  title: 'Rewards - Love4Detailing',
-  description: 'View your loyalty points and rewards.',
-};
+  Gift,
+  Sparkles,
+  Star,
+  Trophy,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { UserRewards } from '@/types';
 
 // Move to constants file
 const REWARDS_TIERS = [
   {
     name: 'Bronze',
     points: 0,
-    icon: StarIcon,
+    icon: Star,
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
     benefits: [
@@ -34,7 +32,7 @@ const REWARDS_TIERS = [
   {
     name: 'Silver',
     points: 500,
-    icon: SparklesIcon,
+    icon: Sparkles,
     color: 'text-gray-600',
     bgColor: 'bg-gray-50',
     benefits: [
@@ -47,7 +45,7 @@ const REWARDS_TIERS = [
   {
     name: 'Gold',
     points: 1000,
-    icon: TrophyIcon,
+    icon: Trophy,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
     benefits: [
@@ -60,21 +58,79 @@ const REWARDS_TIERS = [
   },
 ];
 
-async function getRewardsData(userId: string) {
-  const rewardsService = new RewardsService();
-  return rewardsService.getUserRewards(userId);
-}
+export default function RewardsPage() {
+  const [rewards, setRewards] = useState<UserRewards | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const supabase = createClientComponentClient();
 
-export default async function RewardsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return null; // Handle in middleware
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    async function loadRewards() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const rewardsService = new RewardsService();
+        const userRewards = await rewardsService.getUserRewards(user.id);
+        setRewards(userRewards);
+      } catch (error) {
+        console.error('Failed to load rewards:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadRewards();
+  }, [supabase]);
+
+  if (!mounted) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="mb-8">
+          <div className="h-8 w-48 bg-gray-200 rounded mb-2" />
+          <div className="h-4 w-96 bg-gray-200 rounded" />
+        </div>
+        <Card className="mb-8 p-6 bg-gradient-to-r from-primary-50 to-primary-100">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-6">
+              <div className="h-24 w-24 rounded-full bg-gray-200" />
+              <div>
+                <div className="h-6 w-32 bg-gray-200 rounded mb-2" />
+                <div className="h-4 w-24 bg-gray-200 rounded" />
+              </div>
+            </div>
+          </div>
+        </Card>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4">
+              <div className="flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-full bg-gray-200" />
+                <div>
+                  <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
+                  <div className="h-6 w-16 bg-gray-200 rounded" />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
   }
 
-  const rewardsData = await getRewardsData(user.id);
-  const userPoints = rewardsData?.points || 0;
+  if (loading) {
+    return <div>Loading rewards...</div>;
+  }
+
+  if (!rewards) {
+    return <div>No rewards found</div>;
+  }
+
+  const userPoints = rewards.currentPoints || 0;
   
   const currentTier = REWARDS_TIERS.reduce((prev, curr) => {
     if (userPoints >= curr.points) return curr;
@@ -131,13 +187,50 @@ export default async function RewardsPage() {
         </div>
       </Card>
 
+      {/* Points Overview */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="p-4">
+          <div className="flex items-center space-x-4">
+            <div className="rounded-full bg-primary-50 p-3">
+              <Star className="h-6 w-6 text-primary-500" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Current Points</p>
+              <p className="text-2xl font-bold">{rewards.currentPoints}</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center space-x-4">
+            <div className="rounded-full bg-primary-50 p-3">
+              <Trophy className="h-6 w-6 text-primary-500" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Lifetime Points</p>
+              <p className="text-2xl font-bold">{rewards.lifetimePoints}</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center space-x-4">
+            <div className="rounded-full bg-primary-50 p-3">
+              <Gift className="h-6 w-6 text-primary-500" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Available Rewards</p>
+              <p className="text-2xl font-bold">{rewards.availableRewards}</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       {/* Points History and Tiers Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Points History */}
         <div className="lg:col-span-2">
-          <RewardsHistory 
-            transactions={rewardsData?.history || []}
-          />
+          <RewardsHistory />
         </div>
 
         {/* Current Benefits */}
@@ -147,7 +240,7 @@ export default async function RewardsPage() {
             <ul className="space-y-3">
               {currentTier.benefits.map((benefit, index) => (
                 <li key={index} className="flex items-center gap-2 text-sm">
-                  <GiftIcon className="w-4 h-4 text-primary-600 flex-shrink-0" />
+                  <Gift className="w-4 h-4 text-primary-600 flex-shrink-0" />
                   <span>{benefit}</span>
                 </li>
               ))}
@@ -181,7 +274,7 @@ export default async function RewardsPage() {
               <ul className="space-y-2">
                 {tier.benefits.map((benefit, index) => (
                   <li key={index} className="text-sm flex items-center gap-2">
-                    <GiftIcon className="w-4 h-4 text-primary-600" />
+                    <Gift className="w-4 h-4 text-primary-600" />
                     {benefit}
                   </li>
                 ))}
@@ -193,7 +286,7 @@ export default async function RewardsPage() {
 
       {/* Coming Soon */}
       <Card className="p-6 text-center bg-gray-50">
-        <SparklesIcon className="w-12 h-12 text-primary-600 mx-auto mb-4" />
+        <Sparkles className="w-12 h-12 text-primary-600 mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2">More Features Coming Soon</h2>
         <p className="text-gray-600 mb-4">
           We're working on exciting new rewards and benefits for our loyal customers.

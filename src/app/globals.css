@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import react-day-picker styles */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: rgb(79, 70, 229);
+  --rdp-background-color: rgb(243, 244, 246);
+  --rdp-accent-color-dark: rgb(67, 56, 202);
+  --rdp-background-color-dark: rgb(31, 41, 55);
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  margin: 1em;
+}
+
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover {
+  background-color: var(--rdp-accent-color);
+  color: white;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

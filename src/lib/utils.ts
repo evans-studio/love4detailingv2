@@ -1,13 +1,89 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, addMinutes, parse } from 'date-fns';
 import { customAlphabet } from 'nanoid';
 
 /**
- * Combines class names using clsx and tailwind-merge
+ * Merge Tailwind classes with clsx
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Format a price in pence to pounds with currency symbol
+ */
+export function formatCurrency(pence: number): string {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+  }).format(pence / 100);
+}
+
+/**
+ * Format a date string to a human-readable format
+ */
+export function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString('en-GB', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/**
+ * Format a time string to a human-readable format
+ */
+export function formatTime(time: string): string {
+  const [hours, minutes] = time.split(':');
+  return new Date(0, 0, 0, parseInt(hours), parseInt(minutes))
+    .toLocaleTimeString('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    });
+}
+
+// Create a custom nanoid generator with only uppercase letters and numbers
+const generateId = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 8);
+
+/**
+ * Generates a booking reference number
+ */
+export function generateBookingReference(): string {
+  return `L4D-${generateId()}`;
+}
+
+/**
+ * Format bytes to human-readable string
+ */
+export function formatBytes(bytes: number, decimals = 2): string {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
+}
+
+/**
+ * Generate time slots for a given date
+ */
+export function generateTimeSlots(date: Date): string[] {
+  const slots: string[] = [];
+  const startHour = 10; // 10:00 AM
+  const endHour = 18; // 6:00 PM
+  const interval = 30; // 30 minutes
+
+  for (let hour = startHour; hour < endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += interval) {
+      const timeSlot = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      slots.push(timeSlot);
+    }
+  }
+
+  return slots;
 }
 
 /**
@@ -21,35 +97,28 @@ export function formatPrice(price: number): string {
 }
 
 /**
- * Formats a date to a human-readable string
- */
-export function formatDate(date: string | Date, formatString: string = 'PPP'): string {
-  return format(new Date(date), formatString);
-}
-
-/**
  * Formats a time slot (HH:mm) to a human-readable string
  */
 export function formatTimeSlot(timeSlot: string): string {
-  return format(parse(timeSlot, 'HH:mm', new Date()), 'h:mm aa');
+  return new Date(0, 0, 0, parseInt(timeSlot.split(':')[0]), parseInt(timeSlot.split(':')[1]))
+    .toLocaleTimeString('en-GB', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    });
 }
 
 /**
  * Calculates the end time of a service based on start time and duration
  */
 export function calculateEndTime(startTime: string, durationInMinutes: number): string {
-  const startDate = parse(startTime, 'HH:mm', new Date());
-  return format(addMinutes(startDate, durationInMinutes), 'HH:mm');
-}
-
-// Create a custom nanoid generator with only uppercase letters and numbers
-const generateId = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 8);
-
-/**
- * Generates a booking reference number
- */
-export function generateBookingReference(): string {
-  return `L4D-${generateId()}`;
+  const startDate = new Date(0, 0, 0, parseInt(startTime.split(':')[0]), parseInt(startTime.split(':')[1]));
+  const endDate = new Date(startDate.getTime() + durationInMinutes * 60000);
+  return endDate.toLocaleTimeString('en-GB', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
 }
 
 /**
@@ -178,25 +247,6 @@ export function formatFileSize(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
 
-export function formatTime(time: string): string {
-  return new Date(`1970-01-01T${time}`).toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
-
-export function generateTimeSlots(date: Date): string[] {
-  const slots = ['10:00', '11:30', '13:00', '14:30', '16:00'];
-  
-  // Don't generate slots for Sundays
-  if (date.getDay() === 0) {
-    return [];
-  }
-  
-  return slots;
-}
-
 export function isValidPostcode(postcode: string): boolean {
   // UK postcode regex
   const regex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
@@ -236,11 +286,4 @@ export function getVehicleSize(make: string, model: string): 'small' | 'medium' 
   };
 
   return sizeMap[make]?.[model] || 'medium';
-}
-
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'GBP',
-  }).format(amount);
 } 
