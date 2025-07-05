@@ -1,7 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { EmailService } from '@/lib/services/email';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(request: Request) {
   try {
@@ -14,8 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
-    const emailService = new EmailService();
+    // Using service role client defined above
 
     // Get user by email from public profiles
     const { data: user, error: userError } = await supabase
@@ -31,17 +33,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate a new password reset link
-    const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(
+    // Generate a new password setup link using admin invite
+    const { data, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
       email,
       {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?booking=${bookingId}`
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${bookingId}`,
+        data: {
+          booking_id: bookingId,
+        }
       }
     );
 
-    if (resetError) {
+    if (inviteError) {
+      console.error('Failed to send invite email:', inviteError);
       return NextResponse.json(
-        { error: 'Failed to generate setup link' },
+        { error: 'Failed to send setup email', details: inviteError.message },
         { status: 500 }
       );
     }
@@ -71,16 +77,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Send the email with the new link
-    await emailService.sendBookingConfirmation({
-      ...booking,
-      vehicles: booking.vehicles,
-      time_slots: booking.time_slots
-    });
-
+    // The invite email is sent automatically by Supabase
     return NextResponse.json({
       success: true,
-      setupLink: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?booking=${bookingId}`
+      message: 'Setup email sent successfully',
+      setupLink: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${bookingId}`
     });
   } catch (error) {
     console.error('Error resending setup email:', error);
