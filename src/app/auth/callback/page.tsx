@@ -51,6 +51,41 @@ export default function AuthCallbackPage() {
                               // If we came from password reset and have tokens, assume recovery
                               (accessToken && document.referrer.includes('reset-password'));
 
+        console.log('Recovery flow detected:', isRecoveryFlow);
+
+        // If this is definitely a recovery flow but no tokens, wait for them
+        if (isRecoveryFlow && !accessToken && !code) {
+          console.log('Recovery flow detected but no tokens yet, waiting...');
+          setStatus('Processing password reset...');
+          
+          // Wait a bit longer for tokens to appear in URL
+          setTimeout(() => {
+            const newHashParams = new URLSearchParams(window.location.hash.substring(1));
+            const newAccessToken = newHashParams.get('access_token');
+            const newRefreshToken = newHashParams.get('refresh_token');
+            
+            if (newAccessToken && newRefreshToken) {
+              console.log('Tokens found after delay, setting session...');
+              supabase.auth.setSession({
+                access_token: newAccessToken,
+                refresh_token: newRefreshToken,
+              }).then(({ data, error }) => {
+                if (error) {
+                  console.error('Delayed session setup error:', error);
+                  router.push('/auth/sign-in?error=Failed to set up session');
+                } else {
+                  console.log('Delayed session established, redirecting to update-password');
+                  router.push('/auth/update-password');
+                }
+              });
+            } else {
+              console.log('Still no tokens, redirect to update-password anyway');
+              router.push('/auth/update-password');
+            }
+          }, 2000); // Wait 2 seconds for tokens
+          return;
+        }
+
         // If we have tokens in hash (password reset/magic link flow)
         if (accessToken && refreshToken) {
           setStatus('Setting up session...');
@@ -69,9 +104,8 @@ export default function AuthCallbackPage() {
           console.log('Session established, user:', data.user?.email);
 
           // For hash-based authentication (password reset/magic link), always check if it's recovery
-          // If we have access tokens in hash, it's likely a password reset
           if (isRecoveryFlow) {
-            console.log('Recovery flow detected, redirecting to update-password');
+            console.log('Recovery flow with tokens, redirecting to update-password');
             setStatus('Redirecting to password update...');
             router.push('/auth/update-password');
             return;
@@ -105,6 +139,13 @@ export default function AuthCallbackPage() {
             router.push('/auth/update-password');
             return;
           }
+        }
+
+        // If we detected recovery but have no auth method, redirect to update-password
+        if (isRecoveryFlow) {
+          console.log('Recovery flow detected but no standard auth tokens, redirecting to update-password');
+          router.push('/auth/update-password');
+          return;
         }
 
         // Default redirect to dashboard
