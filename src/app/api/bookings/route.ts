@@ -147,14 +147,13 @@ export async function POST(request: NextRequest) {
     // Generate booking reference manually
     const bookingRef = `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
     
-    // Create booking (simplified select to avoid join issues)
+    // Create booking (remove vehicle_size_id as it doesn't exist in table)
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
         user_id: userId,
         vehicle_id: vehicleRecord.id,
         time_slot_id: dateTime.timeSlotId,
-        vehicle_size_id: vehicle.sizeId,
         total_price_pence: sizeData.price_pence,
         email: personalDetails.email,
         full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
