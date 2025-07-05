@@ -1,7 +1,9 @@
-import { supabase } from '@/lib/api/supabase';
-import type { VehicleSize } from '@/lib/validation/booking';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type { Database } from '@/types/supabase';
+import type { DbVehicleSize } from '@/types';
 
-export async function getVehicleSizes(): Promise<VehicleSize[]> {
+export async function getVehicleSizes(): Promise<DbVehicleSize[]> {
+  const supabase = createClientComponentClient<Database>();
   const { data, error } = await supabase
     .from('vehicle_sizes')
     .select('*')
@@ -13,10 +15,12 @@ export async function getVehicleSizes(): Promise<VehicleSize[]> {
     id: size.id,
     label: size.label,
     price_pence: size.price_pence,
+    description: size.description,
   }));
 }
 
-export async function getVehicleSizeById(id: string): Promise<VehicleSize> {
+export async function getVehicleSizeById(id: string): Promise<DbVehicleSize> {
+  const supabase = createClientComponentClient<Database>();
   const { data, error } = await supabase
     .from('vehicle_sizes')
     .select('*')
@@ -29,10 +33,12 @@ export async function getVehicleSizeById(id: string): Promise<VehicleSize> {
     id: data.id,
     label: data.label,
     price_pence: data.price_pence,
+    description: data.description,
   };
 }
 
-export async function getVehicleSizeForType(vehicleType: 'Car' | 'Van' | 'Motorcycle'): Promise<VehicleSize> {
+export async function getVehicleSizeForType(vehicleType: 'Car' | 'Van' | 'Motorcycle'): Promise<DbVehicleSize> {
+  const supabase = createClientComponentClient<Database>();
   // Map vehicle types to size categories
   const sizeMap = {
     'Car': 'Medium',
@@ -52,5 +58,6 @@ export async function getVehicleSizeForType(vehicleType: 'Car' | 'Van' | 'Motorc
     id: data.id,
     label: data.label,
     price_pence: data.price_pence,
+    description: data.description,
   };
 } 

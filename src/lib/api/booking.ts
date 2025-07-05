@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '@/types/supabase';
-import type { Booking } from '@/lib/validation/booking';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import type { Database } from '@/types/supabase';
+import type { Booking } from '@/types';
 
 export class BookingError extends Error {
   constructor(message: string, public code: string) {
@@ -10,172 +10,116 @@ export class BookingError extends Error {
 }
 
 interface AnonymousBookingData {
-  vehicle_id: string;
-  time_slot_id: string;
+  vehicle_registration: string;
+  vehicle_make: string;
+  vehicle_model: string;
+  vehicle_year: string;
+  vehicle_color: string;
   vehicle_size_id: string;
+  time_slot_id: string;
   email: string;
   full_name: string;
   phone: string;
 }
 
-interface CreateUserResponse {
-  user_id: string;
-  error?: string;
-}
-
 export class BookingService {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private supabaseAdmin: ReturnType<typeof createClient<Database>>;
+  private supabase;
 
   constructor() {
-    // Regular client for public operations
-    this.supabase = createClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    // Admin client for user creation
-    this.supabaseAdmin = createClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
-  }
-
-  private async createUserAccount(email: string, full_name: string, phone: string): Promise<CreateUserResponse> {
-    try {
-      // Create auth user with admin API
-      const { data: authUser, error: authError } = await this.supabaseAdmin.auth.admin.createUser({
-        email,
-        email_confirm: true, // Auto-confirm email
-        user_metadata: {
-          full_name,
-          phone
-        }
-      });
-
-      if (authError) throw authError;
-      if (!authUser.user) throw new Error('No user returned from creation');
-
-      // Create public user profile
-      const { error: profileError } = await this.supabaseAdmin
-        .from('users')
-        .insert({
-          id: authUser.user.id,
-          email: authUser.user.email,
-          full_name,
-          phone,
-          role: 'customer'
-        });
-
-      if (profileError) {
-        // Cleanup auth user if profile creation fails
-        await this.supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
-        throw profileError;
-      }
-
-      // Create initial rewards record
-      await this.supabaseAdmin
-        .from('rewards')
-        .insert({
-          user_id: authUser.user.id,
-          points: 0,
-          tier: 'bronze'
-        });
-
-      return { user_id: authUser.user.id };
-    } catch (error) {
-      console.error('Error creating user account:', error);
-      return { user_id: '', error: 'Failed to create user account' };
-    }
+    this.supabase = createClientComponentClient<Database>();
   }
 
   async createAnonymousBooking(data: AnonymousBookingData): Promise<{
     success: boolean;
     booking?: Booking;
     error?: string;
-    password_reset_link?: string;
   }> {
     try {
-      // Create the booking first
-      const { data: booking, error: bookingError } = await this.supabase
+      // Check if time slot is available first
+      const { data: timeSlot, error: timeSlotError } = await this.supabase
+        .from('time_slots')
+        .select('is_available')
+        .eq('id', data.time_slot_id)
+        .single();
+
+      if (timeSlotError) throw new BookingError('Failed to check time slot availability', 'TIME_SLOT_CHECK_FAILED');
+      if (!timeSlot) throw new BookingError('Time slot not found', 'TIME_SLOT_NOT_FOUND');
+      if (!timeSlot.is_available) throw new BookingError('Time slot is no longer available', 'TIME_SLOT_UNAVAILABLE');
+
+      // Get the vehicle size price
+      const { data: sizeData, error: sizeError } = await this.supabase
+        .from('vehicle_sizes')
+        .select('price_pence')
+        .eq('id', data.vehicle_size_id)
+        .single();
+
+      if (sizeError) throw new BookingError('Failed to get vehicle size price', 'VEHICLE_SIZE_CHECK_FAILED');
+      if (!sizeData) throw new BookingError('Vehicle size not found', 'VEHICLE_SIZE_NOT_FOUND');
+
+      // Create the booking using the stored procedure
+      const { data: bookingId, error: bookingError } = await this.supabase
         .rpc('create_anonymous_booking', {
-          p_time_slot_id: data.time_slot_id,
-          p_vehicle_id: data.vehicle_id,
+          p_vehicle_registration: data.vehicle_registration,
+          p_vehicle_make: data.vehicle_make,
+          p_vehicle_model: data.vehicle_model,
+          p_vehicle_year: data.vehicle_year,
+          p_vehicle_color: data.vehicle_color,
           p_vehicle_size_id: data.vehicle_size_id,
+          p_time_slot_id: data.time_slot_id,
+          p_total_price_pence: sizeData.price_pence,
           p_email: data.email,
           p_full_name: data.full_name,
           p_phone: data.phone
         });
 
-      if (bookingError) throw bookingError;
-
-      // Create user account
-      const { user_id, error: userError } = await this.createUserAccount(
-        data.email,
-        data.full_name,
-        data.phone
-      );
-
-      if (userError) {
-        console.error('User creation failed but booking was created:', userError);
-        return { success: true, booking };
+      if (bookingError) {
+        if (bookingError.message.includes('Time slot is not available')) {
+          throw new BookingError('Time slot is no longer available', 'TIME_SLOT_UNAVAILABLE');
+        }
+        throw new BookingError('Failed to create booking', 'BOOKING_CREATION_FAILED');
       }
 
-      // Associate booking with new user
-      const { error: updateError } = await this.supabaseAdmin
+      if (!bookingId) throw new BookingError('No booking ID returned', 'BOOKING_ID_MISSING');
+
+      // Get the created booking
+      const { data: booking, error: getBookingError } = await this.supabase
         .from('bookings')
-        .update({ user_id })
-        .eq('id', booking.id);
+        .select(`
+          *,
+          vehicle:vehicles(
+            registration,
+            make,
+            model,
+            year,
+            color,
+            vehicle_size:vehicle_sizes(label, price_pence)
+          ),
+          time_slot:time_slots(slot_date, slot_time)
+        `)
+        .eq('id', bookingId)
+        .single();
 
-      if (updateError) {
-        console.error('Failed to associate booking with user:', updateError);
-      }
-
-      // Generate password reset link for the user
-      const { data: resetData, error: resetError } = await this.supabaseAdmin.auth.admin
-        .generateLink({
-          type: 'recovery',
-          email: data.email
-        });
-
-      if (resetError) {
-        console.error('Failed to generate password reset link:', resetError);
-        return { success: true, booking };
-      }
+      if (getBookingError) throw new BookingError('Failed to get booking details', 'BOOKING_DETAILS_FAILED');
+      if (!booking) throw new BookingError('Booking not found after creation', 'BOOKING_NOT_FOUND');
 
       return {
         success: true,
-        booking,
-        password_reset_link: resetData?.properties?.action_link
+        booking
       };
     } catch (error) {
       console.error('Error in createAnonymousBooking:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create booking'
+        error: error instanceof BookingError ? error.message : 'Failed to create booking'
       };
     }
   }
 }
 
-export async function createBooking(bookingData: {
-  vehicle_id: string;
-  time_slot_id: string;
-  vehicle_size_id: string;
-  email: string;
-  full_name: string;
-  phone: string;
-}): Promise<{
+export async function createBooking(bookingData: AnonymousBookingData): Promise<{
   success: boolean;
   booking?: Booking;
   error?: string;
-  password_reset_link?: string;
 }> {
   const bookingService = new BookingService();
   return bookingService.createAnonymousBooking(bookingData);

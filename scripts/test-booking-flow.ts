@@ -14,6 +14,13 @@ console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 
 console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✓ Set' : '❌ Missing');
 console.log('SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✓ Set' : '❌ Missing');
 
+if (!supabaseAdmin) {
+  throw new Error('Supabase admin client is not initialized');
+}
+
+// Since we check for null above, we can safely assert supabaseAdmin is non-null
+const admin = supabaseAdmin;
+
 // Use require for JSON file
 const vehicleSizeData = require('../vehicle-size-data.json');
 
@@ -51,7 +58,7 @@ async function createTestUser() {
   const password = 'testPassword123!';
 
   // Create user with service role client
-  const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
+  const { data: authUser, error: authError } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true
@@ -67,7 +74,7 @@ async function createTestUser() {
   }
 
   // Create user profile in public schema
-  const { data: publicUser, error: publicError } = await supabaseAdmin
+  const { data: publicUser, error: publicError } = await admin
     .from('users')
     .insert({
       id: authUser.user.id,
@@ -96,13 +103,7 @@ async function createTestVehicle(userId: string) {
     model: 'M3',
     year: '2020',
     color: 'Black',
-    user_id: userId,
-    dvla_data: {
-      make: 'BMW',
-      model: 'M3',
-      yearOfManufacture: 2020,
-      colour: 'BLACK'
-    }
+    user_id: userId
   };
 
   // Calculate vehicle size
@@ -112,7 +113,7 @@ async function createTestVehicle(userId: string) {
     throw new Error('Failed to calculate vehicle size');
   }
 
-  const { data: vehicle, error } = await supabaseAdmin
+  const { data: vehicle, error } = await admin
     .from('vehicles')
     .insert({
       ...testVehicle,
@@ -136,32 +137,32 @@ async function getTestTimeSlot() {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const date = tomorrow.toISOString().split('T')[0];
-  const time = '10:00:00';
 
-  // Try to get existing time slot
-  const { data: existingSlot, error: getError } = await supabaseAdmin
+  // Try to find an available time slot for tomorrow
+  const { data: slots, error: getError } = await admin
     .from('time_slots')
     .select()
     .eq('slot_date', date)
-    .eq('slot_time', time)
-    .single();
+    .eq('is_available', true)
+    .order('slot_time')
+    .limit(1);
 
-  if (!getError && existingSlot) {
+  if (!getError && slots && slots.length > 0) {
     await logTestResult({
       step: 'Get Test Time Slot',
       success: true,
-      data: existingSlot
+      data: slots[0]
     });
-    return existingSlot;
+    return slots[0];
   }
 
-  // Create new time slot if it doesn't exist
-  const { data: newSlot, error: createError } = await supabaseAdmin
+  // Create new time slot if no available slots found
+  const { data: newSlot, error: createError } = await admin
     .from('time_slots')
     .insert({
       slot_date: date,
-      slot_time: time,
-      is_booked: false
+      slot_time: '10:00:00',
+      is_available: true
     })
     .select()
     .single();
@@ -187,7 +188,7 @@ async function createTestBooking(
   vehicleSizeId: string
 ) {
   // Get vehicle size price
-  const { data: vehicleSize } = await supabaseAdmin
+  const { data: vehicleSize } = await admin
     .from('vehicle_sizes')
     .select('price_pence')
     .eq('id', vehicleSizeId)
@@ -200,15 +201,27 @@ async function createTestBooking(
     total_price_pence: vehicleSize?.price_pence || 5999, // Default to medium price if not found
     status: 'pending',
     payment_status: 'pending',
-    payment_method: 'cash'
+    payment_method: 'cash',
+    booking_reference: `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).substr(2, 6)}`
   };
 
-  const { data: createdBooking, error } = await supabaseAdmin
+  // First check if time slot is available
+  const { data: timeSlot } = await admin
+    .from('time_slots')
+    .select('is_available')
+    .eq('id', timeSlotId)
+    .single();
+
+  if (!timeSlot?.is_available) {
+    throw new Error('Time slot is not available');
+  }
+
+  // Create booking
+  const { data: createdBooking, error } = await admin
     .from('bookings')
     .insert(booking)
     .select(`
       *,
-      user:users(email, full_name, phone),
       vehicle:vehicles(
         registration,
         make,
@@ -228,12 +241,16 @@ async function createTestBooking(
     error
   });
 
+  if (error || !createdBooking) {
+    throw new Error('Failed to create test booking');
+  }
+
   return createdBooking;
 }
 
 async function processRewards(userId: string, bookingId: string) {
   // Calculate points (e.g., 10 points per £1)
-  const { data: booking } = await supabaseAdmin
+  const { data: booking } = await admin
     .from('bookings')
     .select('total_price_pence')
     .eq('id', bookingId)
@@ -242,7 +259,7 @@ async function processRewards(userId: string, bookingId: string) {
   const pointsEarned = Math.floor((booking?.total_price_pence || 0) / 100) * 10;
 
   // Add points to user's rewards
-  const { data: existingRewards } = await supabaseAdmin
+  const { data: existingRewards } = await admin
     .from('rewards')
     .select('points')
     .eq('user_id', userId)
@@ -250,7 +267,7 @@ async function processRewards(userId: string, bookingId: string) {
 
   const newPoints = (existingRewards?.points || 0) + pointsEarned;
 
-  const { data: rewards, error: rewardsError } = await supabaseAdmin
+  const { data: rewards, error: rewardsError } = await admin
     .from('rewards')
     .upsert({
       user_id: userId,
@@ -260,7 +277,7 @@ async function processRewards(userId: string, bookingId: string) {
     .single();
 
   // Record the transaction
-  const { error: transactionError } = await supabaseAdmin
+  const { error: transactionError } = await admin
     .from('reward_transactions')
     .insert({
       user_id: userId,
@@ -341,7 +358,7 @@ async function runEndToEndTest() {
     console.log('\n✅ End-to-End Test Completed Successfully!\n');
     console.log('Final Test Summary:');
     console.log('------------------');
-    console.log(`User: ${booking.user.full_name} (${booking.user.email})`);
+    console.log(`User ID: ${booking.user_id}`);
     console.log(`Vehicle: ${booking.vehicle.make} ${booking.vehicle.model} (${booking.vehicle.registration})`);
     console.log(`Size: ${booking.vehicle.vehicle_size.label} (£${booking.vehicle.vehicle_size.price_pence / 100})`);
     console.log(`Booking: ${booking.booking_reference}`);
@@ -356,66 +373,4 @@ async function runEndToEndTest() {
 }
 
 // Run the test
-runEndToEndTest();
-
-async function testBookingFlow() {
-  try {
-    console.log('🧪 Testing booking flow...');
-
-    // Test vehicle size lookup
-    const { data: vehicleSizes, error: sizeError } = await supabase
-      .from('vehicle_sizes')
-      .select('*');
-
-    if (sizeError) throw sizeError;
-    console.log('✅ Vehicle sizes loaded:', vehicleSizes.length);
-
-    // Create test booking
-    const bookingData = {
-      vehicle: {
-        make: 'Audi',
-        model: 'A4',
-        registration: 'TEST123',
-        year: '2020',
-        color: 'Black',
-        fuelType: 'Petrol',
-        vehicleType: 'Car',
-      },
-      customer: {
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'test@example.com',
-        phone: '07700900000',
-      },
-      timeSlot: {
-        date: '2025-07-15',
-        time: '09:00',
-      },
-      vehicleSize: vehicleSizes[0],
-    };
-
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .insert([bookingData])
-      .select()
-      .single();
-
-    if (bookingError) throw bookingError;
-    console.log('✅ Test booking created:', booking.id);
-
-    // Cleanup
-    await supabase
-      .from('bookings')
-      .delete()
-      .eq('id', booking.id);
-
-    console.log('✅ Test booking cleaned up');
-    console.log('✅ All tests passed!');
-
-  } catch (error) {
-    console.error('❌ Test failed:', error);
-    process.exit(1);
-  }
-}
-
-testBookingFlow(); 
+runEndToEndTest(); 

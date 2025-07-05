@@ -387,13 +387,13 @@
     "make": "BMW",
     "model": "X6",
     "trim": "SE",
-    "size": "M"
+    "size": "L"
   },
   {
     "make": "BMW",
     "model": "X6",
     "trim": "Sport",
-    "size": "M"
+    "size": "L"
   },
   {
     "make": "BMW",
@@ -3291,7 +3291,7 @@
     "make": "Audi",
     "model": "Q7",
     "trim": "GT Line",
-    "size": "L"
+    "size": "XL"
   },
   {
     "make": "Hyundai",
@@ -3315,7 +3315,7 @@
     "make": "BMW",
     "model": "M4",
     "trim": "Tech Pack",
-    "size": "S"
+    "size": "M"
   },
   {
     "make": "Mercedes-Benz",

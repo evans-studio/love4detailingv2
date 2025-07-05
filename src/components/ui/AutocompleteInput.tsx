@@ -16,6 +16,9 @@ interface AutocompleteInputProps {
   suggestions: Suggestion[];
   placeholder?: string;
   className?: string;
+  required?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 export function AutocompleteInput({
@@ -25,6 +28,9 @@ export function AutocompleteInput({
   suggestions,
   placeholder,
   className,
+  required = false,
+  error = false,
+  helperText,
 }: AutocompleteInputProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<Suggestion[]>([]);
@@ -84,8 +90,10 @@ export function AutocompleteInput({
         }}
         onFocus={() => setIsOpen(true)}
         placeholder={placeholder}
+        required={required}
         className={cn(
           'flex h-10 w-full rounded-md border border-stone bg-transparent px-3 py-2 text-sm ring-offset-white placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+          error && 'border-error focus-visible:ring-error',
           className
         )}
       />
@@ -105,6 +113,15 @@ export function AutocompleteInput({
             </li>
           ))}
         </ul>
+      )}
+
+      {helperText && (
+        <p className={cn(
+          'mt-1 text-sm',
+          error ? 'text-error' : 'text-muted'
+        )}>
+          {helperText}
+        </p>
       )}
     </div>
   );

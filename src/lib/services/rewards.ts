@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/api/supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/supabase';
 import type { RewardsTier, UserRewards } from '@/types';
 import { EmailService } from './email';
@@ -55,29 +55,42 @@ const REWARDS_CONFIG = {
 };
 
 export class RewardsService {
-  private supabase = createClient();
+  private supabase = createClientComponentClient();
   private emailService = new EmailService();
 
   /**
    * Get user's current rewards status
    */
-  async getUserRewards(userId: string): Promise<UserRewards | null> {
+  async getUserRewards(user_id: string): Promise<UserRewards | null> {
     const { data: rewards, error } = await this.supabase
       .from('rewards')
       .select(`
         *,
         reward_transactions (*)
       `)
-      .eq('user_id', userId)
+      .eq('user_id', user_id)
       .single();
 
     if (error || !rewards) return null;
 
+    const tier = this.calculateTier(rewards.points) as keyof typeof REWARDS_CONFIG.tiers;
+    const tierConfig = REWARDS_CONFIG.tiers[tier];
+
     return {
-      userId: rewards.user_id,
-      points: rewards.points,
-      tier: this.calculateTier(rewards.points),
-      history: rewards.reward_transactions,
+      user_id: rewards.user_id,
+      currentPoints: rewards.points,
+      lifetimePoints: rewards.points, // We don't track lifetime points separately yet
+      availableRewards: 0, // We don't have a rewards redemption system yet
+      currentTier: {
+        id: tier,
+        name: tierConfig.name,
+        points: tierConfig.minPoints,
+        benefits: tierConfig.benefits,
+        icon: tierConfig.icon,
+        color: tierConfig.color,
+        bgColor: tierConfig.bgColor
+      },
+      rewardsHistory: rewards.reward_transactions
     };
   }
 
@@ -96,29 +109,30 @@ export class RewardsService {
   getTierDetails(tier: string): RewardsTier {
     const tierConfig = REWARDS_CONFIG.tiers[tier as keyof typeof REWARDS_CONFIG.tiers];
     return {
+      id: tier,
       name: tierConfig.name,
       points: tierConfig.minPoints,
       benefits: tierConfig.benefits,
       icon: tierConfig.icon,
       color: tierConfig.color,
-      bgColor: tierConfig.bgColor,
+      bgColor: tierConfig.bgColor
     };
   }
 
   /**
    * Add points for a booking
    */
-  async addBookingPoints(userId: string, bookingId: string): Promise<void> {
-    await this.addPoints(userId, bookingId, REWARDS_CONFIG.pointsPerBooking, 'Booking completed');
+  async addBookingPoints(user_id: string, booking_id: string): Promise<void> {
+    await this.addPoints(user_id, booking_id, REWARDS_CONFIG.pointsPerBooking, 'Booking completed');
   }
 
   /**
    * Add points for a referral
    */
-  async addReferralPoints(userId: string, referredBookingId: string): Promise<void> {
+  async addReferralPoints(user_id: string, referred_booking_id: string): Promise<void> {
     await this.addPoints(
-      userId,
-      referredBookingId,
+      user_id,
+      referred_booking_id,
       REWARDS_CONFIG.pointsPerReferral,
       'Successful referral'
     );
@@ -127,10 +141,10 @@ export class RewardsService {
   /**
    * Add points for a review
    */
-  async addReviewPoints(userId: string, bookingId: string): Promise<void> {
+  async addReviewPoints(user_id: string, booking_id: string): Promise<void> {
     await this.addPoints(
-      userId,
-      bookingId,
+      user_id,
+      booking_id,
       REWARDS_CONFIG.pointsForReview,
       'Review submitted'
     );
@@ -140,15 +154,15 @@ export class RewardsService {
    * Add points to user's account
    */
   private async addPoints(
-    userId: string,
-    bookingId: string,
+    user_id: string,
+    booking_id: string,
     points: number,
     description: string
   ): Promise<void> {
     const { data: existingRewards } = await this.supabase
       .from('rewards')
       .select('points')
-      .eq('user_id', userId)
+      .eq('user_id', user_id)
       .single();
 
     const currentPoints = existingRewards?.points || 0;
@@ -158,7 +172,7 @@ export class RewardsService {
     const { error: rewardsError } = await this.supabase
       .from('rewards')
       .upsert({
-        user_id: userId,
+        user_id,
         points: newPoints,
         updated_at: new Date().toISOString(),
       });
@@ -168,8 +182,8 @@ export class RewardsService {
     const { error: transactionError } = await this.supabase
       .from('reward_transactions')
       .insert({
-        user_id: userId,
-        booking_id: bookingId,
+        user_id,
+        booking_id,
         points,
         type: 'earned',
         description,
@@ -183,38 +197,45 @@ export class RewardsService {
     const newTier = this.calculateTier(newPoints);
 
     if (newTier !== oldTier) {
-      // TODO: Trigger tier upgrade notification
-      console.log(`User ${userId} upgraded from ${oldTier} to ${newTier}`);
-      await this.emailService.sendTierUpgradeNotification(
-        userId,
-        userId,
-        oldTier,
-        newTier,
-        newPoints
-      );
+      // Get user's email
+      const { data: user } = await this.supabase
+        .from('users')
+        .select('email')
+        .eq('id', user_id)
+        .single();
+
+      if (user?.email) {
+        await this.emailService.sendTierUpgradeNotification(
+          user_id,
+          user.email,
+          oldTier,
+          newTier,
+          newPoints
+        );
+      }
     }
   }
 
   /**
    * Get points needed for next tier
    */
-  getPointsForNextTier(currentPoints: number): { 
+  getPointsNeededForNextTier(points: number): {
     nextTier: string | null;
     pointsNeeded: number;
   } {
-    const currentTier = this.calculateTier(currentPoints);
-    
-    if (currentTier === 'bronze' && currentPoints < REWARDS_CONFIG.tiers.silver.minPoints) {
+    const currentTier = this.calculateTier(points);
+
+    if (currentTier === 'bronze') {
       return {
         nextTier: 'silver',
-        pointsNeeded: REWARDS_CONFIG.tiers.silver.minPoints - currentPoints,
+        pointsNeeded: REWARDS_CONFIG.tiers.silver.minPoints - points,
       };
     }
-    
-    if (currentTier === 'silver' && currentPoints < REWARDS_CONFIG.tiers.gold.minPoints) {
+
+    if (currentTier === 'silver') {
       return {
         nextTier: 'gold',
-        pointsNeeded: REWARDS_CONFIG.tiers.gold.minPoints - currentPoints,
+        pointsNeeded: REWARDS_CONFIG.tiers.gold.minPoints - points,
       };
     }
 
@@ -225,16 +246,17 @@ export class RewardsService {
   }
 
   /**
-   * Get all available tiers
+   * Get all tiers
    */
   getAllTiers(): RewardsTier[] {
-    return Object.values(REWARDS_CONFIG.tiers).map(tier => ({
-      name: tier.name,
-      points: tier.minPoints,
-      benefits: tier.benefits,
-      icon: tier.icon,
-      color: tier.color,
-      bgColor: tier.bgColor,
+    return Object.entries(REWARDS_CONFIG.tiers).map(([tier, config]) => ({
+      id: tier,
+      name: config.name,
+      points: config.minPoints,
+      benefits: config.benefits,
+      icon: config.icon,
+      color: config.color,
+      bgColor: config.bgColor
     }));
   }
 } 

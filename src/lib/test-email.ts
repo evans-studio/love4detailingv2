@@ -2,28 +2,40 @@ import { config } from 'dotenv';
 import { resolve } from 'path';
 import { EmailService } from './services/email';
 import { formatPrice } from './utils';
+import type { Booking } from '@/types';
 
 // Load environment variables from .env.local
 config({ path: resolve(process.cwd(), '.env.local') });
 
-const testBooking = {
+const testBooking: Booking = {
   id: 'test-booking-id',
-  reference: 'TEST-123',
-  date: '2024-03-25',
-  timeSlot: '10:00',
-  firstName: 'Test',
-  lastName: 'User',
+  user_id: null,
+  vehicle_id: 'test-vehicle-id',
+  time_slot_id: 'test-timeslot-id',
+  vehicle_size_id: 'test-size-id',
+  status: 'pending',
+  payment_status: 'pending',
+  payment_method: 'card',
+  total_price_pence: 9999,
+  booking_reference: 'TEST-123',
   email: 'paul@evans-studio.co.uk', // Replace with your email
+  full_name: 'Test User',
   phone: '+44123456789',
-  make: 'BMW',
-  model: 'M3',
-  registration: 'TEST123',
-  size: 'medium' as const,
-  notes: 'Test booking',
-  status: 'pending' as const,
-  userId: null,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  vehicles: {
+    make: 'BMW',
+    model: 'M3',
+    registration: 'TEST123',
+    vehicle_sizes: {
+      label: 'Medium',
+      price_pence: 9999
+    }
+  },
+  time_slots: {
+    slot_date: '2024-03-25',
+    slot_time: '10:00'
+  }
 };
 
 async function testEmailService() {

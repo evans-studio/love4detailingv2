@@ -1,46 +1,39 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
-import type { Database as SupabaseDatabase } from '../../types/supabase';
+import type { Database as SupabaseDatabase } from '@/types/supabase';
 
-// Get environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// For client-side operations
+export const supabase = createClientComponentClient<SupabaseDatabase>();
 
-// Validate required environment variables
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing required environment variables NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
-    'Please check your .env.local file.'
-  );
-}
-
-// Regular client for authenticated and anonymous users
-export const supabase = createClient<SupabaseDatabase>(supabaseUrl, supabaseAnonKey);
-
-// Admin client with full access (for seeding, testing, and admin operations)
-export const supabaseAdmin = supabaseServiceKey 
+// For server-side operations with admin privileges
+export const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
   ? createClient<SupabaseDatabase>(
-      supabaseUrl,
-      supabaseServiceKey,
-      { auth: { persistSession: false } }
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     )
   : null;
 
+// For server-side operations (non-admin)
+export const createServerClient = () =>
+  createClient<SupabaseDatabase>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
 // Helper to check if we're connected to production
 export async function validateConnection() {
+  try {
   if (!supabaseAdmin) {
-    console.warn('⚠️ Admin client not initialized - missing SUPABASE_SERVICE_ROLE_KEY');
-    return false;
+      throw new Error('Supabase admin client is not initialized');
   }
 
-  try {
     const { data, error } = await supabaseAdmin
       .from('users')
       .select('*', { count: 'exact' });
 
     if (error) throw error;
 
-    console.log(`✅ Connected to Supabase: ${supabaseUrl}`);
+    console.log(`✅ Connected to Supabase: ${process.env.NEXT_PUBLIC_SUPABASE_URL}`);
     console.log(`Total users in DB: ${data?.length}`);
     
     return true;
@@ -85,9 +78,8 @@ export type Database = {
         Row: {
           id: string;
           created_at: string;
-          date: string;
-          start_time: string;
-          end_time: string;
+          slot_date: string;
+          slot_time: string;
           is_available: boolean;
         };
         Insert: Omit<Database['public']['Tables']['time_slots']['Row'], 'id' | 'created_at'>;

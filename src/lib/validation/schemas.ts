@@ -1,20 +1,12 @@
 import { z } from 'zod';
 
-// Common validation patterns
-const PHONE_REGEX = /^(?:\+44|0)[1-9]\d{8,9}$/;
-const UK_POSTCODE_REGEX = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
-const VEHICLE_REG_REGEX = /^[A-Z0-9]{2,7}$/i;
-
-// User schemas
-export const userSchema = z.object({
-  firstName: z.string().min(2, 'First name is required'),
-  lastName: z.string().min(2, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().regex(PHONE_REGEX, 'Invalid UK phone number'),
-});
+// Regex patterns
+const PHONE_REGEX = /^(?:(?:\+44)|(?:0))(?:(?:(?:\d{10})|(?:\d{9})|(?:\d{8})|(?:\d{7})|(?:\d{6})|(?:\d{5})))$/;
+const VEHICLE_REG_REGEX = /^[A-Z0-9]{2,8}$/;
+const POSTCODE_REGEX = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i;
 
 // Vehicle schemas
-export const vehicleSchema = z.object({
+export const vehicleDetailsSchema = z.object({
   registration: z.string().regex(VEHICLE_REG_REGEX, 'Invalid vehicle registration'),
   make: z.string().min(2, 'Make is required'),
   model: z.string().min(1, 'Model is required'),
@@ -23,27 +15,44 @@ export const vehicleSchema = z.object({
     .min(1900)
     .max(new Date().getFullYear() + 1),
   color: z.string().min(2, 'Color is required'),
-  size: z.enum(['small', 'medium', 'large']),
+  size_id: z.string().uuid('Invalid vehicle size ID'),
+});
+
+// Personal details schema
+export const personalDetailsSchema = z.object({
+  firstName: z.string().min(2, 'First name is required'),
+  lastName: z.string().min(2, 'Last name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().regex(PHONE_REGEX, 'Invalid UK phone number'),
+  address_line1: z.string().min(5, 'Address line 1 is required'),
+  address_line2: z.string().optional(),
+  city: z.string().min(2, 'City is required'),
+  postcode: z.string().regex(POSTCODE_REGEX, 'Invalid UK postcode'),
 });
 
 // Booking schemas
 export const bookingSchema = z.object({
-  serviceId: z.string().uuid('Invalid service ID'),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
-  timeSlot: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-  firstName: z.string().min(2, 'First name is required'),
-  lastName: z.string().min(2, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().regex(PHONE_REGEX, 'Invalid UK phone number'),
-  registration: z.string().regex(VEHICLE_REG_REGEX, 'Invalid vehicle registration'),
-  make: z.string().min(2, 'Make is required'),
-  model: z.string().min(1, 'Model is required'),
-  year: z.number()
-    .int()
-    .min(1900)
-    .max(new Date().getFullYear() + 1),
-  color: z.string().min(2, 'Color is required'),
-  notes: z.string().optional(),
+  vehicle: vehicleDetailsSchema,
+  customer: personalDetailsSchema,
+  vehicle_size_id: z.string().uuid(),
+  time_slot_id: z.string().uuid(),
+  price_snapshot_pence: z.number(),
+});
+
+// Time slot schema
+export const timeSlotSchema = z.object({
+  id: z.string().uuid(),
+  slot_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+  slot_time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+  is_available: z.boolean(),
+});
+
+// Vehicle size schema
+export const vehicleSizeSchema = z.object({
+  id: z.string().uuid(),
+  label: z.string().min(2, 'Label is required'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
+  price_pence: z.number().min(0, 'Price cannot be negative'),
 });
 
 // Auth schemas
@@ -87,7 +96,7 @@ export const changePasswordSchema = z.object({
 });
 
 // Profile schemas
-export const profileUpdateSchema = userSchema.extend({
+export const profileUpdateSchema = personalDetailsSchema.extend({
   notifications: z.object({
     email: z.boolean(),
     sms: z.boolean(),

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,7 +63,7 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
             id: `mock_payment_${Date.now()}`,
             amount,
             currency: 'GBP',
-            status: 'succeeded',
+            status: 'paid',
             clientSecret: 'mock_secret',
           },
         });

@@ -2,12 +2,13 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/api/supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { User as UserType } from '@/types';
 
 interface AuthContextType {
   user: UserType | null;
   loading: boolean;
+  error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -17,75 +18,176 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children, initialUser = null }: { children: React.ReactNode; initialUser?: UserType | null }) {
+  const [user, setUser] = useState<UserType | null>(initialUser);
+  const [loading, setLoading] = useState(!initialUser);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClientComponentClient();
+
+  const mapSupabaseUser = (supabaseUser: User | null): UserType | null => {
+    if (!supabaseUser) return null;
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email!,
+      firstName: supabaseUser.user_metadata?.first_name || '',
+      lastName: supabaseUser.user_metadata?.last_name || '',
+      phone: supabaseUser.user_metadata?.phone || null,
+      createdAt: supabaseUser.created_at,
+      updatedAt: supabaseUser.updated_at || supabaseUser.created_at
+    };
+  };
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    let mounted = true;
+
+    async function getInitialSession() {
+      try {
+        setError(null);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+        
+        if (mounted) {
+          setUser(mapSupabaseUser(session?.user ?? null));
+        }
+      } catch (e) {
+        if (mounted) {
+          setError(e instanceof Error ? e.message : 'Failed to get auth session');
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    // Only check session if we don't have an initial user
+    if (!initialUser) {
+      getInitialSession();
+    }
 
     // Listen for changes on auth state
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (mounted) {
+        setUser(mapSupabaseUser(session?.user ?? null));
+        setLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [initialUser, supabase.auth]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      setError(null);
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to sign in');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      setError(null);
+      setLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+      });
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to sign up');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      setError(null);
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to sign out');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    });
+    try {
+      setError(null);
+      setLoading(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?type=recovery`,
+      });
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to reset password');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateProfile = async (userId: string, data: { firstName?: string; lastName?: string; phone?: string; }) => {
-    if (!user) throw new Error('No user logged in');
+    try {
+      setError(null);
+      setLoading(true);
+      
+      if (!user) throw new Error('No user logged in');
 
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        updated_at: new Date().toISOString(),
-        ...data,
-      })
-      .select()
-      .single();
+      const { error } = await supabase
+        .from('users')
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
 
-    if (error) throw error;
+      if (error) throw error;
+
+      // Update local user state
+      setUser(prev => prev ? {
+        ...prev,
+        firstName: data.firstName || prev.firstName,
+        lastName: data.lastName || prev.lastName,
+        phone: data.phone || prev.phone,
+        updatedAt: new Date().toISOString()
+      } : null);
+
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to update profile');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         loading,
+        error,
         signIn,
         signUp,
         signOut,
@@ -111,18 +214,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
-
-export function useRequireAuth() {
-  const { user, loading } = useAuth();
-  const [isRedirecting, setIsRedirecting] = useState(false);
-
-  useEffect(() => {
-    if (!loading && !user && !isRedirecting) {
-      setIsRedirecting(true);
-      window.location.href = '/auth/sign-in';
-    }
-  }, [user, loading, isRedirecting]);
-
-  return { user, loading };
 } 

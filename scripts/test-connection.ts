@@ -5,6 +5,13 @@ import { supabase, supabaseAdmin } from '../src/lib/api/supabase';
 // Load environment variables from .env.local
 config({ path: path.resolve(process.cwd(), '.env.local') });
 
+if (!supabaseAdmin) {
+  throw new Error('Supabase admin client is not initialized');
+}
+
+// Since we check for null above, we can safely assert supabaseAdmin is non-null
+const admin = supabaseAdmin;
+
 async function testTableAccess() {
   console.log('\n🔍 Testing table access...');
 
@@ -44,7 +51,7 @@ async function testBookingFlow() {
   try {
     // Create test user
     const testEmail = `test${Date.now()}@love4detailing.com`;
-    const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: { user }, error: userError } = await admin.auth.admin.createUser({
       email: testEmail,
       password: 'testpass123',
       email_confirm: true
@@ -54,7 +61,7 @@ async function testBookingFlow() {
     console.log('✅ Created test user');
 
     // Create user profile
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await admin
       .from('users')
       .insert({
         id: user!.id,
@@ -70,7 +77,7 @@ async function testBookingFlow() {
     console.log('✅ Created user profile');
 
     // Create test vehicle size
-    const { data: size, error: sizeError } = await supabaseAdmin
+    const { data: size, error: sizeError } = await admin
       .from('vehicle_sizes')
       .insert({
         label: `Test Size ${Date.now()}`,
@@ -84,7 +91,7 @@ async function testBookingFlow() {
     console.log('✅ Created vehicle size');
 
     // Create test vehicle
-    const { data: vehicle, error: vehicleError } = await supabaseAdmin
+    const { data: vehicle, error: vehicleError } = await admin
       .from('vehicles')
       .insert({
         user_id: user!.id,
@@ -103,7 +110,7 @@ async function testBookingFlow() {
     // Create test time slot
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const { data: slot, error: slotError } = await supabaseAdmin
+    const { data: slot, error: slotError } = await admin
       .from('time_slots')
       .insert({
         slot_date: tomorrow.toISOString().split('T')[0],
@@ -116,7 +123,7 @@ async function testBookingFlow() {
     console.log('✅ Created time slot');
 
     // Create test booking
-    const { data: booking, error: bookingError } = await supabaseAdmin
+    const { data: booking, error: bookingError } = await admin
       .from('bookings')
       .insert({
         user_id: user!.id,
@@ -138,12 +145,12 @@ async function testBookingFlow() {
     console.log('✅ Created test booking');
 
     // Clean up
-    await supabaseAdmin.from('bookings').delete().eq('id', booking.id);
-    await supabaseAdmin.from('vehicles').delete().eq('id', vehicle.id);
-    await supabaseAdmin.from('vehicle_sizes').delete().eq('id', size.id);
-    await supabaseAdmin.from('time_slots').delete().eq('id', slot.id);
-    await supabaseAdmin.from('users').delete().eq('id', user!.id);
-    await supabaseAdmin.auth.admin.deleteUser(user!.id);
+    await admin.from('bookings').delete().eq('id', booking.id);
+    await admin.from('vehicles').delete().eq('id', vehicle.id);
+    await admin.from('vehicle_sizes').delete().eq('id', size.id);
+    await admin.from('time_slots').delete().eq('id', slot.id);
+    await admin.from('users').delete().eq('id', user!.id);
+    await admin.auth.admin.deleteUser(user!.id);
     console.log('✅ Cleaned up test data');
 
   } catch (error) {
@@ -156,7 +163,7 @@ async function testMissingVehicles() {
 
   try {
     // Create missing vehicle record
-    const { data: vehicle, error: vehicleError } = await supabaseAdmin
+    const { data: vehicle, error: vehicleError } = await admin
       .from('missing_vehicle_models')
       .insert({
         registration: 'UNKNOWN1',
@@ -170,7 +177,7 @@ async function testMissingVehicles() {
     console.log('✅ Created missing vehicle record');
 
     // Clean up
-    await supabaseAdmin.from('missing_vehicle_models').delete().eq('id', vehicle.id);
+    await admin.from('missing_vehicle_models').delete().eq('id', vehicle.id);
     console.log('✅ Cleaned up test data');
 
   } catch (error) {

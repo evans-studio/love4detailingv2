@@ -31,11 +31,11 @@ export function UserStep() {
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      firstName: state.data.firstName || user?.user_metadata?.first_name || '',
-      lastName: state.data.lastName || user?.user_metadata?.last_name || '',
-      email: state.data.email || user?.email || '',
-      phone: state.data.phone || user?.user_metadata?.phone || '',
-      notes: state.data.notes || '',
+      firstName: state.data.personalDetails?.name.split(' ')[0] || user?.firstName || '',
+      lastName: state.data.personalDetails?.name.split(' ')[1] || user?.lastName || '',
+      email: state.data.personalDetails?.email || user?.email || '',
+      phone: state.data.personalDetails?.phone || user?.phone || '',
+      notes: '',
     },
   });
 
@@ -43,10 +43,14 @@ export function UserStep() {
     try {
       setLoading(true);
       dispatch({
-        type: 'UPDATE_DATA',
-        payload: data,
+        type: 'SET_PERSONAL_DETAILS',
+        payload: {
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.email,
+          phone: data.phone
+        }
       });
-      dispatch({ type: 'SET_STEP', payload: BookingStep.Review });
+      dispatch({ type: 'SET_STEP', payload: BookingStep.Summary });
     } catch (error) {
       console.error('Error updating user details:', error);
     } finally {

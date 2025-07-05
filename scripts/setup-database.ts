@@ -9,6 +9,10 @@ async function setupDatabase() {
   console.log('Setting up database...');
 
   try {
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client is not initialized');
+    }
+
     // Create test time slots
     const timeSlots = [];
     const startDate = new Date();

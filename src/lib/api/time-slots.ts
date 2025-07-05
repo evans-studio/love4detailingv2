@@ -1,97 +1,119 @@
 'use client';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { TimeSlot } from '@/lib/validation/booking';
+import { startOfDay, format } from 'date-fns';
+import type { Database } from '@/types/supabase';
+import type { DbTimeSlot } from '@/types';
 
-const supabase = createClientComponentClient();
+export async function getAvailableTimeSlots(date: string): Promise<DbTimeSlot[]> {
+  const supabase = createClientComponentClient<Database>();
 
-export async function getAvailableTimeSlots(date: string): Promise<TimeSlot[]> {
-  const { data: slots, error } = await supabase
+  // Format date to match database format (YYYY-MM-DD)
+  const formattedDate = format(new Date(date), 'yyyy-MM-dd');
+
+  // First, ensure slots exist for this date
+  await generateTimeSlotsIfNeeded(formattedDate);
+
+  const { data, error } = await supabase
     .from('time_slots')
-    .select(`
-      id,
-      slot_time,
-      is_booked,
-      bookings!inner(id)
-    `)
-    .eq('slot_date', date)
-    .is('bookings.id', null)
+    .select('*')
+    .eq('slot_date', formattedDate)
     .eq('is_booked', false)
     .order('slot_time');
 
-  if (error) throw error;
-
-  return slots.map(slot => ({
-    date,
-    time: slot.slot_time,
-    isAvailable: !slot.is_booked
-  }));
-}
-
-export async function generateTimeSlots(): Promise<void> {
-  // Generate time slots for the next 14 days
-  const startDate = new Date();
-  const endDate = new Date();
-  endDate.setDate(endDate.getDate() + 14);
-
-  const timeSlots = [
-    '10:00:00',
-    '11:30:00',
-    '13:00:00',
-    '14:30:00',
-    '16:00:00',
-  ];
-
-  const slots = [];
-  let currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    // Skip Sundays
-    if (currentDate.getDay() !== 0) {
-      for (const time of timeSlots) {
-        slots.push({
-          slot_date: currentDate.toISOString().split('T')[0],
-          slot_time: time,
-          is_booked: false,
-        });
-      }
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
+  if (error) {
+    console.error('Error fetching time slots:', error);
+    throw error;
   }
 
-  const { error } = await supabase
-    .from('time_slots')
-    .insert(slots);
-
-  if (error) throw error;
+  return data?.map(slot => ({
+    id: slot.id,
+    slot_date: slot.slot_date,
+    slot_time: format(new Date(`2000-01-01T${slot.slot_time}`), 'h:mm a'),
+    is_booked: slot.is_booked,
+    created_at: slot.created_at,
+    updated_at: slot.updated_at
+  })) || [];
 }
 
-// These functions are no longer needed as they're handled by the stored procedure
-export async function isTimeSlotAvailable(timeSlotId: string): Promise<boolean> {
+export async function getAvailableDates(): Promise<string[]> {
+  const supabase = createClientComponentClient<Database>();
+  const today = startOfDay(new Date());
+  const formattedToday = format(today, 'yyyy-MM-dd');
+
+  // First, ensure slots exist for the next 14 days
+  await generateTimeSlotsIfNeeded(formattedToday);
+
   const { data, error } = await supabase
     .from('time_slots')
-    .select('is_booked')
-    .eq('id', timeSlotId)
+    .select('slot_date')
+    .eq('is_booked', false)
+    .gte('slot_date', formattedToday)
+    .order('slot_date');
+
+  if (error) {
+    console.error('Error fetching available dates:', error);
+    throw error;
+  }
+
+  // Return unique dates
+  return Array.from(new Set(data?.map(slot => slot.slot_date) || []));
+}
+
+async function generateTimeSlotsIfNeeded(date: string): Promise<void> {
+  try {
+    const response = await fetch('/api/time-slots/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ date }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Error generating time slots:', error);
+    }
+  } catch (err) {
+    console.error('Failed to generate time slots:', err);
+  }
+}
+
+export async function createBooking(params: {
+  userId: string;
+  vehicleId: string;
+  timeSlotId: string;
+  totalPricePence: number;
+}) {
+  const supabase = createClientComponentClient<Database>();
+
+  // Get user details first
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) throw new Error('Not authenticated');
+
+  // Get user profile data
+  const { data: profile, error: profileError } = await supabase
+    .from('users')
+    .select('email, full_name, phone')
+    .eq('id', user.id)
     .single();
 
-  if (error) throw error;
-  return !data.is_booked;
-}
+  if (profileError) throw profileError;
+  if (!profile) throw new Error('User profile not found');
 
-export async function reserveTimeSlot(timeSlotId: string): Promise<void> {
-  const { error } = await supabase
-    .from('time_slots')
-    .update({ is_booked: true })
-    .eq('id', timeSlotId);
+  // Create booking with user details
+  const { data: booking, error: bookingError } = await supabase
+    .rpc('create_booking', {
+      p_user_id: user.id,
+      p_vehicle_id: params.vehicleId,
+      p_time_slot_id: params.timeSlotId,
+      p_total_price_pence: params.totalPricePence,
+      p_email: profile.email,
+      p_full_name: profile.full_name,
+      p_phone: profile.phone
+    });
 
-  if (error) throw error;
-}
-
-export async function releaseTimeSlot(timeSlotId: string): Promise<void> {
-  const { error } = await supabase
-    .from('time_slots')
-    .update({ is_booked: false })
-    .eq('id', timeSlotId);
-
-  if (error) throw error;
+  if (bookingError) throw bookingError;
+  return booking;
 } 

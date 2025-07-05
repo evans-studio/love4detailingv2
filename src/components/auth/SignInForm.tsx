@@ -23,6 +23,7 @@ export function SignInForm() {
   const { signIn } = useAuth();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
+  const message = searchParams.get('message');
 
   const {
     register,
@@ -55,6 +56,11 @@ export function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {message && (
+        <div className="text-sm text-green-600 bg-green-50 p-3 rounded-md">
+          {message}
+        </div>
+      )}
       <div className="space-y-2">
         <Input
           type="email"

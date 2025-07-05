@@ -5,6 +5,13 @@ import { supabase, supabaseAdmin, validateConnection } from '../src/lib/api/supa
 // Load environment variables from .env.local
 config({ path: path.resolve(process.cwd(), '.env.local') });
 
+if (!supabaseAdmin) {
+  throw new Error('Supabase admin client is not initialized');
+}
+
+// Since we check for null above, we can safely assert supabaseAdmin is non-null
+const admin = supabaseAdmin;
+
 async function testConnection() {
   console.log('Testing Supabase connection...');
   
@@ -64,7 +71,7 @@ async function testRLS() {
     console.log('RLS test (should be blocked):', bookingsError ? '✅ Success' : '❌ Failed');
 
     // Try to access with admin client
-    const { data: adminBookings, error: adminError } = await supabaseAdmin
+    const { data: adminBookings, error: adminError } = await admin
       .from('bookings')
       .select('*')
       .limit(1);
