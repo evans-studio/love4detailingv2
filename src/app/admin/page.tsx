@@ -2,42 +2,130 @@
 
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import Link from 'next/link';
+import { 
+  CalendarDays, 
+  Users, 
+  Car, 
+  DollarSign, 
+  Clock, 
+  Plus, 
+  Settings,
+  FileText
+} from 'lucide-react';
+import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
 
 interface AdminStats {
   totalBookings: number;
-  totalUsers: number;
-  totalVehicles: number;
+  monthlyBookings: number;
+  activeCustomers: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
+}
+
+interface UpcomingBooking {
+  id: string;
+  booking_reference: string;
+  full_name: string;
+  email: string;
+  vehicles: {
+    make: string;
+    model: string;
+    registration: string;
+  };
+  time_slots: {
+    slot_date: string;
+    slot_time: string;
+  };
+  total_price_pence: number;
+  status: string;
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [upcomingBookings, setUpcomingBookings] = useState<UpcomingBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchDashboardData() {
       try {
-        const [bookingsRes, usersRes, vehiclesRes] = await Promise.all([
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+        // Fetch comprehensive stats
+        const [bookingsRes, monthlyBookingsRes, usersRes, revenueRes, monthlyRevenueRes] = await Promise.all([
           supabase.from('bookings').select('id', { count: 'exact' }),
-          supabase.from('users').select('id', { count: 'exact' }),
-          supabase.from('vehicles').select('id', { count: 'exact' }),
+          supabase.from('bookings')
+            .select('id', { count: 'exact' })
+            .gte('created_at', startOfMonth.toISOString())
+            .lt('created_at', startOfNextMonth.toISOString()),
+          supabase.from('users').select('id', { count: 'exact' }).neq('role', 'admin'),
+          supabase.from('bookings').select('total_price_pence'),
+          supabase.from('bookings')
+            .select('total_price_pence')
+            .gte('created_at', startOfMonth.toISOString())
+            .lt('created_at', startOfNextMonth.toISOString()),
         ]);
+
+        // Calculate revenue
+        const totalRevenue = (revenueRes.data || []).reduce((sum, booking) => sum + (booking.total_price_pence || 0), 0);
+        const monthlyRevenue = (monthlyRevenueRes.data || []).reduce((sum, booking) => sum + (booking.total_price_pence || 0), 0);
 
         setStats({
           totalBookings: bookingsRes.count || 0,
-          totalUsers: usersRes.count || 0,
-          totalVehicles: vehiclesRes.count || 0,
+          monthlyBookings: monthlyBookingsRes.count || 0,
+          activeCustomers: usersRes.count || 0,
+          totalRevenue: totalRevenue,
+          monthlyRevenue: monthlyRevenue,
         });
+
+        // Fetch upcoming bookings
+        const { data: bookings } = await supabase
+          .from('bookings')
+          .select(`
+            id,
+            booking_reference,
+            full_name,
+            email,
+            total_price_pence,
+            status,
+            vehicles!inner (
+              make,
+              model,
+              registration
+            ),
+            time_slots!inner (
+              slot_date,
+              slot_time
+            )
+          `)
+          .eq('status', 'pending')
+          .gte('time_slots.slot_date', now.toISOString().split('T')[0])
+          .order('time_slots.slot_date', { ascending: true })
+          .order('time_slots.slot_time', { ascending: true })
+          .limit(5);
+
+        // Transform the data to match our interface
+        const transformedBookings = (bookings || []).map(booking => ({
+          ...booking,
+          vehicles: Array.isArray(booking.vehicles) ? booking.vehicles[0] : booking.vehicles,
+          time_slots: Array.isArray(booking.time_slots) ? booking.time_slots[0] : booking.time_slots,
+        }));
+
+        setUpcomingBookings(transformedBookings);
       } catch (error) {
-        console.error('Error fetching admin stats:', error);
+        console.error('Error fetching admin dashboard data:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchStats();
+    fetchDashboardData();
   }, [supabase]);
 
   if (loading) {
@@ -45,29 +133,154 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
-          <h3 className="text-lg font-medium text-gray-900">Total Bookings</h3>
-          <p className="mt-2 text-3xl font-semibold text-primary-600">
-            {stats?.totalBookings || 0}
-          </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="text-gray-600 mt-1">Welcome to the Love4Detailing control panel</p>
+        </div>
+        <div className="text-sm text-gray-500">
+          Last updated: {new Date().toLocaleTimeString()}
+        </div>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Bookings</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.totalBookings || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">All time</p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-full">
+              <CalendarDays className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
         </Card>
 
-        <Card className="p-4">
-          <h3 className="text-lg font-medium text-gray-900">Total Users</h3>
-          <p className="mt-2 text-3xl font-semibold text-primary-600">
-            {stats?.totalUsers || 0}
-          </p>
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">This Month</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.monthlyBookings || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">Bookings</p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-full">
+              <Clock className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
         </Card>
 
-        <Card className="p-4">
-          <h3 className="text-lg font-medium text-gray-900">Total Vehicles</h3>
-          <p className="mt-2 text-3xl font-semibold text-primary-600">
-            {stats?.totalVehicles || 0}
-          </p>
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active Customers</p>
+              <p className="text-2xl font-bold text-gray-900">{stats?.activeCustomers || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">Registered users</p>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-full">
+              <Users className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {formatCurrency((stats?.monthlyRevenue || 0) / 100)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Total: {formatCurrency((stats?.totalRevenue || 0) / 100)}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-100 rounded-full">
+              <DollarSign className="h-6 w-6 text-yellow-600" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Quick Actions */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="space-y-3">
+            <Link href="/admin/bookings/create" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Manual Booking
+              </Button>
+            </Link>
+            <Link href="/admin/pricing" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Settings className="h-4 w-4 mr-2" />
+                Edit Pricing
+              </Button>
+            </Link>
+            <Link href="/admin/bookings" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <FileText className="h-4 w-4 mr-2" />
+                View Booking Logs
+              </Button>
+            </Link>
+            <Link href="/admin/availability" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Clock className="h-4 w-4 mr-2" />
+                Manage Availability
+              </Button>
+            </Link>
+          </div>
+        </Card>
+
+        {/* Upcoming Bookings */}
+        <Card className="p-6 lg:col-span-2">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Upcoming Bookings</h2>
+            <Link href="/admin/bookings">
+              <Button variant="ghost" size="sm">View All</Button>
+            </Link>
+          </div>
+          
+          {upcomingBookings.length === 0 ? (
+            <div className="text-center py-8">
+              <Car className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-500">No upcoming bookings</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {upcomingBookings.map((booking) => (
+                <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3">
+                      <div>
+                        <p className="font-medium text-gray-900">{booking.full_name}</p>
+                        <p className="text-sm text-gray-600">
+                          {booking.vehicles.make} {booking.vehicles.model} ({booking.vehicles.registration})
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      {formatDate(booking.time_slots.slot_date)} at {formatTime(booking.time_slots.slot_time)}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatCurrency(booking.total_price_pence / 100)}
+                    </p>
+                  </div>
+                  <div className="ml-4">
+                    <Link href={`/admin/bookings/${booking.id}`}>
+                      <Button variant="ghost" size="sm">View</Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </div>

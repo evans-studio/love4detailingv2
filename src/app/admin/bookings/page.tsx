@@ -3,7 +3,26 @@
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 import { format } from 'date-fns';
+import { 
+  Search, 
+  Filter, 
+  Edit, 
+  Trash2, 
+  Calendar, 
+  Clock,
+  User,
+  Car,
+  Plus,
+  Download
+} from 'lucide-react';
+import Link from 'next/link';
+import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
 
 interface Booking {
   id: string;
@@ -11,16 +30,24 @@ interface Booking {
   user_id: string;
   vehicle_id: string;
   time_slot_id: string;
+  status: string;
+  payment_status: string;
+  total_price_pence: number;
+  full_name: string;
+  email: string;
+  phone: string;
+  notes?: string;
   created_at: string;
-  user: {
-    email: string;
-    full_name: string;
-    phone: string | null;
-  };
   vehicle: {
     registration: string;
-    make: string | null;
-    model: string | null;
+    make: string;
+    model: string;
+    year: string;
+    color: string;
+    vehicle_size: {
+      label: string;
+      price_pence: number;
+    };
   };
   time_slot: {
     slot_date: string;
@@ -28,35 +55,153 @@ interface Booking {
   };
 }
 
+interface BookingFilters {
+  search: string;
+  status: string;
+  dateFrom: string;
+  dateTo: string;
+  vehicleSize: string;
+}
+
 export default function AdminBookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vehicleSizes, setVehicleSizes] = useState<{ id: string; label: string }[]>([]);
+  const [filters, setFilters] = useState<BookingFilters>({
+    search: '',
+    status: '',
+    dateFrom: '',
+    dateTo: '',
+    vehicleSize: ''
+  });
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    async function fetchBookings() {
+    async function fetchData() {
       try {
-        const { data, error } = await supabase
+        // Fetch bookings with full details
+        const { data: bookingsData, error: bookingsError } = await supabase
           .from('bookings')
           .select(`
             *,
-            user:users(email, full_name, phone),
-            vehicle:vehicles(registration, make, model),
-            time_slot:time_slots(slot_date, slot_time)
+            vehicles (
+              registration,
+              make,
+              model,
+              year,
+              color,
+              vehicle_sizes (
+                label,
+                price_pence
+              )
+            ),
+            time_slots (
+              slot_date,
+              slot_time
+            )
           `)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        setBookings(data || []);
+        if (bookingsError) throw bookingsError;
+
+        // Fetch vehicle sizes for filter
+        const { data: sizesData, error: sizesError } = await supabase
+          .from('vehicle_sizes')
+          .select('id, label')
+          .order('label');
+
+        if (sizesError) throw sizesError;
+
+        setBookings(bookingsData || []);
+        setFilteredBookings(bookingsData || []);
+        setVehicleSizes(sizesData || []);
       } catch (error) {
-        console.error('Error fetching bookings:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBookings();
+    fetchData();
   }, [supabase]);
+
+  // Apply filters
+  useEffect(() => {
+    let filtered = [...bookings];
+
+    // Search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(booking => 
+        booking.booking_reference.toLowerCase().includes(searchLower) ||
+        booking.full_name.toLowerCase().includes(searchLower) ||
+        booking.email.toLowerCase().includes(searchLower) ||
+        booking.vehicle.registration.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Status filter
+    if (filters.status) {
+      filtered = filtered.filter(booking => booking.status === filters.status);
+    }
+
+    // Date range filter
+    if (filters.dateFrom) {
+      filtered = filtered.filter(booking => 
+        new Date(booking.time_slot.slot_date) >= new Date(filters.dateFrom)
+      );
+    }
+    if (filters.dateTo) {
+      filtered = filtered.filter(booking => 
+        new Date(booking.time_slot.slot_date) <= new Date(filters.dateTo)
+      );
+    }
+
+    // Vehicle size filter
+    if (filters.vehicleSize) {
+      filtered = filtered.filter(booking => 
+        booking.vehicle.vehicle_size.label === filters.vehicleSize
+      );
+    }
+
+    setFilteredBookings(filtered);
+  }, [bookings, filters]);
+
+  const handleFilterChange = (key: keyof BookingFilters, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      status: '',
+      dateFrom: '',
+      dateTo: '',
+      vehicleSize: ''
+    });
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
+      confirmed: { color: 'bg-blue-100 text-blue-800', label: 'Confirmed' },
+      completed: { color: 'bg-green-100 text-green-800', label: 'Completed' },
+      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
+    };
+    const config = statusConfig[status as keyof typeof statusConfig] || { color: 'bg-gray-100 text-gray-800', label: status };
+    return <Badge className={config.color}>{config.label}</Badge>;
+  };
+
+  const getPaymentBadge = (paymentStatus: string) => {
+    const paymentConfig = {
+      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
+      paid: { color: 'bg-green-100 text-green-800', label: 'Paid' },
+      failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
+    };
+    const config = paymentConfig[paymentStatus as keyof typeof paymentConfig] || { color: 'bg-gray-100 text-gray-800', label: paymentStatus };
+    return <Badge className={config.color}>{config.label}</Badge>;
+  };
 
   if (loading) {
     return <LoadingState>Loading bookings...</LoadingState>;
@@ -64,66 +209,223 @@ export default function AdminBookings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">All Bookings</h1>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Reference
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Vehicle
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date & Time
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {bookings.map((booking) => (
-              <tr key={booking.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {booking.booking_reference}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div>{booking.user.full_name}</div>
-                  <div className="text-xs text-gray-400">{booking.user.email}</div>
-                  {booking.user.phone && (
-                    <div className="text-xs text-gray-400">{booking.user.phone}</div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div>{booking.vehicle.registration}</div>
-                  {booking.vehicle.make && booking.vehicle.model && (
-                    <div className="text-xs text-gray-400">
-                      {booking.vehicle.make} {booking.vehicle.model}
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div>
-                    {format(new Date(booking.time_slot.slot_date), 'dd MMM yyyy')}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    {booking.time_slot.slot_time.slice(0, 5)}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {format(new Date(booking.created_at), 'dd MMM yyyy HH:mm')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Booking Management</h1>
+          <p className="text-gray-600 mt-1">
+            Showing {filteredBookings.length} of {bookings.length} bookings
+          </p>
+        </div>
+        <div className="flex space-x-3">
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Link href="/admin/bookings/create">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Booking
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {/* Filters */}
+      <Card className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Reference, name, email..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <Select
+              value={filters.status}
+              onValueChange={(value) => handleFilterChange('status', value)}
+            >
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </Select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              From Date
+            </label>
+            <Input
+              type="date"
+              value={filters.dateFrom}
+              onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              To Date
+            </label>
+            <Input
+              type="date"
+              value={filters.dateTo}
+              onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-end">
+            <Button variant="outline" onClick={clearFilters} className="w-full">
+              <Filter className="h-4 w-4 mr-2" />
+              Clear Filters
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Bookings Table */}
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reference
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Customer
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Vehicle
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date & Time
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <Calendar className="h-12 w-12 text-gray-400 mb-3" />
+                      <p className="text-gray-500">
+                        {bookings.length === 0 ? 'No bookings found' : 'No bookings match your filters'}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredBookings.map((booking) => (
+                  <tr key={booking.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {booking.booking_reference}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {formatDate(booking.created_at)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <User className="h-4 w-4 text-gray-600" />
+                          </div>
+                        </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">
+                            {booking.full_name}
+                          </div>
+                          <div className="text-sm text-gray-500">{booking.email}</div>
+                          {booking.phone && (
+                            <div className="text-xs text-gray-400">{booking.phone}</div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <Car className="h-4 w-4 text-gray-400 mr-2" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {booking.vehicle.registration}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.year})
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {booking.vehicle.vehicle_size.label} • {booking.vehicle.color}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 text-gray-400 mr-2" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {formatDate(booking.time_slot.slot_date)}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {formatTime(booking.time_slot.slot_time)}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="space-y-1">
+                        {getStatusBadge(booking.status)}
+                        {getPaymentBadge(booking.payment_status)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {formatCurrency(booking.total_price_pence / 100)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex items-center justify-end space-x-2">
+                        <Link href={`/admin/bookings/${booking.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 } 

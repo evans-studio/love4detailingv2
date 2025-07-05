@@ -5,30 +5,40 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '@/lib/constants/routes';
 import { cn } from '@/lib/utils';
-import { BookOpen, Settings, Users, Clock } from 'lucide-react';
+import { BookOpen, Settings, Users, Clock, BarChart3, DollarSign, FileText } from 'lucide-react';
 import { checkAdminAccess } from '@/lib/auth/admin';
 import { LoadingState } from '@/components/ui/LoadingState';
 
 const navigation = [
+  {
+    name: 'Overview',
+    href: '/admin',
+    icon: BarChart3,
+  },
   {
     name: 'Bookings',
     href: ROUTES.ADMIN_BOOKINGS,
     icon: BookOpen,
   },
   {
-    name: 'Users',
-    href: ROUTES.ADMIN_USERS,
-    icon: Users,
-  },
-  {
-    name: 'Time Slots',
-    href: '/admin/time-slots',
+    name: 'Availability',
+    href: '/admin/availability',
     icon: Clock,
   },
   {
-    name: 'Settings',
-    href: ROUTES.ADMIN_SETTINGS,
-    icon: Settings,
+    name: 'Pricing',
+    href: '/admin/pricing',
+    icon: DollarSign,
+  },
+  {
+    name: 'Policies',
+    href: '/admin/policies',
+    icon: FileText,
+  },
+  {
+    name: 'Users',
+    href: ROUTES.ADMIN_USERS,
+    icon: Users,
   },
 ];
 
