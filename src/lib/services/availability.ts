@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { 
   DailyAvailability, 
   WeeklyScheduleTemplate, 
@@ -10,8 +11,8 @@ import type {
 
 export class AvailabilityService {
   // Weekly Schedule Template Management
-  static async getWeeklyTemplate(): Promise<WeeklyScheduleTemplate[]> {
-    const { data, error } = await supabase
+  static async getWeeklyTemplate(client: SupabaseClient = supabase): Promise<WeeklyScheduleTemplate[]> {
+    const { data, error } = await client
       .from('weekly_schedule_template')
       .select('*')
       .order('day_of_week');
@@ -22,9 +23,10 @@ export class AvailabilityService {
 
   static async updateWeeklyTemplate(
     dayOfWeek: DayOfWeek, 
-    config: Partial<WeeklyScheduleTemplate>
+    config: Partial<WeeklyScheduleTemplate>,
+    client: SupabaseClient = supabase
   ): Promise<WeeklyScheduleTemplate> {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('weekly_schedule_template')
       .upsert({
         day_of_week: dayOfWeek,
@@ -39,8 +41,8 @@ export class AvailabilityService {
   }
 
   // Daily Availability Management
-  static async getDailyAvailability(date: string): Promise<DailyAvailability | null> {
-    const { data, error } = await supabase
+  static async getDailyAvailability(date: string, client: SupabaseClient = supabase): Promise<DailyAvailability | null> {
+    const { data, error } = await client
       .from('daily_availability')
       .select('*')
       .eq('date', date)
@@ -52,9 +54,10 @@ export class AvailabilityService {
 
   static async updateDailyAvailability(
     date: string, 
-    config: Partial<DailyAvailability>
+    config: Partial<DailyAvailability>,
+    client: SupabaseClient = supabase
   ): Promise<DailyAvailability> {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('daily_availability')
       .upsert({
         date,
@@ -109,9 +112,9 @@ export class AvailabilityService {
   }
 
   // Calendar View Data
-  static async getCalendarData(startDate: string, endDate: string): Promise<AvailabilityCalendarDay[]> {
+  static async getCalendarData(startDate: string, endDate: string, client: SupabaseClient = supabase): Promise<AvailabilityCalendarDay[]> {
     // Get availability config for date range
-    const { data: dailyConfigs, error: configError } = await supabase
+    const { data: dailyConfigs, error: configError } = await client
       .from('daily_availability')
       .select('*')
       .gte('date', startDate)
@@ -120,7 +123,7 @@ export class AvailabilityService {
     if (configError) throw configError;
 
     // Get time slots with bookings for date range
-    const { data: slots, error: slotsError } = await supabase
+    const { data: slots, error: slotsError } = await client
       .from('time_slots')
       .select(`
         *,
@@ -138,7 +141,7 @@ export class AvailabilityService {
     if (slotsError) throw slotsError;
 
     // Get weekly template as fallback
-    const weeklyTemplate = await this.getWeeklyTemplate();
+    const weeklyTemplate = await this.getWeeklyTemplate(client);
     
     // Build calendar data
     const calendarDays: AvailabilityCalendarDay[] = [];
