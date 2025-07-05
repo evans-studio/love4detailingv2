@@ -124,7 +124,7 @@ async function setupAdminAccount() {
     console.log('📧 Email:', ADMIN_EMAIL);
     console.log('🔑 Password:', ADMIN_PASSWORD);
     console.log('🚨 IMPORTANT: Change the default password after first login!');
-    console.log('🔗 Admin Dashboard: http://localhost:3000/admin');
+    console.log('🔗 Admin Dashboard: https://love4detailingv2.vercel.app/admin');
 
     return true;
 
