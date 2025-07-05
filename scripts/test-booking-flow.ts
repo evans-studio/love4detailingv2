@@ -143,7 +143,7 @@ async function getTestTimeSlot() {
     .from('time_slots')
     .select()
     .eq('slot_date', date)
-    .eq('is_available', true)
+    .eq('is_booked', false)
     .order('slot_time')
     .limit(1);
 
@@ -162,7 +162,7 @@ async function getTestTimeSlot() {
     .insert({
       slot_date: date,
       slot_time: '10:00:00',
-      is_available: true
+      is_booked: false
     })
     .select()
     .single();
@@ -208,11 +208,11 @@ async function createTestBooking(
   // First check if time slot is available
   const { data: timeSlot } = await admin
     .from('time_slots')
-    .select('is_available')
+    .select('is_booked')
     .eq('id', timeSlotId)
     .single();
 
-  if (!timeSlot?.is_available) {
+  if (timeSlot?.is_booked) {
     throw new Error('Time slot is not available');
   }
 
