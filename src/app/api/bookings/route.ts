@@ -25,21 +25,22 @@ export async function POST(request: NextRequest) {
     // Extract photos from body if present (not in validated schema)
     const vehiclePhotos = body.vehicle?.photos || [];
 
-    // Check if time slot is still available
+    // Check if time slot is still available (use is_booked column)
     const { data: timeSlot, error: timeSlotError } = await supabase
       .from('time_slots')
-      .select('is_available')
+      .select('is_booked')
       .eq('id', dateTime.timeSlotId)
       .single();
 
     if (timeSlotError) {
+      console.error('Time slot query error:', timeSlotError);
       return NextResponse.json(
         { error: 'Failed to check time slot availability' },
         { status: 500 }
       );
     }
 
-    if (!timeSlot || !timeSlot.is_available) {
+    if (!timeSlot || timeSlot.is_booked) {
       return NextResponse.json(
         { error: 'Selected time slot is no longer available' },
         { status: 400 }
@@ -175,8 +176,7 @@ export async function POST(request: NextRequest) {
     const { error: updateSlotError } = await supabase
       .from('time_slots')
       .update({ 
-        is_booked: true,
-        is_available: false
+        is_booked: true
       })
       .eq('id', dateTime.timeSlotId);
 
