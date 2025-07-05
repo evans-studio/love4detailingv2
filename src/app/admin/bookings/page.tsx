@@ -172,8 +172,8 @@ export default function AdminBookings() {
       status: booking.status as 'pending' | 'confirmed' | 'completed' | 'cancelled',
       payment_status: booking.payment_status as 'pending' | 'paid' | 'failed',
       notes: booking.notes || '',
-      slot_date: booking.time_slot.slot_date,
-      slot_time: booking.time_slot.slot_time,
+      slot_date: booking.time_slot?.slot_date || '',
+      slot_time: booking.time_slot?.slot_time || '',
     });
     setIsEditModalOpen(true);
   };
@@ -197,8 +197,8 @@ export default function AdminBookings() {
       if (bookingError) throw bookingError;
 
       // If time slot changed, update the time slot
-      if (formData.slot_date !== editingBooking.time_slot.slot_date || 
-          formData.slot_time !== editingBooking.time_slot.slot_time) {
+      if (formData.slot_date !== editingBooking.time_slot?.slot_date || 
+          formData.slot_time !== editingBooking.time_slot?.slot_time) {
         
         // Find or create new time slot
         const { data: existingSlot } = await supabase
@@ -534,10 +534,10 @@ export default function AdminBookings() {
                           {booking.time_slot ? (
                             <>
                               <div className="text-sm font-medium text-gray-900">
-                                {formatDate(booking.time_slot.slot_date)}
+                                {booking.time_slot?.slot_date ? formatDate(booking.time_slot.slot_date) : 'No date'}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {formatTime(booking.time_slot.slot_time)}
+                                {booking.time_slot?.slot_time ? formatTime(booking.time_slot.slot_time) : 'No time'}
                               </div>
                             </>
                           ) : (
