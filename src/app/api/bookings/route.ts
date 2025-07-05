@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
 
         if (existingBooking) {
           // Booking was created successfully despite the error
-          await supabase.from('time_slots').update({ is_booked: true }).eq('id', dateTime.timeSlotId);
+          await supabase.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
           
           return NextResponse.json({
             success: true,
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Booking created successfully
-    await supabase.from('time_slots').update({ is_booked: true }).eq('id', dateTime.timeSlotId);
+    await supabase.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
 
     return NextResponse.json({
       success: true,

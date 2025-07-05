@@ -67,7 +67,7 @@ export async function POST(request: Request) {
           slots.push({
             slot_date: dateStr,
             slot_time: time,
-            is_booked: false
+            is_available: true
           });
         }
       }
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       .from('time_slots')
       .select('*')
       .eq('slot_date', format(requestedDate, 'yyyy-MM-dd'))
-      .eq('is_booked', false)
+      .eq('is_available', true)
       .order('slot_time');
 
     if (availableSlotsError) {

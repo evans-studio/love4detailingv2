@@ -47,7 +47,7 @@ export const adminApi = {
           id,
           slot_date,
           slot_time,
-          is_booked
+          is_available
         )
       `)
       .order('created_at', { ascending: false });
@@ -259,7 +259,7 @@ export const useAdminQuery = () => {
             id,
             slot_date,
             slot_time,
-            is_booked
+            is_available
           )
         `)
         .order('created_at', { ascending: false });
