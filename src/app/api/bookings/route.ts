@@ -168,6 +168,48 @@ export async function POST(request: NextRequest) {
 
     if (bookingError || !booking) {
       console.error('Booking creation error:', bookingError);
+      
+      // If it's a reward transaction constraint violation, the booking might have been created
+      // Check if we can find the booking by time slot and user
+      if (bookingError?.code === '23505' && bookingError?.message?.includes('unique_booking_transaction')) {
+        console.log('Checking if booking was actually created despite reward transaction error...');
+        
+        const { data: existingBooking } = await supabase
+          .from('bookings')
+          .select('*')
+          .eq('time_slot_id', dateTime.timeSlotId)
+          .eq('user_id', userId)
+          .single();
+          
+        if (existingBooking) {
+          console.log('Booking was created successfully, returning success despite reward error');
+          return NextResponse.json({
+            success: true,
+            booking: {
+              id: existingBooking.id,
+              booking_reference: existingBooking.booking_reference,
+              status: existingBooking.status,
+              payment_status: existingBooking.payment_status,
+              total_price_pence: existingBooking.total_price_pence,
+              vehicle: {
+                registration: vehicleRecord.registration,
+                make: vehicleRecord.make,
+                model: vehicleRecord.model,
+                year: vehicleRecord.year,
+                color: vehicleRecord.color,
+              },
+              time_slot: {
+                id: dateTime.timeSlotId,
+                date: dateTime.date,
+                time: dateTime.time,
+              },
+              user_id: userId,
+              is_new_user: !existingUser,
+            }
+          });
+        }
+      }
+      
       return NextResponse.json(
         { 
           error: 'Failed to create booking',
