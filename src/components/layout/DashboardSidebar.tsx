@@ -15,9 +15,11 @@ import {
   Settings,
   Star,
   User,
+  Shield,
 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
+import { checkAdminAccess } from '@/lib/auth/admin';
 
 const navigation = [
   {
@@ -50,11 +52,20 @@ const navigation = [
 export function DashboardSidebar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check admin access
+    const checkAdmin = async () => {
+      const hasAccess = await checkAdminAccess();
+      setIsAdmin(hasAccess);
+    };
+    
+    checkAdmin();
   }, []);
 
   const handleSignOut = async () => {
@@ -111,6 +122,22 @@ export function DashboardSidebar() {
               </Link>
             );
           })}
+          
+          {/* Admin Portal Link */}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium border-t mt-2 pt-2',
+                pathname.startsWith('/admin')
+                  ? 'bg-primary-50 text-primary-500'
+                  : 'text-orange-600 hover:bg-orange-50'
+              )}
+            >
+              <Shield className="h-5 w-5" />
+              Admin Portal
+            </Link>
+          )}
         </div>
 
         <div className="mt-auto p-2">
