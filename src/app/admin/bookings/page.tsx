@@ -8,6 +8,10 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { format } from 'date-fns';
 import { 
   Search, 
@@ -19,7 +23,9 @@ import {
   User,
   Car,
   Plus,
-  Download
+  Download,
+  Save,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
@@ -63,11 +69,24 @@ interface BookingFilters {
   vehicleSize: string;
 }
 
+const editBookingSchema = z.object({
+  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
+  payment_status: z.enum(['pending', 'paid', 'failed']),
+  notes: z.string().optional(),
+  slot_date: z.string(),
+  slot_time: z.string(),
+});
+
+type EditBookingFormData = z.infer<typeof editBookingSchema>;
+
 export default function AdminBookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [vehicleSizes, setVehicleSizes] = useState<{ id: string; label: string }[]>([]);
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [filters, setFilters] = useState<BookingFilters>({
     search: '',
     status: '',
@@ -77,53 +96,18 @@ export default function AdminBookings() {
   });
   const supabase = createClientComponentClient();
 
+  const editForm = useForm<EditBookingFormData>({
+    resolver: zodResolver(editBookingSchema),
+  });
+
   useEffect(() => {
-    async function fetchData() {
-      try {
-        // Fetch bookings with full details
-        const { data: bookingsData, error: bookingsError } = await supabase
-          .from('bookings')
-          .select(`
-            *,
-            vehicles (
-              registration,
-              make,
-              model,
-              year,
-              color,
-              vehicle_sizes (
-                label,
-                price_pence
-              )
-            ),
-            time_slots (
-              slot_date,
-              slot_time
-            )
-          `)
-          .order('created_at', { ascending: false });
+    const loadData = async () => {
+      setLoading(true);
+      await fetchData();
+      setLoading(false);
+    };
 
-        if (bookingsError) throw bookingsError;
-
-        // Fetch vehicle sizes for filter
-        const { data: sizesData, error: sizesError } = await supabase
-          .from('vehicle_sizes')
-          .select('id, label')
-          .order('label');
-
-        if (sizesError) throw sizesError;
-
-        setBookings(bookingsData || []);
-        setFilteredBookings(bookingsData || []);
-        setVehicleSizes(sizesData || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
+    loadData();
   }, [supabase]);
 
   // Apply filters
@@ -180,6 +164,158 @@ export default function AdminBookings() {
       dateTo: '',
       vehicleSize: ''
     });
+  };
+
+  const handleEditBooking = (booking: Booking) => {
+    setEditingBooking(booking);
+    editForm.reset({
+      status: booking.status as 'pending' | 'confirmed' | 'completed' | 'cancelled',
+      payment_status: booking.payment_status as 'pending' | 'paid' | 'failed',
+      notes: booking.notes || '',
+      slot_date: booking.time_slot.slot_date,
+      slot_time: booking.time_slot.slot_time,
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateBooking = async (formData: EditBookingFormData) => {
+    if (!editingBooking) return;
+
+    try {
+      setIsUpdating(true);
+
+      // Update booking status and payment status
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .update({
+          status: formData.status,
+          payment_status: formData.payment_status,
+          notes: formData.notes,
+        })
+        .eq('id', editingBooking.id);
+
+      if (bookingError) throw bookingError;
+
+      // If time slot changed, update the time slot
+      if (formData.slot_date !== editingBooking.time_slot.slot_date || 
+          formData.slot_time !== editingBooking.time_slot.slot_time) {
+        
+        // Find or create new time slot
+        const { data: existingSlot } = await supabase
+          .from('time_slots')
+          .select('id')
+          .eq('slot_date', formData.slot_date)
+          .eq('slot_time', formData.slot_time)
+          .single();
+
+        let timeSlotId = existingSlot?.id;
+
+        if (!timeSlotId) {
+          // Create new time slot
+          const { data: newSlot, error: slotError } = await supabase
+            .from('time_slots')
+            .insert({
+              slot_date: formData.slot_date,
+              slot_time: formData.slot_time,
+              is_available: false,
+              is_booked: true,
+            })
+            .select('id')
+            .single();
+
+          if (slotError) throw slotError;
+          timeSlotId = newSlot.id;
+        }
+
+        // Update booking with new time slot
+        const { error: updateError } = await supabase
+          .from('bookings')
+          .update({ time_slot_id: timeSlotId })
+          .eq('id', editingBooking.id);
+
+        if (updateError) throw updateError;
+
+        // Mark old time slot as available
+        await supabase
+          .from('time_slots')
+          .update({ is_booked: false, is_available: true })
+          .eq('id', editingBooking.time_slot_id);
+      }
+
+      // Refresh bookings data
+      await fetchData();
+      setIsEditModalOpen(false);
+      setEditingBooking(null);
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      alert('Failed to update booking. Please try again.');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId: string) => {
+    if (!confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', bookingId);
+
+      if (error) throw error;
+
+      // Refresh bookings data
+      await fetchData();
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      alert('Failed to delete booking. Please try again.');
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      // Fetch bookings with full details
+      const { data: bookingsData, error: bookingsError } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          vehicles (
+            registration,
+            make,
+            model,
+            year,
+            color,
+            vehicle_sizes (
+              label,
+              price_pence
+            )
+          ),
+          time_slots (
+            slot_date,
+            slot_time
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (bookingsError) throw bookingsError;
+
+      // Fetch vehicle sizes for filter
+      const { data: sizesData, error: sizesError } = await supabase
+        .from('vehicle_sizes')
+        .select('id, label')
+        .order('label');
+
+      if (sizesError) throw sizesError;
+
+      setBookings(bookingsData || []);
+      setFilteredBookings(bookingsData || []);
+      setVehicleSizes(sizesData || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -409,12 +545,19 @@ export default function AdminBookings() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
-                        <Link href={`/admin/bookings/${booking.id}`}>
-                          <Button variant="ghost" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleEditBooking(booking)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDeleteBooking(booking.id)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -426,6 +569,126 @@ export default function AdminBookings() {
           </table>
         </div>
       </Card>
+
+      {/* Edit Booking Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Booking</DialogTitle>
+          </DialogHeader>
+          
+          {editingBooking && (
+            <form onSubmit={editForm.handleSubmit(handleUpdateBooking)} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Booking Status
+                  </label>
+                  <Select
+                    value={editForm.watch('status')}
+                    onValueChange={(value) => editForm.setValue('status', value as any)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </Select>
+                  {editForm.formState.errors.status && (
+                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.status.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Payment Status
+                  </label>
+                  <Select
+                    value={editForm.watch('payment_status')}
+                    onValueChange={(value) => editForm.setValue('payment_status', value as any)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="failed">Failed</option>
+                  </Select>
+                  {editForm.formState.errors.payment_status && (
+                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.payment_status.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date
+                  </label>
+                  <Input
+                    type="date"
+                    {...editForm.register('slot_date')}
+                    error={!!editForm.formState.errors.slot_date}
+                  />
+                  {editForm.formState.errors.slot_date && (
+                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.slot_date.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Time
+                  </label>
+                  <Input
+                    type="time"
+                    {...editForm.register('slot_time')}
+                    error={!!editForm.formState.errors.slot_time}
+                  />
+                  {editForm.formState.errors.slot_time && (
+                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.slot_time.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Notes
+                </label>
+                <textarea
+                  {...editForm.register('notes')}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add any notes about this booking..."
+                />
+                {editForm.formState.errors.notes && (
+                  <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.notes.message}</p>
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isUpdating}
+                >
+                  {isUpdating ? (
+                    <>
+                      <LoadingState className="h-4 w-4 mr-2" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Update Booking
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

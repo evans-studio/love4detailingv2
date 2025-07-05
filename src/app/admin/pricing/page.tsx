@@ -84,27 +84,35 @@ export default function PricingManagement() {
 
   const fetchPricingData = async () => {
     try {
-      const [sizesRes, addonsRes] = await Promise.all([
-        supabase
-          .from('vehicle_sizes')
-          .select('*')
-          .order('order_index'),
-        supabase
+      // Fetch vehicle sizes
+      const { data: sizesData, error: sizesError } = await supabase
+        .from('vehicle_sizes')
+        .select('*')
+        .order('order_index');
+
+      if (sizesError) throw sizesError;
+
+      // Try to fetch service addons - table might not exist yet
+      let addonsData: ServiceAddon[] = [];
+      try {
+        const { data, error } = await supabase
           .from('service_addons')
           .select('*')
-          .order('name')
-      ]);
+          .order('name');
+        
+        if (!error && data) {
+          addonsData = data;
+        }
+      } catch (error) {
+        // Service addons table doesn't exist yet - that's okay
+        console.log('Service addons table not available yet');
+      }
 
-      if (sizesRes.error) throw sizesRes.error;
-      
-      // Create addons table if it doesn't exist (will be handled by migration)
-      const addonsData = addonsRes.data || [];
-
-      setVehicleSizes(sizesRes.data || []);
+      setVehicleSizes(sizesData || []);
       setAddons(addonsData);
       
       // Set form values for vehicle sizes
-      sizeForm.setValue('sizes', sizesRes.data || []);
+      sizeForm.setValue('sizes', sizesData || []);
     } catch (error) {
       console.error('Error fetching pricing data:', error);
     } finally {
