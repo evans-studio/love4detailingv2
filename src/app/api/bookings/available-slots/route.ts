@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { BookingValidationService } from '@/lib/services/booking-validation';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 // GET /api/bookings/available-slots?date=YYYY-MM-DD
 export async function GET(request: Request) {
   try {
