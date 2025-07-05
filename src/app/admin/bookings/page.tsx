@@ -44,21 +44,21 @@ interface Booking {
   phone: string;
   notes?: string;
   created_at: string;
-  vehicle: {
+  vehicle?: {
     registration: string;
     make: string;
     model: string;
     year: string;
     color: string;
-    vehicle_size: {
+    vehicle_size?: {
       label: string;
       price_pence: number;
     };
-  };
-  time_slot: {
+  } | null;
+  time_slot?: {
     slot_date: string;
     slot_time: string;
-  };
+  } | null;
 }
 
 interface BookingFilters {
@@ -121,7 +121,7 @@ export default function AdminBookings() {
         booking.booking_reference.toLowerCase().includes(searchLower) ||
         booking.full_name.toLowerCase().includes(searchLower) ||
         booking.email.toLowerCase().includes(searchLower) ||
-        booking.vehicle.registration.toLowerCase().includes(searchLower)
+        (booking.vehicle?.registration && booking.vehicle.registration.toLowerCase().includes(searchLower))
       );
     }
 
@@ -133,19 +133,19 @@ export default function AdminBookings() {
     // Date range filter
     if (filters.dateFrom) {
       filtered = filtered.filter(booking => 
-        new Date(booking.time_slot.slot_date) >= new Date(filters.dateFrom)
+        booking.time_slot?.slot_date && new Date(booking.time_slot.slot_date) >= new Date(filters.dateFrom)
       );
     }
     if (filters.dateTo) {
       filtered = filtered.filter(booking => 
-        new Date(booking.time_slot.slot_date) <= new Date(filters.dateTo)
+        booking.time_slot?.slot_date && new Date(booking.time_slot.slot_date) <= new Date(filters.dateTo)
       );
     }
 
     // Vehicle size filter
     if (filters.vehicleSize) {
       filtered = filtered.filter(booking => 
-        booking.vehicle.vehicle_size.label === filters.vehicleSize
+        booking.vehicle?.vehicle_size?.label === filters.vehicleSize
       );
     }
 
@@ -507,15 +507,23 @@ export default function AdminBookings() {
                       <div className="flex items-center">
                         <Car className="h-4 w-4 text-gray-400 mr-2" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {booking.vehicle.registration}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.year})
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {booking.vehicle.vehicle_size.label} • {booking.vehicle.color}
-                          </div>
+                          {booking.vehicle ? (
+                            <>
+                              <div className="text-sm font-medium text-gray-900">
+                                {booking.vehicle.registration}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.year})
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                {booking.vehicle.vehicle_size?.label || 'Unknown size'} • {booking.vehicle.color}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-sm text-gray-500 italic">
+                              Vehicle information unavailable
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -523,12 +531,20 @@ export default function AdminBookings() {
                       <div className="flex items-center">
                         <Clock className="h-4 w-4 text-gray-400 mr-2" />
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {formatDate(booking.time_slot.slot_date)}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {formatTime(booking.time_slot.slot_time)}
-                          </div>
+                          {booking.time_slot ? (
+                            <>
+                              <div className="text-sm font-medium text-gray-900">
+                                {formatDate(booking.time_slot.slot_date)}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {formatTime(booking.time_slot.slot_time)}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-sm text-gray-500 italic">
+                              Time slot unavailable
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
