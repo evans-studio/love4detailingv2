@@ -110,8 +110,29 @@ export default function AdminSettings() {
 
   const loadSettings = async () => {
     try {
-      // For now, we'll use the default settings above
-      // In a real implementation, you'd load from a settings table
+      const response = await fetch('/api/admin/settings');
+      if (!response.ok) {
+        throw new Error('Failed to load settings');
+      }
+      
+      const data = await response.json();
+      
+      if (data.business) {
+        setBusinessSettings({
+          company_name: data.business.company_name,
+          email: data.business.email,
+          phone: data.business.phone,
+          address: data.business.address,
+          business_hours: data.business.business_hours,
+          booking_settings: data.business.booking_settings,
+          pricing_settings: data.business.pricing_settings,
+        });
+      }
+      
+      if (data.system) {
+        setSystemSettings(data.system);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -126,17 +147,29 @@ export default function AdminSettings() {
     setSuccess(null);
 
     try {
-      // In a real implementation, you'd save to a database
-      // For now, we'll simulate the save operation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setSuccess('Business settings saved successfully');
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          business: businessSettings
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save settings');
+      }
+      
+      const result = await response.json();
+      setSuccess(result.message || 'Business settings saved successfully');
       
       // Auto-clear success message
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       console.error('Error saving business settings:', error);
-      setError('Failed to save business settings');
+      setError(error instanceof Error ? error.message : 'Failed to save business settings');
     } finally {
       setSaving(false);
     }
@@ -148,16 +181,29 @@ export default function AdminSettings() {
     setSuccess(null);
 
     try {
-      // In a real implementation, you'd save to a database
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setSuccess('System settings saved successfully');
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          system: systemSettings
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save system settings');
+      }
+      
+      const result = await response.json();
+      setSuccess(result.message || 'System settings saved successfully');
       
       // Auto-clear success message
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       console.error('Error saving system settings:', error);
-      setError('Failed to save system settings');
+      setError(error instanceof Error ? error.message : 'Failed to save system settings');
     } finally {
       setSaving(false);
     }
