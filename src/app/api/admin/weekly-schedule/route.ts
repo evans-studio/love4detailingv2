@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
+import { checkServerAdminAccess } from '@/lib/auth/admin';
 
 // Validation schema for weekly schedule updates
 const WeeklyScheduleUpdateSchema = z.object({
@@ -29,6 +31,15 @@ function validateTimeIn15MinIncrements(time: string): boolean {
   return minutes % 15 === 0; // Must be 0, 15, 30, or 45 minutes
 }
 
+// Configure route as dynamic
+export const dynamic = 'force-dynamic';
+
+// Create service role client for admin operations
+const supabaseServiceRole = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -36,22 +47,17 @@ export async function GET(request: NextRequest) {
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Check admin role
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
+    // Check admin role using helper function
+    const isAdmin = await checkServerAdminAccess(user.id);
+    if (!isAdmin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
-    // Get weekly schedule template with custom time columns
-    const { data, error } = await supabase
+    // Get weekly schedule template with custom time columns using service role
+    const { data, error } = await supabaseServiceRole
       .from('weekly_schedule_template')
       .select(`
         id,
@@ -72,8 +78,19 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Database error:', error);
+      
+      // If the error is about missing columns, return empty array with helpful message
+      if (error.code === '42703') {
+        console.log('Missing columns detected - database needs migration');
+        return NextResponse.json({
+          error: 'Database schema update required',
+          message: 'Please run the weekly schedule migration',
+          needsMigration: true
+        }, { status: 500 });
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to fetch weekly schedule' },
+        { error: 'Failed to fetch weekly schedule', details: error.message },
         { status: 500 }
       );
     }
@@ -96,17 +113,12 @@ export async function POST(request: NextRequest) {
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Check admin role
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
+    // Check admin role using helper function
+    const isAdmin = await checkServerAdminAccess(user.id);
+    if (!isAdmin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
@@ -167,8 +179,8 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString()
     };
 
-    // Upsert the weekly schedule template using day_of_week as unique key
-    const { data, error } = await supabase
+    // Upsert the weekly schedule template using day_of_week as unique key with service role
+    const { data, error } = await supabaseServiceRole
       .from('weekly_schedule_template')
       .upsert(updateData, { 
         onConflict: 'day_of_week',
@@ -191,8 +203,18 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Database error:', error);
+      
+      // If the error is about missing columns, return helpful message
+      if (error.code === '42703') {
+        return NextResponse.json({
+          error: 'Database schema update required',
+          message: 'Please run the weekly schedule migration to add slot time columns',
+          needsMigration: true
+        }, { status: 500 });
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to update weekly schedule' },
+        { error: 'Failed to update weekly schedule', details: error.message },
         { status: 500 }
       );
     }
