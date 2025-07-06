@@ -171,8 +171,9 @@ export async function POST(request: NextRequest) {
       });
 
       if (authError) {
+        console.error('Auth user creation error:', authError);
         return NextResponse.json(
-          { error: 'Failed to create user account', details: authError.message },
+          { error: 'Failed to create user account', details: authError.message, code: authError.code },
           { status: 500 }
         );
       }
@@ -180,12 +181,24 @@ export async function POST(request: NextRequest) {
       userId = authUser.user.id;
 
       // Create user profile
-      await supabaseServiceRole.from('users').insert({
+      const { error: profileError } = await supabaseServiceRole.from('users').insert({
         id: userId,
         email: personalDetails.email,
         full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
         phone: personalDetails.phone,
+        role: 'customer',
+        created_at: new Date().toISOString(),
       });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Clean up auth user if profile creation failed
+        await supabaseServiceRole.auth.admin.deleteUser(userId);
+        return NextResponse.json(
+          { error: 'Failed to create user profile', details: profileError.message },
+          { status: 500 }
+        );
+      }
     }
 
     // Create vehicle
@@ -331,7 +344,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Booking creation error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error', 
+        details: error instanceof Error ? error.message : 'Unknown error',
+        stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : 'No stack') : undefined
+      },
       { status: 500 }
     );
   }
