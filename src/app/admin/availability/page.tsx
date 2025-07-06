@@ -22,13 +22,13 @@ interface Booking {
   booking_reference: string;
   user_id: string;
   vehicle_id: string;
-  time_slot_id: string;
+  slot_id: string;
   status: string;
   payment_status: string;
   total_price_pence: number;
-  full_name: string;
-  email: string;
-  phone: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
   notes?: string;
   created_at: string;
   vehicle?: {
@@ -37,15 +37,13 @@ interface Booking {
     model: string;
     year: string;
     color: string;
-    vehicle_size?: {
-      label: string;
-      price_pence: number;
-    };
   } | null;
-  time_slot?: {
+  available_slot?: {
     slot_date: string;
-    slot_time: string;
-    slot_number?: number;
+    start_time: string;
+    end_time: string;
+    current_bookings: number;
+    max_bookings: number;
   } | null;
 }
 

@@ -15,11 +15,11 @@ export async function getAvailableTimeSlots(date: string): Promise<DbTimeSlot[]>
   await generateTimeSlotsIfNeeded(formattedDate);
 
   const { data, error } = await supabase
-    .from('time_slots')
+    .from('available_slots')
     .select('*')
     .eq('slot_date', formattedDate)
-    .eq('is_booked', false)
-    .order('slot_time');
+    .eq('is_blocked', false)
+    .order('start_time');
 
   if (error) {
     console.error('Error fetching time slots:', error);
@@ -29,8 +29,9 @@ export async function getAvailableTimeSlots(date: string): Promise<DbTimeSlot[]>
   return data?.map(slot => ({
     id: slot.id,
     slot_date: slot.slot_date,
-    slot_time: format(new Date(`2000-01-01T${slot.slot_time}`), 'h:mm a'),
-    is_booked: slot.is_booked,
+    start_time: slot.start_time,
+    end_time: slot.end_time,
+    is_blocked: slot.is_blocked,
     created_at: slot.created_at,
     updated_at: slot.updated_at
   })) || [];
@@ -45,9 +46,9 @@ export async function getAvailableDates(): Promise<string[]> {
   await generateTimeSlotsIfNeeded(formattedToday);
 
   const { data, error } = await supabase
-    .from('time_slots')
+    .from('available_slots')
     .select('slot_date')
-    .eq('is_booked', false)
+    .eq('is_blocked', false)
     .gte('slot_date', formattedToday)
     .order('slot_date');
 
@@ -107,7 +108,7 @@ export async function createBooking(params: {
     .rpc('create_booking', {
       p_user_id: user.id,
       p_vehicle_id: params.vehicleId,
-      p_time_slot_id: params.timeSlotId,
+      p_slot_id: params.timeSlotId,
       p_total_price_pence: params.totalPricePence,
       p_email: profile.email,
       p_full_name: profile.full_name,

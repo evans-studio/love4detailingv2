@@ -99,15 +99,14 @@ export class AvailabilityService {
         // Generate time slots using correct column names
         for (let slotNum = 1; slotNum <= dayTemplate.max_slots; slotNum++) {
           const { error } = await supabase
-            .from('time_slots')
+            .from('available_slots')
             .upsert({
-              slot_date: dateStr,          // ✅ Correct column name
-              slot_time: customTimes[slotNum - 1], // ✅ Using custom times
-              slot_number: slotNum,
-              is_available: true,
-              buffer_minutes: 30
+              slot_date: dateStr,
+              start_time: customTimes[slotNum - 1],
+              end_time: customTimes[slotNum - 1].replace(/:(\d{2}):/, (_, minutes) => ':' + (parseInt(minutes) + 60).toString().padStart(2, '0') + ':'), // Add 1 hour
+              is_blocked: false
             }, {
-              onConflict: 'slot_date,slot_time'
+              onConflict: 'slot_date,start_time'
             });
           
           if (error) console.log('Slot creation error:', error);
@@ -149,20 +148,19 @@ export class AvailabilityService {
     
     // Check if day is working and slot exists
     const { data: slot, error: slotError } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .select('id')
-      .eq('slot_date', date)              // ✅ Correct column name
-      .eq('slot_number', slotNumber)
-      .eq('is_available', true)
+      .eq('slot_date', date)
+      .eq('is_blocked', false)
       .single();
     
     if (slotError || !slot) return false;
     
-    // Check for existing bookings using UUID time_slot_id
+    // Check for existing bookings using UUID slot_id
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .select('id')
-      .eq('time_slot_id', slot.id)        // ✅ Correct UUID reference
+      .eq('slot_id', slot.id)
       .not('status', 'eq', 'cancelled')
       .single();
     
@@ -195,7 +193,7 @@ export class AvailabilityService {
 
       // Get time slots - simplified query without complex joins
       const { data: slots, error: slotsError } = await supabase
-        .from('time_slots')
+        .from('available_slots')
         .select('*')
         .gte('slot_date', startDate)
         .lte('slot_date', endDate)

@@ -10,8 +10,11 @@ import { format } from 'date-fns';
 interface TimeSlot {
   id: string;
   slot_date: string;
-  slot_time: string;
-  is_available: boolean;
+  start_time: string;
+  end_time: string;
+  is_blocked: boolean;
+  current_bookings: number;
+  max_bookings: number;
 }
 
 interface DateTimeStepProps {
@@ -56,7 +59,7 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
       const response = await fetch(`/api/time-slots?date=${dateStr}`);
       if (response.ok) {
         const slots: TimeSlot[] = await response.json();
-        setAvailableSlots(slots.filter(slot => slot.is_available));
+        setAvailableSlots(slots.filter(slot => !slot.is_blocked && slot.current_bookings < slot.max_bookings));
       }
     } catch (error) {
       console.error('Error loading time slots:', error);
@@ -82,7 +85,7 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
     setSelectedSlot(slot.id);
     setValue('dateTime.timeSlotId', slot.id);
     setValue('dateTime.date', slot.slot_date);
-    setValue('dateTime.time', slot.slot_time);
+    setValue('dateTime.time', `${slot.start_time} - ${slot.end_time}`);
   };
 
   const handleNext = async () => {
@@ -92,13 +95,15 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
     }
   };
 
-  const formatTimeSlot = (time: string) => {
-    // Convert 24-hour time to 12-hour format
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:${minutes} ${period}`;
+  const formatTimeSlot = (startTime: string, endTime: string) => {
+    const formatTime = (time: string) => {
+      const [hours, minutes] = time.split(':');
+      const hour = parseInt(hours);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return `${displayHour}:${minutes} ${period}`;
+    };
+    return `${formatTime(startTime)} - ${formatTime(endTime)}`;
   };
 
   return (
@@ -161,7 +166,7 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
                   }`}
                 >
                   <div className="font-medium">
-                    {formatTimeSlot(slot.slot_time)}
+                    {formatTimeSlot(slot.start_time, slot.end_time)}
                   </div>
                   <div className="text-sm text-gray-600">
                     {format(new Date(slot.slot_date), 'EEEE, MMM d')}
@@ -183,8 +188,10 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
           <h3 className="font-medium text-green-900 mb-2">Selected Appointment</h3>
           <p className="text-green-800">
             {format(selectedDate, 'EEEE, MMMM d, yyyy')} at{' '}
-            {availableSlots.find(s => s.id === selectedSlot)?.slot_time && 
-              formatTimeSlot(availableSlots.find(s => s.id === selectedSlot)!.slot_time)}
+            {(() => {
+              const slot = availableSlots.find(s => s.id === selectedSlot);
+              return slot ? formatTimeSlot(slot.start_time, slot.end_time) : '';
+            })()}
           </p>
         </div>
       )}
@@ -200,7 +207,7 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
         <button
           type="button"
           onClick={handleNext}
-          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
         >
           Next: Review & Confirm
         </button>

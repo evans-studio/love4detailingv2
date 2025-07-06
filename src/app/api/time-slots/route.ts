@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { format, parseISO, addDays, startOfDay } from 'date-fns';
+import { TimeSlotsService } from '@/lib/services/time-slots.service';
 
 // Configure route as dynamic
 export const dynamic = 'force-dynamic';
@@ -37,15 +38,15 @@ export async function GET(request: NextRequest) {
     }
 
     // First, generate time slots if needed
-    await generateTimeSlotsIfNeeded(dateParam);
+    await TimeSlotsService.generateTimeSlotsIfNeeded(dateParam);
 
     // Fetch available time slots for the date (limit to 5 per day to prevent duplicates)
     const { data: timeSlots, error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .select('*')
       .eq('slot_date', dateParam)
-      .eq('is_available', true)
-      .order('slot_time')
+      .eq('is_blocked', false)
+      .order('start_time')
       .limit(5);
 
     if (error) {
@@ -58,9 +59,9 @@ export async function GET(request: NextRequest) {
 
     console.log(`Found ${timeSlots?.length || 0} available time slots for ${dateParam}`);
 
-    // Remove duplicates by slot_time (in case of database inconsistencies)
+    // Remove duplicates by start_time (in case of database inconsistencies)
     const uniqueSlots = timeSlots?.reduce((acc, slot) => {
-      const existingSlot = acc.find((s: any) => s.slot_time === slot.slot_time);
+      const existingSlot = acc.find((s: any) => s.start_time === slot.start_time);
       if (!existingSlot) {
         acc.push(slot);
       }
@@ -76,8 +77,9 @@ export async function GET(request: NextRequest) {
     const formattedSlots = limitedSlots.map((slot: any) => ({
       id: slot.id,
       slot_date: slot.slot_date,
-      slot_time: slot.slot_time,
-      is_available: slot.is_available,
+      start_time: slot.start_time,
+      end_time: slot.end_time,
+      is_blocked: slot.is_blocked,
     }));
 
     return NextResponse.json(formattedSlots);
@@ -91,21 +93,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function generateTimeSlotsIfNeeded(date: string): Promise<void> {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/api/time-slots/generate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ date }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('Error generating time slots:', error);
-    }
-  } catch (err) {
-    console.error('Failed to generate time slots:', err);
-  }
-}
+// Removed: Internal API call replaced with direct service call

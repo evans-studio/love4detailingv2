@@ -5,9 +5,9 @@ import type { ComponentType } from 'react';
 export type DbUser = Database['public']['Tables']['users']['Row'];
 export type DbVehicle = Database['public']['Tables']['vehicles']['Row'];
 export type DbBooking = Database['public']['Tables']['bookings']['Row'];
-export type DbVehicleSize = Database['public']['Tables']['vehicle_sizes']['Row'];
-export type DbTimeSlot = Database['public']['Tables']['time_slots']['Row'];
-export type DbReward = Database['public']['Tables']['rewards']['Row'];
+export type DbAvailableSlot = Database['public']['Tables']['available_slots']['Row'];
+export type DbCustomerReward = Database['public']['Tables']['customer_rewards']['Row'];
+export type DbServicePricing = Database['public']['Tables']['service_pricing']['Row'];
 export type DbRewardTransaction = Database['public']['Tables']['reward_transactions']['Row'];
 export type DbAdminNote = Database['public']['Tables']['admin_notes']['Row'];
 export type DbMissingVehicleModel = Database['public']['Tables']['missing_vehicle_models']['Row'];
@@ -241,21 +241,18 @@ export interface Booking {
     make: string;
     model: string;
     registration: string;
-    vehicle_sizes: {
-      label: string;
-      price_pence: number;
-    };
   };
-  time_slots?: {
+  available_slots?: {
     slot_date: string;
-    slot_time: string;
+    start_time: string;
+    end_time: string;
   };
 }
 
 export interface BookingFormData {
   vehicle_id: string;
-  time_slot_id: string;
-  vehicle_size_id: string;
+  slot_id: string;
+  vehicle_size: string;
   date: string;
   timeSlot: string;
   price_snapshot_pence: number;
@@ -272,12 +269,13 @@ export type BookingStatus =
   | 'completed'
   | 'cancelled';
 
-// Time Slot Enhancement Types
-export interface TimeSlot {
+// Available Slot Types
+export interface AvailableSlot {
   id: string;
   slot_date: string;
-  slot_time: string;
-  is_available: boolean;
+  start_time: string;
+  end_time: string;
+  is_blocked: boolean;
   created_at: string;
 }
 

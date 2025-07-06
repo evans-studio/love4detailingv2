@@ -62,12 +62,12 @@ export async function POST(request: NextRequest) {
       // Check if this day is a working day
       if (workingHours.workingDays.includes(currentDate.getDay())) {
         const dateStr = format(currentDate, 'yyyy-MM-dd');
-        for (const time of timeSlots) {
+        for (const timeSlot of timeSlots) {
           slots.push({
             slot_date: dateStr,
-            slot_time: time,
-            is_booked: false,
-            is_available: true
+            start_time: timeSlot.start,
+            end_time: timeSlot.end,
+            is_blocked: false
           });
         }
       }
@@ -78,9 +78,9 @@ export async function POST(request: NextRequest) {
 
     // Use upsert to handle conflicts
     const { data, error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .upsert(slots, { 
-        onConflict: 'slot_date,slot_time',
+        onConflict: 'slot_date,start_time',
         ignoreDuplicates: true 
       })
       .select('id');
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateTimeSlots(config: WorkingHours): string[] {
+function generateTimeSlots(config: WorkingHours): { start: string; end: string }[] {
   const { start, end, slotsCount } = config;
   
   // Parse start and end times
@@ -126,20 +126,27 @@ function generateTimeSlots(config: WorkingHours): string[] {
   const startMinutes = startHour * 60 + startMin;
   const endMinutes = endHour * 60 + endMin;
   
-  // Calculate interval between slots
+  // Calculate interval between slots (assuming 1 hour slots)
+  const slotDuration = 60; // 1 hour slots
   const totalMinutes = endMinutes - startMinutes;
-  const interval = Math.floor(totalMinutes / (slotsCount - 1));
+  const interval = Math.floor(totalMinutes / slotsCount);
   
   const slots = [];
   
   for (let i = 0; i < slotsCount; i++) {
-    const slotMinutes = startMinutes + (i * interval);
-    const hours = Math.floor(slotMinutes / 60);
-    const minutes = slotMinutes % 60;
+    const slotStartMinutes = startMinutes + (i * interval);
+    const slotEndMinutes = slotStartMinutes + slotDuration;
+    
+    const startHours = Math.floor(slotStartMinutes / 60);
+    const startMins = slotStartMinutes % 60;
+    const endHours = Math.floor(slotEndMinutes / 60);
+    const endMins = slotEndMinutes % 60;
     
     // Format as HH:MM:SS
-    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
-    slots.push(timeString);
+    const startTime = `${startHours.toString().padStart(2, '0')}:${startMins.toString().padStart(2, '0')}:00`;
+    const endTime = `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}:00`;
+    
+    slots.push({ start: startTime, end: endTime });
   }
   
   return slots;

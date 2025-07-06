@@ -1,12 +1,7 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+// Auto-generated database types for Love4Detailing v2.0
+// This file defines the complete database schema structure
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       users: {
@@ -569,16 +564,6 @@ export interface Database {
         }
         Returns: string
       }
-      generate_booking_reference: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      award_booking_points: {
-        Args: {
-          p_booking_id: string
-        }
-        Returns: number
-      }
     }
     Enums: {
       booking_status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
@@ -623,9 +608,3 @@ export type UserRole = Database['public']['Enums']['user_role']
 export type VehicleSize = Database['public']['Enums']['vehicle_size']
 export type RewardTier = Database['public']['Enums']['reward_tier']
 export type RewardTransactionType = Database['public']['Enums']['reward_transaction_type']
-
-// Legacy compatibility - for files that still reference old table names
-// These should be updated to use the new names above
-export type TimeSlotRow = AvailableSlotRow // time_slots -> available_slots
-export type RewardRow = CustomerRewardRow // rewards -> customer_rewards
-export type VehicleSizeEnum = VehicleSize // vehicle_sizes table -> vehicle_size enum

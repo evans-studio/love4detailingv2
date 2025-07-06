@@ -49,11 +49,11 @@ export async function POST(request: Request) {
     }
 
     const timeSlots = [
-      '10:00:00',
-      '11:30:00',
-      '13:00:00',
-      '14:30:00',
-      '16:00:00',
+      { start: '10:00:00', end: '11:00:00' },
+      { start: '11:30:00', end: '12:30:00' },
+      { start: '13:00:00', end: '14:00:00' },
+      { start: '14:30:00', end: '15:30:00' },
+      { start: '16:00:00', end: '17:00:00' },
     ];
 
     const slots = [];
@@ -63,11 +63,12 @@ export async function POST(request: Request) {
       // Skip Sundays
       if (currentDate.getDay() !== 0) {
         const dateStr = format(currentDate, 'yyyy-MM-dd');
-        for (const time of timeSlots) {
+        for (const timeSlot of timeSlots) {
           slots.push({
             slot_date: dateStr,
-            slot_time: time,
-            is_available: true
+            start_time: timeSlot.start,
+            end_time: timeSlot.end,
+            is_blocked: false
           });
         }
       }
@@ -78,8 +79,8 @@ export async function POST(request: Request) {
 
     // Check which slots already exist to avoid unnecessary operations
     const { data: existingSlots } = await supabaseAdmin
-      .from('time_slots')
-      .select('slot_date, slot_time')
+      .from('available_slots')
+      .select('slot_date, start_time')
       .gte('slot_date', format(startDate, 'yyyy-MM-dd'))
       .lte('slot_date', format(endDate, 'yyyy-MM-dd'));
 
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
     const newSlots = slots.filter(slot => {
       return !existingSlots?.some(existing => 
         existing.slot_date === slot.slot_date && 
-        existing.slot_time === slot.slot_time
+        existing.start_time === slot.start_time
       );
     });
 
@@ -99,9 +100,9 @@ export async function POST(request: Request) {
     if (newSlots.length > 0) {
       // Use upsert with the admin client to handle conflicts
       const result = await supabaseAdmin
-        .from('time_slots')
+        .from('available_slots')
         .upsert(newSlots, { 
-          onConflict: 'slot_date,slot_time',
+          onConflict: 'slot_date,start_time',
           ignoreDuplicates: true 
         })
         .select('id');
@@ -124,11 +125,11 @@ export async function POST(request: Request) {
 
     // Get available slots for the requested date
     const { data: availableSlots, error: availableSlotsError } = await supabaseAdmin
-      .from('time_slots')
+      .from('available_slots')
       .select('*')
       .eq('slot_date', format(requestedDate, 'yyyy-MM-dd'))
-      .eq('is_available', true)
-      .order('slot_time');
+      .eq('is_blocked', false)
+      .order('start_time');
 
     if (availableSlotsError) {
       console.error('Error fetching available slots:', availableSlotsError);

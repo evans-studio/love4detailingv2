@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
-import vehicleSizeData from '../../../vehicle-size-data.json';
+import vehicleSizeData from '@/data/vehicle-size-data.json';
 
 // Size code to label mapping
 const sizeMap = {
