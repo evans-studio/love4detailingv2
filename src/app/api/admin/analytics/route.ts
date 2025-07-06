@@ -6,6 +6,17 @@ import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
+// Helper function to get vehicle size label from size_id
+function getVehicleSizeLabel(sizeId: string): string {
+  const labels = {
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large', 
+    extra_large: 'Extra Large'
+  };
+  return labels[sizeId as keyof typeof labels] || 'Unknown';
+}
+
 const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -88,7 +99,7 @@ export async function GET(request: NextRequest) {
       // Vehicle registrations
       supabaseServiceRole
         .from('vehicles')
-        .select('id, created_at, size_id, vehicle_sizes(label)')
+        .select('id, created_at, size_id')
         .gte('created_at', fromDate)
         .lte('created_at', toDate + 'T23:59:59'),
 
@@ -103,7 +114,7 @@ export async function GET(request: NextRequest) {
       supabaseServiceRole
         .from('bookings')
         .select(`
-          vehicles!inner(size_id, vehicle_sizes!inner(label, price_pence)),
+          vehicles!inner(size_id),
           total_price_pence
         `)
         .gte('created_at', fromDate)
@@ -150,7 +161,7 @@ export async function GET(request: NextRequest) {
     
     // Vehicle size distribution
     const vehicleSizeStats = vehiclesResult.data?.reduce((acc, vehicle: any) => {
-      const size = vehicle.vehicle_sizes?.label || 'Unknown';
+      const size = getVehicleSizeLabel(vehicle.size_id);
       acc[size] = (acc[size] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
@@ -163,7 +174,7 @@ export async function GET(request: NextRequest) {
 
     // Process top vehicle sizes by revenue
     const vehicleSizeRevenue = topVehicleSizesResult.data?.reduce((acc, booking: any) => {
-      const size = booking.vehicles?.vehicle_sizes?.label || 'Unknown';
+      const size = getVehicleSizeLabel(booking.vehicles?.size_id);
       acc[size] = (acc[size] || 0) + (booking.total_price_pence || 0);
       return acc;
     }, {} as Record<string, number>) || {};
