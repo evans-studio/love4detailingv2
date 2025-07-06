@@ -156,104 +156,123 @@ export class AvailabilityService {
     return !booking; // Available if no booking exists
   }
 
-  // Calendar View Data - Using proper schema with UUID relationships
+  // Fixed getCalendarData method - handles the relationship properly
   static async getCalendarData(startDate: string, endDate: string, client?: any): Promise<AvailabilityCalendarDay[]> {
     const supabase = client || createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
-    // Get availability config for date range
-    const { data: dailyConfigs, error: configError } = await supabase
-      .from('daily_availability')
-      .select('*')
-      .gte('date', startDate)
-      .lte('date', endDate);
+    console.log('Loading calendar data for:', startDate, 'to', endDate);
     
-    if (configError) throw configError;
+    try {
+      // Get availability config for date range
+      const { data: dailyConfigs, error: configError } = await supabase
+        .from('daily_availability')
+        .select('*')
+        .gte('date', startDate)
+        .lte('date', endDate);
+      
+      if (configError) {
+        console.error('Config error:', configError);
+        throw configError;
+      }
 
-    // Get time slots with bookings using proper foreign key relationship
-    const { data: slots, error: slotsError } = await supabase
-      .from('time_slots')
-      .select(`
-        *,
-        bookings!time_slots_time_slot_id_fkey(
-          id,
-          full_name,
-          booking_reference,
-          status
-        )
-      `)
-      .gte('slot_date', startDate)         // ✅ Correct column name
-      .lte('slot_date', endDate)           // ✅ Correct column name
-      .order('slot_date, slot_number');
-    
-    if (slotsError) throw slotsError;
+      // Get time slots - simplified query without complex joins
+      const { data: slots, error: slotsError } = await supabase
+        .from('time_slots')
+        .select('*')
+        .gte('slot_date', startDate)
+        .lte('slot_date', endDate)
+        .order('slot_date, slot_number');
+      
+      if (slotsError) {
+        console.error('Slots error:', slotsError);
+        throw slotsError;
+      }
 
-    // Get weekly template as fallback
-    const weeklyTemplate = await this.getWeeklyTemplate(supabase);
-    
-    // Build calendar data
-    const calendarDays: AvailabilityCalendarDay[] = [];
-    const currentDate = new Date(startDate);
-    const end = new Date(endDate);
-    
-    while (currentDate <= end) {
-      const dateStr = currentDate.toISOString().split('T')[0];
-      const dayOfWeek = currentDate.getDay() as DayOfWeek;
+      // Get bookings separately to avoid complex join issues
+      const { data: bookings, error: bookingsError } = await supabase
+        .from('bookings')
+        .select('id, time_slot_id, full_name, booking_reference, status')
+        .not('status', 'eq', 'cancelled');
       
-      // Get config for this date - FIX: Add proper type annotations
-      const dailyConfig = dailyConfigs?.find((c: any) => c.date === dateStr);
-      const templateConfig = weeklyTemplate.find((t: any) => t.day_of_week === dayOfWeek);
+      if (bookingsError) {
+        console.error('Bookings error:', bookingsError);
+        // Don't throw - calendar can work without booking data
+      }
+
+      // Get weekly template as fallback
+      const weeklyTemplate = await this.getWeeklyTemplate(supabase);
       
-      const isWorkingDay = dailyConfig?.working_day ?? templateConfig?.working_day ?? false;
-      const maxSlots = dailyConfig?.available_slots ?? templateConfig?.max_slots ?? 0;
+      // Build calendar data
+      const calendarDays: AvailabilityCalendarDay[] = [];
+      const currentDate = new Date(startDate);
+      const end = new Date(endDate);
       
-      // Get slots for this date using correct column name
-      const dateSlots = slots?.filter((s: any) => s.slot_date === dateStr) || [];
-      
-      const dayData: AvailabilityCalendarDay = {
-        date: dateStr,
-        dayName: currentDate.toLocaleDateString('en-US', { weekday: 'short' }),
-        dayNumber: currentDate.getDate(),
-        isWorkingDay,
-        maxSlots,
-        availableSlots: 0,
-        slots: []
-      };
-      
-      // Build slot data
-      for (let slotNum = 1; slotNum <= 5; slotNum++) {
-        const slot = dateSlots.find((s: any) => s.slot_number === slotNum);
-        const booking = slot?.bookings?.find((b: any) => b.status !== 'cancelled');
+      while (currentDate <= end) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const dayOfWeek = currentDate.getDay() as DayOfWeek;
         
-        let status: 'available' | 'booked' | 'unavailable' = 'unavailable';
+        // Get config for this date
+        const dailyConfig = dailyConfigs?.find((c: any) => c.date === dateStr);
+        const templateConfig = weeklyTemplate.find((t: any) => t.day_of_week === dayOfWeek);
         
-        if (slotNum <= maxSlots && isWorkingDay && slot?.is_available) {
-          status = booking ? 'booked' : 'available';
+        const isWorkingDay = dailyConfig?.working_day ?? templateConfig?.working_day ?? false;
+        const maxSlots = dailyConfig?.available_slots ?? templateConfig?.max_slots ?? 0;
+        
+        // Get slots for this date
+        const dateSlots = slots?.filter((s: any) => s.slot_date === dateStr) || [];
+        
+        const dayData: AvailabilityCalendarDay = {
+          date: dateStr,
+          dayName: currentDate.toLocaleDateString('en-US', { weekday: 'short' }),
+          dayNumber: currentDate.getDate(),
+          isWorkingDay,
+          maxSlots,
+          availableSlots: 0,
+          slots: []
+        };
+        
+        // Build slot data
+        for (let slotNum = 1; slotNum <= 5; slotNum++) {
+          const slot = dateSlots.find((s: any) => s.slot_number === slotNum);
+          
+          // Find booking for this slot
+          const booking = slot ? bookings?.find((b: any) => b.time_slot_id === slot.id) : null;
+          
+          let status: 'available' | 'booked' | 'unavailable' = 'unavailable';
+          
+          if (slotNum <= maxSlots && isWorkingDay && slot?.is_available) {
+            status = booking ? 'booked' : 'available';
+          }
+          
+          if (status === 'available') {
+            dayData.availableSlots++;
+          }
+          
+          dayData.slots.push({
+            slot_number: slotNum,
+            time: slot?.slot_time || '',
+            status,
+            booking: booking ? {
+              id: booking.id,
+              customer_name: booking.full_name,
+              reference: booking.booking_reference
+            } : undefined
+          });
         }
         
-        if (status === 'available') {
-          dayData.availableSlots++;
-        }
-        
-        dayData.slots.push({
-          slot_number: slotNum,
-          time: slot?.slot_time || '',    // ✅ Correct column name
-          status,
-          booking: booking ? {
-            id: booking.id,
-            customer_name: booking.full_name,
-            reference: booking.booking_reference
-          } : undefined
-        });
+        calendarDays.push(dayData);
+        currentDate.setDate(currentDate.getDate() + 1);
       }
       
-      calendarDays.push(dayData);
-      currentDate.setDate(currentDate.getDate() + 1);
+      console.log('Calendar days built:', calendarDays.length);
+      return calendarDays;
+    } catch (error) {
+      console.error('Calendar data error:', error);
+      throw error;
     }
-    
-    return calendarDays;
   }
 
   // Additional helper methods for seamless UX
