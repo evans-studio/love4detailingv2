@@ -68,7 +68,7 @@ export default function SignupPage() {
         setMessage('Please check your email and click the confirmation link.');
       } else if (data.session) {
         // User is immediately signed in
-        window.location.href = '/dashboard';
+        router.push('/dashboard');
       }
     } catch (error) {
       console.error('Signup error:', error);

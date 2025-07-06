@@ -12,6 +12,9 @@ export function Header() {
         </Link>
 
         <div className="flex items-center space-x-4">
+          <Link href="/#pricing">
+            <Button variant="ghost">View Pricing</Button>
+          </Link>
           <Link href="/book">
             <Button>Book Detail</Button>
           </Link>
