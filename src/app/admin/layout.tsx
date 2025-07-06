@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '@/lib/constants/routes';
 import { cn } from '@/lib/utils';
-import { BookOpen, Settings, Users, Clock, BarChart3, DollarSign, FileText } from 'lucide-react';
+import { BookOpen, Settings, Users, Clock, BarChart3, TrendingUp } from 'lucide-react';
 import { checkAdminAccess } from '@/lib/auth/admin';
 import { LoadingState } from '@/components/ui/LoadingState';
 
 const navigation = [
   {
     name: 'Overview',
-    href: '/admin',
+    href: ROUTES.ADMIN,
     icon: BarChart3,
   },
   {
@@ -22,23 +22,23 @@ const navigation = [
   },
   {
     name: 'Availability',
-    href: '/admin/availability',
+    href: ROUTES.ADMIN_AVAILABILITY,
     icon: Clock,
   },
   {
-    name: 'Pricing',
-    href: '/admin/pricing',
-    icon: DollarSign,
-  },
-  {
-    name: 'Policies',
-    href: '/admin/policies',
-    icon: FileText,
-  },
-  {
-    name: 'Users',
-    href: ROUTES.ADMIN_USERS,
+    name: 'Customers',
+    href: ROUTES.ADMIN_CUSTOMERS,
     icon: Users,
+  },
+  {
+    name: 'Analytics',
+    href: ROUTES.ADMIN_ANALYTICS,
+    icon: TrendingUp,
+  },
+  {
+    name: 'Settings',
+    href: ROUTES.ADMIN_SETTINGS,
+    icon: Settings,
   },
 ];
 
