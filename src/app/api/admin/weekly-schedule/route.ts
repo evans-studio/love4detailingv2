@@ -63,6 +63,8 @@ export async function GET(request: NextRequest) {
         slot_3_time,
         slot_4_time,
         slot_5_time,
+        start_time,
+        end_time,
         created_at,
         updated_at
       `)
@@ -165,10 +167,13 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString()
     };
 
-    // Upsert the weekly schedule template
+    // Upsert the weekly schedule template using day_of_week as unique key
     const { data, error } = await supabase
       .from('weekly_schedule_template')
-      .upsert(updateData)
+      .upsert(updateData, { 
+        onConflict: 'day_of_week',
+        ignoreDuplicates: false 
+      })
       .select(`
         id,
         day_of_week,
