@@ -6,15 +6,22 @@ import { z } from 'zod';
 import { checkServerAdminAccess } from '@/lib/auth/admin';
 
 // Validation schema for weekly schedule updates
+const timeFieldSchema = z.union([
+  z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  z.string().length(0), // Allow empty strings
+  z.null(),
+  z.undefined()
+]).optional();
+
 const WeeklyScheduleUpdateSchema = z.object({
   day_of_week: z.number().int().min(0).max(6),
   working_day: z.boolean(),
   max_slots: z.number().int().min(0).max(5),
-  slot_1_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  slot_2_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  slot_3_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  slot_4_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  slot_5_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+  slot_1_time: timeFieldSchema,
+  slot_2_time: timeFieldSchema,
+  slot_3_time: timeFieldSchema,
+  slot_4_time: timeFieldSchema,
+  slot_5_time: timeFieldSchema,
 });
 
 // Time validation helper
@@ -124,13 +131,17 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
+    console.log('Received request body:', JSON.stringify(body, null, 2));
+    
     const validationResult = WeeklyScheduleUpdateSchema.safeParse(body);
 
     if (!validationResult.success) {
+      console.log('Validation failed:', validationResult.error.errors);
       return NextResponse.json(
         { 
           error: 'Invalid request data',
-          details: validationResult.error.errors
+          details: validationResult.error.errors,
+          receivedData: body
         },
         { status: 400 }
       );
