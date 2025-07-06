@@ -31,6 +31,17 @@ const PUBLIC_ROUTES = [
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+  
+  // Skip middleware for certain internal Next.js requests to avoid RSC payload issues
+  if (
+    req.nextUrl.pathname.includes('/_next/') ||
+    req.nextUrl.pathname.includes('/api/') ||
+    req.headers.get('RSC') === '1' ||
+    req.headers.get('Next-Router-Prefetch') === '1'
+  ) {
+    return res;
+  }
+  
   const supabase = createMiddlewareClient<Database>({ req, res });
   
   try {
@@ -72,15 +83,19 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(redirectUrl);
       }
 
-      // Check if user has admin role
-      const { data: user } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
+      // Check if user has admin role - but cache the result in session to avoid repeated DB calls
+      const userRole = session.user.user_metadata?.role;
+      if (userRole !== 'admin') {
+        // Only make DB call if role isn't cached in session
+        const { data: user } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
 
-      if (!user || user.role !== 'admin') {
-        return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+        if (!user || user.role !== 'admin') {
+          return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+        }
       }
     }
 
@@ -94,30 +109,44 @@ export async function middleware(req: NextRequest) {
 
     // Handle protected routes - redirect admin users to admin portal
     if (isProtectedRoute && session) {
-      const { data: user } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      if (user && user.role === 'admin') {
+      const userRole = session.user.user_metadata?.role;
+      if (userRole === 'admin') {
         return NextResponse.redirect(new URL('/admin', req.url));
+      } else if (!userRole) {
+        // Only make DB call if role isn't cached
+        const { data: user } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (user && user.role === 'admin') {
+          return NextResponse.redirect(new URL('/admin', req.url));
+        }
       }
     }
 
     // Handle auth routes when user is logged in
     if (isAuthRoute && session) {
       // Check if user is admin and redirect appropriately
-      const { data: user } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      if (user && user.role === 'admin') {
+      const userRole = session.user.user_metadata?.role;
+      if (userRole === 'admin') {
         return NextResponse.redirect(new URL('/admin', req.url));
-      } else {
+      } else if (userRole) {
         return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+      } else {
+        // Only make DB call if role isn't cached
+        const { data: user } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (user && user.role === 'admin') {
+          return NextResponse.redirect(new URL('/admin', req.url));
+        } else {
+          return NextResponse.redirect(new URL(ROUTES.DASHBOARD, req.url));
+        }
       }
     }
 
@@ -152,7 +181,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - api routes (handled separately)
+     * - RSC payloads
      */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/|api/|_next/webpack-hmr).*)',
   ],
 }; 

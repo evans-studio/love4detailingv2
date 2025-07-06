@@ -2,6 +2,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase';
 
+// Simple cache for user roles to avoid repeated DB calls
+const roleCache = new Map<string, { role: string; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 // Client-side admin check
 export async function checkAdminAccess(): Promise<boolean> {
   try {
@@ -14,6 +18,12 @@ export async function checkAdminAccess(): Promise<boolean> {
       return false;
     }
 
+    // Check cache first
+    const cached = roleCache.get(user.id);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.role === 'admin';
+    }
+
     // Check if user has admin role in database
     const { data: userProfile, error: profileError } = await supabase
       .from('users')
@@ -24,6 +34,12 @@ export async function checkAdminAccess(): Promise<boolean> {
     if (profileError || !userProfile) {
       return false;
     }
+
+    // Cache the result
+    roleCache.set(user.id, {
+      role: userProfile.role,
+      timestamp: Date.now()
+    });
 
     return userProfile.role === 'admin';
   } catch (error) {
@@ -60,6 +76,12 @@ export async function checkServerAdminAccess(userId: string): Promise<boolean> {
 // Get user role
 export async function getUserRole(userId: string): Promise<'customer' | 'admin' | null> {
   try {
+    // Check cache first
+    const cached = roleCache.get(userId);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.role as 'customer' | 'admin';
+    }
+
     const supabase = createClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -74,6 +96,12 @@ export async function getUserRole(userId: string): Promise<'customer' | 'admin' 
     if (error || !userProfile) {
       return null;
     }
+
+    // Cache the result
+    roleCache.set(userId, {
+      role: userProfile.role,
+      timestamp: Date.now()
+    });
 
     return userProfile.role as 'customer' | 'admin';
   } catch (error) {
