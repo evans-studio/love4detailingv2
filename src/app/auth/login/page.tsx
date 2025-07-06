@@ -55,6 +55,38 @@ export default function LoginPage() {
     }
   };
 
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin`,
+        }
+      });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      alert('Check your email for the magic link!');
+    } catch (error) {
+      setError('An unexpected error occurred');
+      console.error('Magic link error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
       <Card className="w-full max-w-md">
@@ -117,6 +149,25 @@ export default function LoginPage() {
                 <ArrowRight className="h-4 w-4 mr-2" />
               )}
               Sign In
+            </Button>
+
+            <div className="text-center">
+              <span className="text-sm text-gray-500">or</span>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleMagicLink}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Mail className="h-4 w-4 mr-2" />
+              )}
+              Send Magic Link
             </Button>
 
             <div className="text-center space-y-2">
