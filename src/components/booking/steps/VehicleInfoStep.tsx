@@ -120,8 +120,14 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold mb-4 text-[#F2F2F2]">Vehicle Information</h2>
+        <div className="bg-purple-100 p-4 rounded-lg mb-6">
+          <h3 className="font-medium text-purple-900 mb-2">Service: Full Valet</h3>
+          <p className="text-sm text-purple-800">
+            Premium mobile car detailing service - pricing based on vehicle size
+          </p>
+        </div>
         <p className="text-[#C7C7C7] mb-6">
-          Please provide details about your vehicle
+          Please provide details about your vehicle for accurate pricing
         </p>
       </div>
 
@@ -249,8 +255,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
               >
                 <div className="font-medium">{size.label}</div>
                 <div className="text-sm text-gray-600 mt-1">{size.description}</div>
-                <div className="text-sm font-medium text-primary-600 mt-2">
-                  £{(size.price_pence / 100).toFixed(2)}
+                <div className="text-sm font-medium text-purple-600 mt-2">
+                  Full Valet - £{(size.price_pence / 100).toFixed(2)}
                 </div>
               </button>
             ))}
@@ -268,13 +274,13 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
             onClick={onBack}
             className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
           >
-            Back: Service Selection
+            Back
           </button>
         )}
         <button
           type="button"
           onClick={handleNext}
-          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors ml-auto"
+          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors ml-auto"
         >
           Next: Personal Details
         </button>

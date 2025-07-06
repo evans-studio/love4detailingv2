@@ -21,12 +21,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch all time slots for the date (including booked ones for admin view)
+    // Fetch all time slots for the date (including blocked ones for admin view)
     const { data: timeSlots, error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .select('*')
       .eq('slot_date', dateParam)
-      .order('slot_time');
+      .order('start_time');
 
     if (error) {
       console.error('Database error fetching admin time slots:', error);

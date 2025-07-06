@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(
         email,
         {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery&booking=${bookingId}`
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?type=recovery&booking=${bookingId}`
         }
       );
       
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
             { 
               error: 'Email service temporarily unavailable. Please try again later or contact support.',
               fallback: 'You can manually reset your password by visiting the sign-in page and clicking "Forgot Password".',
-              signInUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/sign-in`
+              signInUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/sign-in`
             },
             { status: 503 }
           );
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
         email,
         {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/setup-password?booking=${bookingId}`,
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/setup-password?booking=${bookingId}`,
           data: {
             booking_id: bookingId,
             first_name: user.full_name?.split(' ')[0] || '',

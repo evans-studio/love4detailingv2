@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { unifiedBookingSchema } from '@/lib/validation/booking';
+import { BookingService } from '@/lib/services/booking.service';
 import { cookies } from 'next/headers';
 
 // Force dynamic rendering for this API route
@@ -39,15 +40,12 @@ export async function GET(request: NextRequest) {
           make,
           model,
           year,
-          color,
-          vehicle_sizes (
-            label,
-            price_pence
-          )
+          color
         ),
-        time_slots (
+        available_slots (
           slot_date,
-          slot_time
+          start_time,
+          end_time
         )
       `, { count: 'exact' })
       .eq('user_id', user.id);
@@ -90,14 +88,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Create new booking using the new BookingService
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    // Set up base URL for API calls
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || 'https://love4detailingv2.vercel.app';
-    
-    // Log incoming data for debugging
     console.log('Incoming booking data:', JSON.stringify(body, null, 2));
     
     // Validate the request data
@@ -110,285 +104,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { service, vehicle, personalDetails, dateTime, vehicleSizeId, totalPrice } = validationResult.data;
-
-    // Since we're having database migration issues, let's temporarily disable the reward trigger
-    // and use a simple approach that works
+    const { vehicle, personalDetails, dateTime } = validationResult.data;
     
-    // First, try to disable the trigger temporarily for this session
-    try {
-      await supabaseServiceRole.rpc('exec_sql', { 
-        sql_query: 'SET session_replication_role = replica;'
-      });
-    } catch (e) {
-      console.log('Could not disable trigger, proceeding anyway');
-    }
-
-    // Check time slot availability
-    const { data: timeSlot, error: timeSlotError } = await supabaseServiceRole
-      .from('time_slots')
-      .select('is_available')
-      .eq('id', dateTime.timeSlotId)
-      .single();
-
-    if (timeSlotError || !timeSlot || !timeSlot.is_available) {
-      return NextResponse.json(
-        { error: 'Selected time slot is no longer available' },
-        { status: 400 }
-      );
-    }
-
-    // Get vehicle size price
-    const { data: sizeData, error: sizeError } = await supabaseServiceRole
-      .from('vehicle_sizes')
-      .select('price_pence')
-      .eq('id', vehicle.sizeId)
-      .single();
-
-    if (sizeError || !sizeData) {
-      return NextResponse.json(
-        { error: 'Invalid vehicle size' },
-        { status: 400 }
-      );
-    }
-
-    // Check if user exists
-    let userId: string | null = null;
-    let existingUser = false;
+    // Create booking using the new BookingService
+    const bookingService = new BookingService();
     
-    const { data: user } = await supabaseServiceRole
-      .from('users')
-      .select('id')
-      .eq('email', personalDetails.email)
-      .single();
+    // Check if user is authenticated
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Prepare booking data
+    const bookingData = {
+      customerEmail: personalDetails.email,
+      customerName: `${personalDetails.firstName} ${personalDetails.lastName}`,
+      customerPhone: personalDetails.phone,
+      slotId: dateTime.timeSlotId,
+      vehicleId: undefined, // Will be handled by the booking service
+      userId: user?.id,
+    };
 
-    if (user) {
-      userId = user.id;
-      existingUser = true;
-    } else {
-      // Try to create new user via anonymous auth endpoint first
-      try {
-        const response = await fetch(`${baseUrl}/api/auth/anonymous`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: personalDetails.email,
-            fullName: `${personalDetails.firstName} ${personalDetails.lastName}`,
-            phone: personalDetails.phone,
-          }),
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          userId = result.user.id;
-          existingUser = false;
-        } else {
-          throw new Error('Anonymous user creation failed');
-        }
-      } catch (error) {
-        // Fallback to direct auth user creation
-        console.log('Falling back to direct user creation:', error);
-        
-        try {
-          const { data: authUser, error: authError } = await supabaseServiceRole.auth.admin.createUser({
-            email: personalDetails.email,
-            email_confirm: true,
-            user_metadata: {
-              first_name: personalDetails.firstName,
-              last_name: personalDetails.lastName,
-              phone: personalDetails.phone,
-            }
-          });
-
-          if (authError) {
-            console.error('Auth user creation error:', authError);
-            return NextResponse.json(
-              { error: 'Failed to create user account', details: authError.message, code: authError.code },
-              { status: 500 }
-            );
-          }
-
-          userId = authUser.user.id;
-
-          // Create user profile
-          const { error: profileError } = await supabaseServiceRole.from('users').insert({
-            id: userId,
-            email: personalDetails.email,
-            full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
-            phone: personalDetails.phone,
-            role: 'customer',
-            created_at: new Date().toISOString(),
-          });
-
-          if (profileError) {
-            console.error('Profile creation error:', profileError);
-            // Clean up auth user if profile creation failed
-            await supabaseServiceRole.auth.admin.deleteUser(userId);
-            return NextResponse.json(
-              { error: 'Failed to create user profile', details: profileError.message },
-              { status: 500 }
-            );
-          }
-        } catch (fallbackError) {
-          console.error('All user creation methods failed:', fallbackError);
-          return NextResponse.json(
-            { error: 'Unable to create user account. Please try again or contact support.' },
-            { status: 500 }
-          );
-        }
-      }
-    }
-
-    // Create vehicle
-    const { data: vehicleRecord, error: vehicleError } = await supabaseServiceRole
-      .from('vehicles')
-      .insert({
-        registration: vehicle.registration.toUpperCase(),
-        make: vehicle.make,
-        model: vehicle.model,
-        year: vehicle.year || '',
-        color: vehicle.color || '',
-        size_id: vehicle.sizeId,
-        user_id: userId,
-      })
-      .select()
-      .single();
-
-    if (vehicleError) {
-      return NextResponse.json(
-        { error: 'Failed to create vehicle', details: vehicleError.message },
-        { status: 500 }
-      );
-    }
-
-    // Generate booking reference
-    const bookingRef = `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    // Create booking - this might fail due to trigger, but we'll check if it actually succeeded
-    const { data: booking, error: bookingError } = await supabaseServiceRole
-      .from('bookings')
-      .insert({
-        user_id: userId,
-        vehicle_id: vehicleRecord.id,
-        time_slot_id: dateTime.timeSlotId,
-        total_price_pence: sizeData.price_pence,
-        email: personalDetails.email,
-        full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
-        phone: personalDetails.phone,
-        status: 'pending',
-        payment_status: 'pending',
-        payment_method: 'cash',
-        booking_reference: bookingRef,
-        service_type: service?.serviceName || 'full-valet',
-      })
-      .select()
-      .single();
-
-    // If booking creation failed, check if it was due to trigger constraint
-    if (bookingError) {
-      if (bookingError.code === '23505' && bookingError.message.includes('unique_booking_transaction')) {
-        // Check if booking was actually created
-        const { data: existingBooking } = await supabaseServiceRole
-          .from('bookings')
-          .select('*')
-          .eq('booking_reference', bookingRef)
-          .single();
-
-        if (existingBooking) {
-          // Booking was created successfully despite the error
-          await supabaseServiceRole.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
-          
-          return NextResponse.json({
-            success: true,
-            booking: {
-              id: existingBooking.id,
-              booking_reference: existingBooking.booking_reference,
-              status: existingBooking.status,
-              payment_status: existingBooking.payment_status,
-              total_price_pence: existingBooking.total_price_pence,
-              vehicle: {
-                registration: vehicleRecord.registration,
-                make: vehicleRecord.make,
-                model: vehicleRecord.model,
-                year: vehicleRecord.year,
-                color: vehicleRecord.color,
-              },
-              time_slot: {
-                id: dateTime.timeSlotId,
-                date: dateTime.date,
-                time: dateTime.time,
-              },
-              user_id: userId,
-              is_new_user: !existingUser,
-            }
-          });
-        }
-      }
-      
-      return NextResponse.json(
-        { error: 'Failed to create booking', details: bookingError.message },
-        { status: 500 }
-      );
-    }
-
-    // Booking created successfully
-    await supabaseServiceRole.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
-
-    // Send booking confirmation email
-    try {
-      await fetch(`${baseUrl}/api/email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'booking_confirmation',
-          to: personalDetails.email,
-          booking_reference: booking.booking_reference,
-          customer_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
-          vehicle: `${vehicleRecord.make} ${vehicleRecord.model} (${vehicleRecord.registration})`,
-          appointment_date: dateTime.date,
-          appointment_time: dateTime.time,
-          total_amount: (sizeData.price_pence / 100).toFixed(2)
-        })
-      });
-    } catch (emailError) {
-      console.error('Failed to send confirmation email:', emailError);
-      // Don't fail the booking if email fails
-    }
+    // Create the booking using the database function
+    const result = await bookingService.createBooking(bookingData);
+    
+    console.log('Booking created successfully:', result);
 
     return NextResponse.json({
       success: true,
-      booking: {
-        id: booking.id,
-        booking_reference: booking.booking_reference,
-        status: booking.status,
-        payment_status: booking.payment_status,
-        total_price_pence: booking.total_price_pence,
-        vehicle: {
-          registration: vehicleRecord.registration,
-          make: vehicleRecord.make,
-          model: vehicleRecord.model,
-          year: vehicleRecord.year,
-          color: vehicleRecord.color,
-        },
-        time_slot: {
-          id: dateTime.timeSlotId,
-          date: dateTime.date,
-          time: dateTime.time,
-        },
-        user_id: userId,
-        is_new_user: !existingUser,
-      }
+      booking: result,
+      message: 'Booking created successfully'
     });
 
   } catch (error) {
     console.error('Booking creation error:', error);
     return NextResponse.json(
       { 
-        error: 'Internal server error', 
-        details: error instanceof Error ? error.message : 'Unknown error',
-        stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : 'No stack') : undefined
+        error: 'Failed to create booking', 
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );

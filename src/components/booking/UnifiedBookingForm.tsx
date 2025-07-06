@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { unifiedBookingSchema, type UnifiedBookingForm } from '@/lib/validation/booking';
-import { ServiceSelectionStep } from './steps/ServiceSelectionStep';
+// ServiceSelectionStep removed - Single Full Valet service only
 import { VehicleInfoStep } from './steps/VehicleInfoStep';
 import { PersonalDetailsStep } from './steps/PersonalDetailsStep';
 import { DateTimeStep } from './steps/DateTimeStep';
@@ -23,11 +23,10 @@ interface UnifiedBookingFormProps {
 }
 
 const steps = [
-  { id: 1, title: 'Service', description: 'Choose your detailing service' },
-  { id: 2, title: 'Vehicle Info', description: 'Tell us about your vehicle' },
-  { id: 3, title: 'Personal Details', description: 'Your contact information' },
-  { id: 4, title: 'Date & Time', description: 'Choose your appointment' },
-  { id: 5, title: 'Summary', description: 'Review and confirm' },
+  { id: 1, title: 'Vehicle Details', description: 'Tell us about your vehicle' },
+  { id: 2, title: 'Date & Time', description: 'Choose your appointment' },
+  { id: 3, title: 'Contact Info', description: 'Your contact information' },
+  { id: 4, title: 'Payment/Confirmation', description: 'Review and confirm' },
 ];
 
 export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) {
@@ -40,8 +39,8 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
     defaultValues: {
       currentStep: 1,
       service: {
-        serviceId: '',
-        serviceName: '',
+        serviceId: 'full_valet',
+        serviceName: 'Full Valet',
       },
       vehicle: {
         make: '',
@@ -116,16 +115,16 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
     switch (currentStep) {
       case 1:
         return (
-          <ServiceSelectionStep 
+          <VehicleInfoStep 
             onNext={nextStep}
+            vehicleSizes={vehicleSizes}
           />
         );
       case 2:
         return (
-          <VehicleInfoStep 
+          <DateTimeStep 
             onNext={nextStep}
             onBack={prevStep}
-            vehicleSizes={vehicleSizes}
           />
         );
       case 3:
@@ -136,13 +135,6 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
           />
         );
       case 4:
-        return (
-          <DateTimeStep 
-            onNext={nextStep}
-            onBack={prevStep}
-          />
-        );
-      case 5:
         return (
           <SummaryStep 
             onBack={prevStep}

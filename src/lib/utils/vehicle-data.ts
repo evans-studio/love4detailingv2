@@ -1,4 +1,4 @@
-import vehicleData from '@/../../vehicle-size-data.json';
+import vehicleData from '@/data/vehicle-size-data.json';
 
 export interface VehicleEntry {
   make: string;

@@ -46,13 +46,13 @@ interface Booking {
   booking_reference: string;
   user_id: string;
   vehicle_id: string;
-  time_slot_id: string;
+  slot_id: string;
   status: string;
   payment_status: string;
   total_price_pence: number;
-  full_name: string;
-  email: string;
-  phone: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
   notes?: string;
   created_at: string;
   vehicle?: {
@@ -61,15 +61,13 @@ interface Booking {
     model: string;
     year: string;
     color: string;
-    vehicle_size?: {
-      label: string;
-      price_pence: number;
-    };
   } | null;
-  time_slot?: {
+  available_slot?: {
     slot_date: string;
-    slot_time: string;
-    slot_number?: number;
+    start_time: string;
+    end_time: string;
+    current_bookings: number;
+    max_bookings: number;
   } | null;
 }
 
@@ -110,8 +108,8 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
 
   useEffect(() => {
     if (booking && isOpen) {
-      const slotDate = booking.time_slot?.slot_date || '';
-      const slotNumber = booking.time_slot?.slot_number || 1;
+      const slotDate = booking.available_slot?.slot_date || '';
+      const slotNumber = 1; // Default slot number for new schema
       
       form.reset({
         status: booking.status as any,
@@ -168,8 +166,8 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
       setSaving(true);
       
       // Validate slot availability if it's different from current booking
-      const currentSlotNumber = booking.time_slot?.slot_number;
-      const currentSlotDate = booking.time_slot?.slot_date;
+      const currentSlotNumber = 1; // Default for new schema
+      const currentSlotDate = booking.available_slot?.slot_date;
       
       if (data.slot_date !== currentSlotDate || data.slot_number !== currentSlotNumber) {
         const selectedSlot = availableSlots.find(slot => 
@@ -269,15 +267,15 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Name</div>
-                  <div className="font-medium text-[#F2F2F2]">{booking.full_name}</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.customer_name}</div>
                 </div>
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Email</div>
-                  <div className="font-medium text-[#F2F2F2]">{booking.email}</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.customer_email}</div>
                 </div>
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Phone</div>
-                  <div className="font-medium text-[#F2F2F2]">{booking.phone || 'Not provided'}</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.customer_phone || 'Not provided'}</div>
                 </div>
               </div>
             </CardContent>
@@ -304,7 +302,7 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Size & Price</div>
                   <div className="font-medium text-[#F2F2F2]">
-                    {booking.vehicle?.vehicle_size?.label} - £{((booking.total_price_pence || 0) / 100).toFixed(2)}
+                    Full Valet - £{((booking.total_price_pence || 0) / 100).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -322,8 +320,8 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Current Date</div>
                   <div className="font-medium text-[#F2F2F2]">
-                    {booking.time_slot?.slot_date ? 
-                      format(new Date(booking.time_slot.slot_date), 'PPP') : 
+                    {booking.available_slot?.slot_date ? 
+                      format(new Date(booking.available_slot.slot_date), 'PPP') : 
                       'No date set'
                     }
                   </div>
@@ -331,8 +329,8 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
                 <div>
                   <div className="text-sm text-[#C7C7C7] mb-1">Current Time</div>
                   <div className="font-medium text-[#F2F2F2]">
-                    {booking.time_slot?.slot_number ? 
-                      `Slot ${booking.time_slot.slot_number}` : 
+                    {booking.available_slot?.start_time ? 
+                      `${booking.available_slot.start_time} - ${booking.available_slot.end_time}` : 
                       'No slot'
                     }
                   </div>
