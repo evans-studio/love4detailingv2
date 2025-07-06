@@ -68,7 +68,7 @@ export class AvailabilityService {
       const dayOfWeek = currentDate.getDay();
       
       // Get template for this day
-      const dayTemplate = template.find(t => t.day_of_week === dayOfWeek);
+      const dayTemplate = template.find((t: any) => t.day_of_week === dayOfWeek);
       
       if (dayTemplate?.working_day && dayTemplate.max_slots > 0) {
         // Create daily availability record
@@ -275,7 +275,7 @@ export class AvailabilityService {
     
     if (error) throw error;
     
-    return (slots || []).filter(slot => {
+    return (slots || []).filter((slot: any) => {
       const activeBookings = slot.bookings?.filter((b: any) => b.status !== 'cancelled') || [];
       return activeBookings.length === 0;
     });
