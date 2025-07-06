@@ -62,6 +62,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
 
       // Submit booking
       const bookingData = {
+        service: data.service,
         vehicle: {
           ...data.vehicle,
           photos: photoUrls,

@@ -219,15 +219,15 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
   const getSlotStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-900/20 text-green-400 border-green-700';
       case 'current':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-[#9146FF]/20 text-[#9146FF] border-[#9146FF]/50';
       case 'booked':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-900/20 text-red-400 border-red-700';
       case 'unavailable':
-        return 'bg-gray-100 text-gray-600 border-gray-200';
+        return 'bg-gray-800 text-gray-500 border-gray-700';
       default:
-        return 'bg-gray-100 text-gray-600 border-gray-200';
+        return 'bg-gray-800 text-gray-500 border-gray-700';
     }
   };
 
@@ -259,167 +259,235 @@ export function EditBookingModal({ booking, isOpen, onClose, onSave }: EditBooki
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Booking Summary */}
-          <Card>
+          {/* Customer Information Section */}
+          <Card className="bg-[#262626] border-gray-700">
             <CardContent className="pt-6">
+              <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Customer Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3">
-                  <User className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <div className="font-medium">{booking.full_name}</div>
-                    <div className="text-sm text-gray-500">{booking.email}</div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Name</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.full_name}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Email</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.email}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Phone</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.phone || 'Not provided'}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Vehicle Details Section */}
+          <Card className="bg-[#262626] border-gray-700">
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                <Car className="h-5 w-5" />
+                Vehicle Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Registration</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.vehicle?.registration || 'Unknown'}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Make & Model</div>
+                  <div className="font-medium text-[#F2F2F2]">
+                    {booking.vehicle?.make} {booking.vehicle?.model}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Car className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <div className="font-medium">
-                      {booking.vehicle?.registration || 'Unknown'}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {booking.vehicle?.make} {booking.vehicle?.model}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <div className="font-medium">
-                      {booking.time_slot?.slot_date ? 
-                        format(new Date(booking.time_slot.slot_date), 'PPP') : 
-                        'No date set'
-                      }
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {booking.time_slot?.slot_number ? 
-                        `Slot ${booking.time_slot.slot_number}` : 
-                        'No slot'
-                      }
-                    </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Size & Price</div>
+                  <div className="font-medium text-[#F2F2F2]">
+                    {booking.vehicle?.vehicle_size?.label} - £{((booking.total_price_pence || 0) / 100).toFixed(2)}
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Booking Details Section */}
+          <Card className="bg-[#262626] border-gray-700">
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Booking Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Current Date</div>
+                  <div className="font-medium text-[#F2F2F2]">
+                    {booking.time_slot?.slot_date ? 
+                      format(new Date(booking.time_slot.slot_date), 'PPP') : 
+                      'No date set'
+                    }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Current Time</div>
+                  <div className="font-medium text-[#F2F2F2]">
+                    {booking.time_slot?.slot_number ? 
+                      `Slot ${booking.time_slot.slot_number}` : 
+                      'No slot'
+                    }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-[#C7C7C7] mb-1">Booking Reference</div>
+                  <div className="font-medium text-[#F2F2F2]">{booking.booking_reference}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            {/* Status Updates */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="status">Booking Status</Label>
-                <Select 
-                  value={form.watch('status')} 
-                  onValueChange={(value) => form.setValue('status', value as any)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Status Management Section */}
+            <Card className="bg-[#262626] border-gray-700">
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  Status Management
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="status" className="text-[#F2F2F2]">Booking Status</Label>
+                    <Select 
+                      value={form.watch('status')} 
+                      onValueChange={(value) => form.setValue('status', value as any)}
+                    >
+                      <SelectTrigger className="bg-[#1A1A1A] border-gray-700 text-[#F2F2F2]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#1A1A1A] border-gray-700">
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="payment_status">Payment Status</Label>
-                <Select 
-                  value={form.watch('payment_status')} 
-                  onValueChange={(value) => form.setValue('payment_status', value as any)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="failed">Failed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="payment_status" className="text-[#F2F2F2]">Payment Status</Label>
+                    <Select 
+                      value={form.watch('payment_status')} 
+                      onValueChange={(value) => form.setValue('payment_status', value as any)}
+                    >
+                      <SelectTrigger className="bg-[#1A1A1A] border-gray-700 text-[#F2F2F2]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#1A1A1A] border-gray-700">
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="failed">Failed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* Time Slot Selection */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="slot_date">Date</Label>
-                <Input
-                  id="slot_date"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  min={format(new Date(), 'yyyy-MM-dd')}
-                />
-              </div>
+            {/* Time Slot Selection Section */}
+            <Card className="bg-[#262626] border-gray-700">
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Reschedule Appointment
+                </h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="slot_date" className="text-[#F2F2F2]">Select New Date</Label>
+                    <Input
+                      id="slot_date"
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      min={format(new Date(), 'yyyy-MM-dd')}
+                      className="bg-[#1A1A1A] border-gray-700 text-[#F2F2F2]"
+                    />
+                  </div>
 
-              {selectedDate && (
-                <div className="space-y-2">
-                  <Label>Available Time Slots</Label>
-                  {loadingSlots ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {[1, 2, 3, 4, 5].map((slotNumber) => {
-                        const slot = availableSlots.find(s => s.slot_number === slotNumber);
-                        const slotConfig = SLOT_TIMES[slotNumber];
-                        const status = slot ? getSlotStatus(slot) : 'unavailable';
-                        const isSelected = form.watch('slot_number') === slotNumber;
-                        const isClickable = status === 'available' || status === 'current';
-                        
-                        return (
-                          <div
-                            key={slotNumber}
-                            className={`
-                              p-3 rounded-lg border cursor-pointer transition-all
-                              ${getSlotStatusColor(status)}
-                              ${isSelected ? 'ring-2 ring-blue-500' : ''}
-                              ${isClickable ? 'hover:opacity-80' : 'cursor-not-allowed opacity-60'}
-                            `}
-                            onClick={() => isClickable && handleSlotSelect(slotNumber)}
-                          >
-                            <div className="flex items-center gap-2 mb-1">
-                              {getSlotStatusIcon(status)}
-                              <span className="font-medium text-sm">
-                                Slot {slotNumber}
-                              </span>
-                            </div>
-                            <div className="text-xs">
-                              {slotConfig?.display || 'Unknown time'}
-                            </div>
-                            {slot?.booking && slot.booking.id !== booking.id && (
-                              <div className="text-xs mt-1 truncate">
-                                {slot.booking.customer_name}
+                  {selectedDate && (
+                    <div className="space-y-2">
+                      <Label className="text-[#F2F2F2]">Available Time Slots</Label>
+                      {loadingSlots ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-6 w-6 animate-spin text-[#9146FF]" />
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {[1, 2, 3, 4, 5].map((slotNumber) => {
+                            const slot = availableSlots.find(s => s.slot_number === slotNumber);
+                            const slotConfig = SLOT_TIMES[slotNumber];
+                            const status = slot ? getSlotStatus(slot) : 'unavailable';
+                            const isSelected = form.watch('slot_number') === slotNumber;
+                            const isClickable = status === 'available' || status === 'current';
+                            
+                            return (
+                              <div
+                                key={slotNumber}
+                                className={`
+                                  p-3 rounded-lg border cursor-pointer transition-all
+                                  ${getSlotStatusColor(status)}
+                                  ${isSelected ? 'ring-2 ring-[#9146FF]' : ''}
+                                  ${isClickable ? 'hover:opacity-80' : 'cursor-not-allowed opacity-60'}
+                                `}
+                                onClick={() => isClickable && handleSlotSelect(slotNumber)}
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  {getSlotStatusIcon(status)}
+                                  <span className="font-medium text-sm">
+                                    Slot {slotNumber}
+                                  </span>
+                                </div>
+                                <div className="text-xs">
+                                  {slotConfig?.display || 'Unknown time'}
+                                </div>
+                                {slot?.booking && slot.booking.id !== booking.id && (
+                                  <div className="text-xs mt-1 truncate">
+                                    {slot.booking.customer_name}
+                                  </div>
+                                )}
+                                {status === 'current' && (
+                                  <Badge variant="outline" className="mt-1 text-xs border-[#9146FF] text-[#9146FF]">
+                                    Current
+                                  </Badge>
+                                )}
                               </div>
-                            )}
-                            {status === 'current' && (
-                              <Badge variant="outline" className="mt-1 text-xs">
-                                Current
-                              </Badge>
-                            )}
-                          </div>
-                        );
-                      })}
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Notes */}
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <textarea
-                id="notes"
-                {...form.register('notes')}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Add any notes about this booking..."
-              />
-            </div>
+            {/* Admin Notes Section */}
+            <Card className="bg-[#262626] border-gray-700">
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-semibold text-[#9146FF] mb-4 flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5" />
+                  Admin Notes
+                </h3>
+                <div className="space-y-2">
+                  <Label htmlFor="notes" className="text-[#F2F2F2]">Internal Notes</Label>
+                  <textarea
+                    id="notes"
+                    {...form.register('notes')}
+                    rows={3}
+                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-gray-700 text-[#F2F2F2] rounded-md focus:outline-none focus:ring-2 focus:ring-[#9146FF] focus:border-transparent placeholder-gray-500"
+                    placeholder="Add any internal notes about this booking..."
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Actions */}
             <div className="flex justify-end space-x-3">
