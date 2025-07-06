@@ -1,0 +1,29 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+
+# Check for common Vercel issues
+echo "Checking for console.logs in API routes..."
+if grep -r "console.log" src/app/api --include="*.ts" --include="*.tsx"; then
+  echo "⚠️  Warning: console.log found in API routes. Use console.error for Vercel logs."
+fi
+
+# Check for local file system usage
+echo "Checking for file system operations..."
+if grep -r "fs\." src/app/api --include="*.ts" --include="*.tsx"; then
+  echo "❌ Error: File system operations found in API routes. This will fail on Vercel!"
+  exit 1
+fi
+
+# Run build check
+echo "Running build check..."
+npm run build
+
+# Run environment check if script exists
+if [ -f "scripts/verify-env.ts" ]; then
+  echo "Running environment verification..."
+  npm run verify:env
+fi
+
+echo "✅ Pre-push checks passed!"

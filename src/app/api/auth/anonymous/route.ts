@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { email, fullName } = await request.json();
+    const { email, fullName, phone } = await request.json();
 
     if (!email || !fullName) {
       return NextResponse.json(
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
         email_confirm: true,
         user_metadata: {
           full_name: fullName,
+          phone: phone || '',
           has_password: false
         }
       });
@@ -47,6 +48,26 @@ export async function POST(request: Request) {
       }
 
       userId = data.user.id;
+
+      // Create user profile in the users table
+      const { error: profileError } = await supabase.from('users').insert({
+        id: userId,
+        email: email,
+        full_name: fullName,
+        phone: phone || '',
+        role: 'customer',
+        created_at: new Date().toISOString(),
+      });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Clean up auth user if profile creation failed
+        await supabase.auth.admin.deleteUser(userId);
+        return NextResponse.json(
+          { error: 'Failed to create user profile', details: profileError.message },
+          { status: 500 }
+        );
+      }
     }
 
     // Generate password reset link
@@ -69,7 +90,13 @@ export async function POST(request: Request) {
     const hasPassword = userData?.user?.user_metadata?.has_password || false;
 
     return NextResponse.json({
-      user_id: userId,
+      success: true,
+      user: {
+        id: userId,
+        email: email,
+        full_name: fullName,
+        phone: phone || ''
+      },
       reset_link: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
       userExists: !!existingUser,
       hasPassword

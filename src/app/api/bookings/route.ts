@@ -163,45 +163,78 @@ export async function POST(request: NextRequest) {
       userId = user.id;
       existingUser = true;
     } else {
-      // Create new user
-      const { data: authUser, error: authError } = await supabaseServiceRole.auth.admin.createUser({
-        email: personalDetails.email,
-        email_confirm: true,
-        user_metadata: {
-          first_name: personalDetails.firstName,
-          last_name: personalDetails.lastName,
-          phone: personalDetails.phone,
+      // Try to create new user via anonymous auth endpoint first
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/api/auth/anonymous`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: personalDetails.email,
+            fullName: `${personalDetails.firstName} ${personalDetails.lastName}`,
+            phone: personalDetails.phone,
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          userId = result.user.id;
+          existingUser = false;
+        } else {
+          throw new Error('Anonymous user creation failed');
         }
-      });
+      } catch (error) {
+        // Fallback to direct auth user creation
+        console.log('Falling back to direct user creation:', error);
+        
+        try {
+          const { data: authUser, error: authError } = await supabaseServiceRole.auth.admin.createUser({
+            email: personalDetails.email,
+            email_confirm: true,
+            user_metadata: {
+              first_name: personalDetails.firstName,
+              last_name: personalDetails.lastName,
+              phone: personalDetails.phone,
+            }
+          });
 
-      if (authError) {
-        console.error('Auth user creation error:', authError);
-        return NextResponse.json(
-          { error: 'Failed to create user account', details: authError.message, code: authError.code },
-          { status: 500 }
-        );
-      }
+          if (authError) {
+            console.error('Auth user creation error:', authError);
+            return NextResponse.json(
+              { error: 'Failed to create user account', details: authError.message, code: authError.code },
+              { status: 500 }
+            );
+          }
 
-      userId = authUser.user.id;
+          userId = authUser.user.id;
 
-      // Create user profile
-      const { error: profileError } = await supabaseServiceRole.from('users').insert({
-        id: userId,
-        email: personalDetails.email,
-        full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
-        phone: personalDetails.phone,
-        role: 'customer',
-        created_at: new Date().toISOString(),
-      });
+          // Create user profile
+          const { error: profileError } = await supabaseServiceRole.from('users').insert({
+            id: userId,
+            email: personalDetails.email,
+            full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
+            phone: personalDetails.phone,
+            role: 'customer',
+            created_at: new Date().toISOString(),
+          });
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Clean up auth user if profile creation failed
-        await supabaseServiceRole.auth.admin.deleteUser(userId);
-        return NextResponse.json(
-          { error: 'Failed to create user profile', details: profileError.message },
-          { status: 500 }
-        );
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            // Clean up auth user if profile creation failed
+            await supabaseServiceRole.auth.admin.deleteUser(userId);
+            return NextResponse.json(
+              { error: 'Failed to create user profile', details: profileError.message },
+              { status: 500 }
+            );
+          }
+        } catch (fallbackError) {
+          console.error('All user creation methods failed:', fallbackError);
+          return NextResponse.json(
+            { error: 'Unable to create user account. Please try again or contact support.' },
+            { status: 500 }
+          );
+        }
       }
     }
 

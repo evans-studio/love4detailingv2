@@ -39,13 +39,14 @@ export async function GET(request: NextRequest) {
     // First, generate time slots if needed
     await generateTimeSlotsIfNeeded(dateParam);
 
-    // Fetch available time slots for the date
+    // Fetch available time slots for the date (limit to 5 per day to prevent duplicates)
     const { data: timeSlots, error } = await supabase
       .from('time_slots')
       .select('*')
       .eq('slot_date', dateParam)
       .eq('is_available', true)
-      .order('slot_time');
+      .order('slot_time')
+      .limit(5);
 
     if (error) {
       console.error('Database error fetching time slots:', error);
@@ -57,13 +58,27 @@ export async function GET(request: NextRequest) {
 
     console.log(`Found ${timeSlots?.length || 0} available time slots for ${dateParam}`);
 
+    // Remove duplicates by slot_time (in case of database inconsistencies)
+    const uniqueSlots = timeSlots?.reduce((acc, slot) => {
+      const existingSlot = acc.find((s: any) => s.slot_time === slot.slot_time);
+      if (!existingSlot) {
+        acc.push(slot);
+      }
+      return acc;
+    }, [] as typeof timeSlots) || [];
+
+    // Ensure we never return more than 5 slots
+    const limitedSlots = uniqueSlots.slice(0, 5);
+
+    console.log(`Returning ${limitedSlots.length} unique time slots for ${dateParam}`);
+
     // Format the response to match expected interface
-    const formattedSlots = timeSlots?.map(slot => ({
+    const formattedSlots = limitedSlots.map((slot: any) => ({
       id: slot.id,
       slot_date: slot.slot_date,
       slot_time: slot.slot_time,
       is_available: slot.is_available,
-    })) || [];
+    }));
 
     return NextResponse.json(formattedSlots);
 

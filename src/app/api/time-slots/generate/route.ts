@@ -76,14 +76,39 @@ export async function POST(request: Request) {
 
     console.log(`Attempting to generate ${slots.length} time slots from ${format(startDate, 'yyyy-MM-dd')} to ${format(endDate, 'yyyy-MM-dd')}`);
 
-    // Use upsert with the admin client to handle conflicts
-    const { data, error } = await supabaseAdmin
+    // Check which slots already exist to avoid unnecessary operations
+    const { data: existingSlots } = await supabaseAdmin
       .from('time_slots')
-      .upsert(slots, { 
-        onConflict: 'slot_date,slot_time',
-        ignoreDuplicates: true 
-      })
-      .select('id');
+      .select('slot_date, slot_time')
+      .gte('slot_date', format(startDate, 'yyyy-MM-dd'))
+      .lte('slot_date', format(endDate, 'yyyy-MM-dd'));
+
+    // Filter out slots that already exist
+    const newSlots = slots.filter(slot => {
+      return !existingSlots?.some(existing => 
+        existing.slot_date === slot.slot_date && 
+        existing.slot_time === slot.slot_time
+      );
+    });
+
+    console.log(`${newSlots.length} new slots to insert (${slots.length - newSlots.length} already exist)`);
+
+    let data = null;
+    let error = null;
+
+    if (newSlots.length > 0) {
+      // Use upsert with the admin client to handle conflicts
+      const result = await supabaseAdmin
+        .from('time_slots')
+        .upsert(newSlots, { 
+          onConflict: 'slot_date,slot_time',
+          ignoreDuplicates: true 
+        })
+        .select('id');
+      
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('Supabase error generating time slots:', error);
@@ -119,15 +144,17 @@ export async function POST(request: Request) {
       });
     }
 
-    console.log(`Successfully generated ${data?.length} time slots`);
+    console.log(`Successfully generated ${data?.length || 0} new time slots`);
     return NextResponse.json({ 
       success: true,
       slotsGenerated: data?.length || 0,
+      existingSlots: slots.length - newSlots.length,
+      totalSlotsRequested: slots.length,
       dateRange: {
         start: format(startDate, 'yyyy-MM-dd'),
         end: format(endDate, 'yyyy-MM-dd')
       },
-      availableSlots: availableSlots || []
+      availableSlots: (availableSlots || []).slice(0, 5) // Limit to 5 slots per day
     });
   } catch (error) {
     console.error('Unexpected error generating time slots:', error);
