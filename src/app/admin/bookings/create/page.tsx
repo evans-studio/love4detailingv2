@@ -72,23 +72,33 @@ export default function CreateManualBooking() {
       
       // Load data using API endpoints for better error handling and admin access
       const [usersRes, vehicleSizesRes] = await Promise.all([
-        fetch('/api/admin/customers').catch(e => ({ ok: false, error: e.message })),
-        fetch('/api/vehicle-sizes').catch(e => ({ ok: false, error: e.message }))
+        fetch('/api/admin/customers').catch(e => null),
+        fetch('/api/vehicle-sizes').catch(e => null)
       ]);
 
       // Handle users data
-      if (usersRes.ok) {
-        const usersData = await usersRes.json();
-        setUsers(usersData.customers || []);
+      if (usersRes && usersRes.ok) {
+        try {
+          const usersData = await usersRes.json();
+          setUsers(usersData.customers || []);
+        } catch (e) {
+          console.error('Failed to parse users data:', e);
+          setError('Failed to load customers');
+        }
       } else {
         console.error('Failed to load users:', usersRes);
         setError('Failed to load customers');
       }
 
       // Handle vehicle sizes data
-      if (vehicleSizesRes.ok) {
-        const sizesData = await vehicleSizesRes.json();
-        setVehicleSizes(sizesData || []);
+      if (vehicleSizesRes && vehicleSizesRes.ok) {
+        try {
+          const sizesData = await vehicleSizesRes.json();
+          setVehicleSizes(sizesData || []);
+        } catch (e) {
+          console.error('Failed to parse vehicle sizes data:', e);
+          setError(prev => prev ? `${prev}. Failed to load vehicle sizes` : 'Failed to load vehicle sizes');
+        }
       } else {
         console.error('Failed to load vehicle sizes:', vehicleSizesRes);
         setError(prev => prev ? `${prev}. Failed to load vehicle sizes` : 'Failed to load vehicle sizes');
