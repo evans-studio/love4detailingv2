@@ -1,14 +1,94 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { unifiedBookingSchema } from '@/lib/validation/booking';
+import { cookies } from 'next/headers';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
+const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+// Get user bookings
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const status = searchParams.get('status');
+
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    let query = supabaseServiceRole
+      .from('bookings')
+      .select(`
+        *,
+        vehicles (
+          registration,
+          make,
+          model,
+          year,
+          color,
+          vehicle_sizes (
+            label,
+            price_pence
+          )
+        ),
+        time_slots (
+          slot_date,
+          slot_time
+        )
+      `, { count: 'exact' })
+      .eq('user_id', user.id);
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    
+    const { data: bookings, error: bookingsError, count } = await query
+      .range(from, to)
+      .order('created_at', { ascending: false });
+
+    if (bookingsError) {
+      return NextResponse.json(
+        { error: 'Failed to fetch bookings', details: bookingsError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      bookings: bookings || [],
+      pagination: {
+        total: count || 0,
+        page,
+        limit,
+        totalPages: Math.ceil((count || 0) / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error('Bookings fetch error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +110,7 @@ export async function POST(request: NextRequest) {
     
     // First, try to disable the trigger temporarily for this session
     try {
-      await supabase.rpc('exec_sql', { 
+      await supabaseServiceRole.rpc('exec_sql', { 
         sql_query: 'SET session_replication_role = replica;'
       });
     } catch (e) {
@@ -38,7 +118,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check time slot availability
-    const { data: timeSlot, error: timeSlotError } = await supabase
+    const { data: timeSlot, error: timeSlotError } = await supabaseServiceRole
       .from('time_slots')
       .select('is_available')
       .eq('id', dateTime.timeSlotId)
@@ -52,7 +132,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get vehicle size price
-    const { data: sizeData, error: sizeError } = await supabase
+    const { data: sizeData, error: sizeError } = await supabaseServiceRole
       .from('vehicle_sizes')
       .select('price_pence')
       .eq('id', vehicle.sizeId)
@@ -69,7 +149,7 @@ export async function POST(request: NextRequest) {
     let userId: string | null = null;
     let existingUser = false;
     
-    const { data: user } = await supabase
+    const { data: user } = await supabaseServiceRole
       .from('users')
       .select('id')
       .eq('email', personalDetails.email)
@@ -80,7 +160,7 @@ export async function POST(request: NextRequest) {
       existingUser = true;
     } else {
       // Create new user
-      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+      const { data: authUser, error: authError } = await supabaseServiceRole.auth.admin.createUser({
         email: personalDetails.email,
         email_confirm: true,
         user_metadata: {
@@ -100,7 +180,7 @@ export async function POST(request: NextRequest) {
       userId = authUser.user.id;
 
       // Create user profile
-      await supabase.from('users').insert({
+      await supabaseServiceRole.from('users').insert({
         id: userId,
         email: personalDetails.email,
         full_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
@@ -109,7 +189,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create vehicle
-    const { data: vehicleRecord, error: vehicleError } = await supabase
+    const { data: vehicleRecord, error: vehicleError } = await supabaseServiceRole
       .from('vehicles')
       .insert({
         registration: vehicle.registration.toUpperCase(),
@@ -134,7 +214,7 @@ export async function POST(request: NextRequest) {
     const bookingRef = `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     // Create booking - this might fail due to trigger, but we'll check if it actually succeeded
-    const { data: booking, error: bookingError } = await supabase
+    const { data: booking, error: bookingError } = await supabaseServiceRole
       .from('bookings')
       .insert({
         user_id: userId,
@@ -156,7 +236,7 @@ export async function POST(request: NextRequest) {
     if (bookingError) {
       if (bookingError.code === '23505' && bookingError.message.includes('unique_booking_transaction')) {
         // Check if booking was actually created
-        const { data: existingBooking } = await supabase
+        const { data: existingBooking } = await supabaseServiceRole
           .from('bookings')
           .select('*')
           .eq('booking_reference', bookingRef)
@@ -164,7 +244,7 @@ export async function POST(request: NextRequest) {
 
         if (existingBooking) {
           // Booking was created successfully despite the error
-          await supabase.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
+          await supabaseServiceRole.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
           
           return NextResponse.json({
             success: true,
@@ -200,7 +280,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Booking created successfully
-    await supabase.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
+    await supabaseServiceRole.from('time_slots').update({ is_available: false }).eq('id', dateTime.timeSlotId);
+
+    // Send booking confirmation email
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'booking_confirmation',
+          to: personalDetails.email,
+          booking_reference: booking.booking_reference,
+          customer_name: `${personalDetails.firstName} ${personalDetails.lastName}`,
+          vehicle: `${vehicleRecord.make} ${vehicleRecord.model} (${vehicleRecord.registration})`,
+          appointment_date: dateTime.date,
+          appointment_time: dateTime.time,
+          total_amount: (sizeData.price_pence / 100).toFixed(2)
+        })
+      });
+    } catch (emailError) {
+      console.error('Failed to send confirmation email:', emailError);
+      // Don't fail the booking if email fails
+    }
 
     return NextResponse.json({
       success: true,
