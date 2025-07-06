@@ -37,7 +37,7 @@ export default function VehiclesPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">My Vehicles</h1>
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">My Vehicles</h1>
           {!showForm && (
             <Button onClick={handleAddVehicle}>
               Add Vehicle
@@ -52,7 +52,7 @@ export default function VehiclesPage() {
         )}
 
         {showForm ? (
-          <Card className="p-6">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
             <VehicleForm
               onSuccess={handleFormSuccess}
               onCancel={handleFormCancel}

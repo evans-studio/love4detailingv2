@@ -80,17 +80,17 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414] p-4">
+        <Card className="w-full max-w-md bg-[#1E1E1E] border-gray-800">
           <CardContent className="text-center p-8">
-            <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <CheckCircle2 className="h-16 w-16 text-[#28C76F] mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-[#F2F2F2] mb-2">
               Check Your Email!
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-[#C7C7C7] mb-4">
               We've sent you a confirmation link at <strong>{email}</strong>
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#C7C7C7]">
               {message || 'Click the link in your email to activate your account.'}
             </p>
           </CardContent>
@@ -100,19 +100,19 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-[#1E1E1E] border-gray-800">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-purple-900">
+          <CardTitle className="text-2xl font-bold text-[#F2F2F2]">
             Create Account
           </CardTitle>
-          <p className="text-gray-600">Join Love4Detailing today</p>
+          <p className="text-[#C7C7C7]">Join Love4Detailing today</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
             {error && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
+              <Alert className="border-[#BA0C2F] bg-[#BA0C2F]/10">
+                <AlertDescription className="text-[#BA0C2F]">
                   {error}
                 </AlertDescription>
               </Alert>
@@ -120,7 +120,7 @@ export default function SignupPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName" className="text-[#C7C7C7]">First Name</Label>
                 <Input
                   id="firstName"
                   value={firstName}
@@ -131,7 +131,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName" className="text-[#C7C7C7]">Last Name</Label>
                 <Input
                   id="lastName"
                   value={lastName}
@@ -144,7 +144,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
+              <Label htmlFor="email" className="flex items-center gap-2 text-[#C7C7C7]">
                 <Mail className="h-4 w-4" />
                 Email Address
               </Label>
@@ -160,7 +160,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
+              <Label htmlFor="password" className="flex items-center gap-2 text-[#C7C7C7]">
                 <Lock className="h-4 w-4" />
                 Password
               </Label>
@@ -176,7 +176,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-[#C7C7C7]">Confirm Password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -201,9 +201,9 @@ export default function SignupPage() {
               Create Account
             </Button>
 
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-sm text-[#C7C7C7]">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-purple-600 hover:underline">
+              <Link href="/auth/login" className="text-[#9146FF] hover:underline">
                 Sign in here
               </Link>
             </div>

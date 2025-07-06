@@ -83,8 +83,8 @@ export function VehicleForm({ onSuccess, onCancel, onError }: VehicleFormProps) 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Registration
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
+          Registration <span className="text-[#BA0C2F]">*</span>
         </label>
         <Input
           {...register('registration')}
@@ -92,67 +92,67 @@ export function VehicleForm({ onSuccess, onCancel, onError }: VehicleFormProps) 
           className="uppercase"
         />
         {errors.registration && (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-[#BA0C2F]">
             {errors.registration.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Make
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
+          Make <span className="text-[#BA0C2F]">*</span>
         </label>
         <Input
           {...register('make')}
           placeholder="Enter make"
         />
         {errors.make && (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-[#BA0C2F]">
             {errors.make.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Model
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
+          Model <span className="text-[#BA0C2F]">*</span>
         </label>
         <Input
           {...register('model')}
           placeholder="Enter model"
         />
         {errors.model && (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-[#BA0C2F]">
             {errors.model.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Year
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
+          Year <span className="text-[#8B8B8B]">(Optional)</span>
         </label>
         <Input
           {...register('year')}
           placeholder="Enter year"
         />
         {errors.year && (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-[#BA0C2F]">
             {errors.year.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Color
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
+          Color <span className="text-[#8B8B8B]">(Optional)</span>
         </label>
         <Input
           {...register('color')}
           placeholder="Enter color"
         />
         {errors.color && (
-          <p className="mt-1 text-sm text-red-600">
+          <p className="mt-1 text-sm text-[#BA0C2F]">
             {errors.color.message}
           </p>
         )}

@@ -47,7 +47,7 @@ export function ResetPasswordForm() {
   if (success) {
     return (
       <div className="space-y-4">
-        <div className="text-sm text-success">
+        <div className="text-sm text-[#28C76F]">
           We&apos;ve sent you an email with instructions to reset your password.
           Please check your inbox and spam folder.
         </div>
@@ -74,7 +74,7 @@ export function ResetPasswordForm() {
         />
       </div>
       {error && (
-        <div className="text-sm text-error">
+        <div className="text-sm text-[#BA0C2F]">
           {error}
         </div>
       )}

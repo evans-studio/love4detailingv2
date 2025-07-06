@@ -15,7 +15,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50"
+        className="fixed inset-0 bg-black/80"
         onClick={() => onOpenChange(false)}
       />
       
@@ -35,8 +35,8 @@ interface DialogContentProps {
 export function DialogContent({ className, children }: DialogContentProps) {
   return (
     <div className={cn(
-      "bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto",
-      "p-6 mx-4 w-full max-w-lg",
+      "bg-[#1E1E1E] border border-gray-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto",
+      "p-6 mx-4 w-full max-w-lg text-[#F2F2F2]",
       className
     )}>
       {children}
@@ -50,7 +50,7 @@ interface DialogHeaderProps {
 
 export function DialogHeader({ children }: DialogHeaderProps) {
   return (
-    <div className="mb-4 pb-4 border-b border-gray-200">
+    <div className="mb-4 pb-4 border-b border-gray-700">
       {children}
     </div>
   );
@@ -63,7 +63,7 @@ interface DialogTitleProps {
 
 export function DialogTitle({ children, className }: DialogTitleProps) {
   return (
-    <h2 className={cn("text-lg font-semibold text-gray-900", className)}>
+    <h2 className={cn("text-lg font-semibold text-[#F2F2F2]", className)}>
       {children}
     </h2>
   );

@@ -25,9 +25,9 @@ export function LoadingState({
   };
 
   const variantClasses = {
-    primary: 'border-primary-600 border-t-transparent',
-    secondary: 'border-gray-600 border-t-transparent',
-    ghost: 'border-gray-300 border-t-transparent',
+    primary: 'border-[#9146FF] border-t-transparent',
+    secondary: 'border-[#C7C7C7] border-t-transparent',
+    ghost: 'border-[#8B8B8B] border-t-transparent',
   };
 
   const spinnerClasses = cn(
@@ -45,7 +45,7 @@ export function LoadingState({
       <div className={spinnerClasses} />
       {text && (
         <span className={cn(
-          'text-gray-600',
+          'text-[#C7C7C7]',
           size === 'sm' && 'text-sm',
           size === 'lg' && 'text-lg'
         )}>
@@ -58,7 +58,7 @@ export function LoadingState({
 
   if (fullPage) {
     return (
-      <div className="fixed inset-0 bg-white bg-opacity-90 z-50">
+      <div className="fixed inset-0 bg-[#141414] bg-opacity-90 z-50">
         {content}
       </div>
     );
@@ -86,7 +86,7 @@ export function LoadingSkeleton({
         <div
           key={index}
           className={cn(
-            'animate-pulse bg-gray-200 rounded',
+            'animate-pulse bg-[#262626] rounded',
             height,
             width,
             className
@@ -104,7 +104,7 @@ interface LoadingCardProps {
 
 export function LoadingCard({ className, imageHeight = 'h-48' }: LoadingCardProps) {
   return (
-    <div className={cn('rounded-lg border p-4 space-y-4', className)}>
+    <div className={cn('rounded-lg border border-gray-800 bg-[#1E1E1E] p-4 space-y-4', className)}>
       <LoadingSkeleton className={imageHeight} />
       <LoadingSkeleton height="h-6" width="w-3/4" />
       <LoadingSkeleton count={2} className="mt-2" />

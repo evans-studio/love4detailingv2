@@ -14,10 +14,10 @@ export function Badge({
   const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
   
   const variantClasses = {
-    default: 'bg-primary-100 text-primary-800',
-    secondary: 'bg-gray-100 text-gray-800',
-    destructive: 'bg-red-100 text-red-800',
-    outline: 'border border-gray-200 text-gray-800',
+    default: 'bg-[#9146FF]/20 text-[#F2F2F2] border border-[#9146FF]/30',
+    secondary: 'bg-[#262626] text-[#C7C7C7] border border-gray-700',
+    destructive: 'bg-[#BA0C2F]/20 text-[#F2F2F2] border border-[#BA0C2F]/30',
+    outline: 'border border-gray-700 text-[#F2F2F2] bg-transparent',
   };
 
   return (

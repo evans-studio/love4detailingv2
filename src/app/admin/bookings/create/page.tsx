@@ -206,8 +206,8 @@ export default function CreateManualBooking() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Create Manual Booking</h1>
-          <p className="text-gray-600">Create a new booking for a customer</p>
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Create Manual Booking</h1>
+          <p className="text-[#C7C7C7]">Create a new booking for a customer</p>
         </div>
       </div>
 
@@ -223,20 +223,20 @@ export default function CreateManualBooking() {
         </Alert>
       )}
 
-      <Card className="p-6">
+      <Card className="p-6 bg-[#1E1E1E] border-gray-800">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Customer Selection */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Details</h3>
+            <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">Customer Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Select Customer *
                 </label>
                 <select
                   value={formData.user_id}
                   onChange={(e) => handleUserChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full p-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:ring-2 focus:ring-[#9146FF] focus:border-transparent"
                   required
                 >
                   <option value="">Select a customer...</option>
@@ -248,7 +248,7 @@ export default function CreateManualBooking() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Phone Number
                 </label>
                 <Input
@@ -263,15 +263,15 @@ export default function CreateManualBooking() {
 
           {/* Vehicle Selection */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Vehicle Details</h3>
+            <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">Vehicle Details</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Select Vehicle *
               </label>
               <select
                 value={formData.vehicle_id}
                 onChange={(e) => setFormData(prev => ({ ...prev, vehicle_id: e.target.value }))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full p-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:ring-2 focus:ring-[#9146FF] focus:border-transparent"
                 required
               >
                 <option value="">Select a vehicle...</option>
@@ -286,15 +286,15 @@ export default function CreateManualBooking() {
 
           {/* Time Slot Selection */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment Time</h3>
+            <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">Appointment Time</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Select Time Slot *
               </label>
               <select
                 value={formData.time_slot_id}
                 onChange={(e) => setFormData(prev => ({ ...prev, time_slot_id: e.target.value }))}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full p-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:ring-2 focus:ring-[#9146FF] focus:border-transparent"
                 required
               >
                 <option value="">Select a time slot...</option>
@@ -309,29 +309,29 @@ export default function CreateManualBooking() {
 
           {/* Additional Details */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Details</h3>
+            <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">Additional Details</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Special Requests
                 </label>
                 <textarea
                   value={formData.special_requests}
                   onChange={(e) => setFormData(prev => ({ ...prev, special_requests: e.target.value }))}
                   placeholder="Any special requests from the customer..."
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full p-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:ring-2 focus:ring-[#9146FF] focus:border-transparent"
                   rows={3}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Admin Notes
                 </label>
                 <textarea
                   value={formData.admin_notes}
                   onChange={(e) => setFormData(prev => ({ ...prev, admin_notes: e.target.value }))}
                   placeholder="Internal notes about this booking..."
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full p-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:ring-2 focus:ring-[#9146FF] focus:border-transparent"
                   rows={3}
                 />
               </div>

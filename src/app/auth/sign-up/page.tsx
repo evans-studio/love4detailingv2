@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function SignUpPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-lg">
+    <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+      <Card className="w-full max-w-lg bg-[#1E1E1E] border-gray-800">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Create an account</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-[#F2F2F2]">Create an account</CardTitle>
+          <CardDescription className="text-[#C7C7C7]">
             Enter your details to create your Love4Detailing account
           </CardDescription>
         </CardHeader>
@@ -22,11 +22,11 @@ export default function SignUpPage() {
           <SignUpForm />
         </CardContent>
         <CardFooter>
-          <div className="text-sm text-muted">
+          <div className="text-sm text-[#C7C7C7]">
             <span>Already have an account? </span>
             <Link
               href="/auth/sign-in"
-              className="text-primary-500 underline-offset-4 transition-colors hover:underline"
+              className="text-[#9146FF] underline-offset-4 transition-colors hover:underline"
             >
               Sign in
             </Link>

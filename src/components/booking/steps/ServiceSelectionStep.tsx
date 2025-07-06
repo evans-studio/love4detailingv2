@@ -75,7 +75,7 @@ export function ServiceSelectionStep({ onNext }: ServiceSelectionStepProps) {
 
       {errors.service?.serviceId && (
         <div className="text-center">
-          <p className="text-red-400 text-sm">{errors.service.serviceId.message}</p>
+          <p className="text-[#BA0C2F] text-sm">{errors.service.serviceId.message}</p>
         </div>
       )}
 

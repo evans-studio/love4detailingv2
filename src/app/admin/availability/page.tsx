@@ -182,8 +182,8 @@ export default function AvailabilityManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Availability Management</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-[#F2F2F2]">Availability Management</h1>
+          <p className="text-[#C7C7C7] mt-1">
             Manage your booking schedule and time slot availability
           </p>
         </div>
@@ -195,44 +195,44 @@ export default function AvailabilityManagement() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-[#1E1E1E] border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Slots</CardTitle>
+            <CardTitle className="text-sm font-medium text-[#C7C7C7]">Total Slots</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSlots}</div>
-            <p className="text-xs text-muted-foreground">Available for booking</p>
+            <div className="text-2xl font-bold text-[#F2F2F2]">{stats.totalSlots}</div>
+            <p className="text-xs text-[#8B8B8B]">Available for booking</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-[#1E1E1E] border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Booked Slots</CardTitle>
+            <CardTitle className="text-sm font-medium text-[#C7C7C7]">Booked Slots</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.bookedSlots}</div>
-            <p className="text-xs text-muted-foreground">Currently occupied</p>
+            <div className="text-2xl font-bold text-[#F2F2F2]">{stats.bookedSlots}</div>
+            <p className="text-xs text-[#8B8B8B]">Currently occupied</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-[#1E1E1E] border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Slots</CardTitle>
+            <CardTitle className="text-sm font-medium text-[#C7C7C7]">Available Slots</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.availableSlots}</div>
-            <p className="text-xs text-muted-foreground">Ready for booking</p>
+            <div className="text-2xl font-bold text-[#F2F2F2]">{stats.availableSlots}</div>
+            <p className="text-xs text-[#8B8B8B]">Ready for booking</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-[#1E1E1E] border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Bookings</CardTitle>
+            <CardTitle className="text-sm font-medium text-[#C7C7C7]">Upcoming Bookings</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.upcomingBookings}</div>
-            <p className="text-xs text-muted-foreground">Confirmed appointments</p>
+            <div className="text-2xl font-bold text-[#F2F2F2]">{stats.upcomingBookings}</div>
+            <p className="text-xs text-[#8B8B8B]">Confirmed appointments</p>
           </CardContent>
         </Card>
       </div>
@@ -258,13 +258,13 @@ export default function AvailabilityManagement() {
       />
 
       {/* Guide Card */}
-      <Card>
+      <Card className="bg-[#1E1E1E] border-gray-800">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
             <div className="space-y-2">
-              <p className="font-medium text-blue-800">Availability Management Guide</p>
-              <div className="text-sm text-blue-700 space-y-1">
+              <p className="font-medium text-[#9146FF]">Availability Management Guide</p>
+              <div className="text-sm text-[#C7C7C7] space-y-1">
                 <p>• Configure your weekly schedule template to set working days and available slots</p>
                 <p>• Use the calendar to view availability and manage individual bookings</p>
                 <p>• Click on calendar slots to view or edit existing bookings</p>

@@ -137,22 +137,22 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome to the Love4Detailing control panel</p>
+          <h1 className="text-3xl font-bold text-[#F2F2F2]">Admin Dashboard</h1>
+          <p className="text-[#C7C7C7] mt-1">Welcome to the Love4Detailing control panel</p>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-[#8B8B8B]">
           Last updated: {new Date().toLocaleTimeString()}
         </div>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.totalBookings || 0}</p>
-              <p className="text-xs text-gray-500 mt-1">All time</p>
+              <p className="text-sm font-medium text-[#C7C7C7]">Total Bookings</p>
+              <p className="text-2xl font-bold text-[#F2F2F2]">{stats?.totalBookings || 0}</p>
+              <p className="text-xs text-[#8B8B8B] mt-1">All time</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
               <CalendarDays className="h-6 w-6 text-blue-600" />
@@ -160,12 +160,12 @@ export default function AdminDashboard() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">This Month</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.monthlyBookings || 0}</p>
-              <p className="text-xs text-gray-500 mt-1">Bookings</p>
+              <p className="text-sm font-medium text-[#C7C7C7]">This Month</p>
+              <p className="text-2xl font-bold text-[#F2F2F2]">{stats?.monthlyBookings || 0}</p>
+              <p className="text-xs text-[#8B8B8B] mt-1">Bookings</p>
             </div>
             <div className="p-3 bg-green-100 rounded-full">
               <Clock className="h-6 w-6 text-green-600" />
@@ -173,12 +173,12 @@ export default function AdminDashboard() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Customers</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.activeCustomers || 0}</p>
-              <p className="text-xs text-gray-500 mt-1">Registered users</p>
+              <p className="text-sm font-medium text-[#C7C7C7]">Active Customers</p>
+              <p className="text-2xl font-bold text-[#F2F2F2]">{stats?.activeCustomers || 0}</p>
+              <p className="text-xs text-[#8B8B8B] mt-1">Registered users</p>
             </div>
             <div className="p-3 bg-purple-100 rounded-full">
               <Users className="h-6 w-6 text-purple-600" />
@@ -186,14 +186,14 @@ export default function AdminDashboard() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-[#C7C7C7]">Monthly Revenue</p>
+              <p className="text-2xl font-bold text-[#F2F2F2]">
                 {formatCurrency((stats?.monthlyRevenue || 0) / 100)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[#8B8B8B] mt-1">
                 Total: {formatCurrency((stats?.totalRevenue || 0) / 100)}
               </p>
             </div>
@@ -206,8 +206,8 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Quick Actions */}
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+          <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">Quick Actions</h2>
           <div className="space-y-3">
             <Link href="/admin/bookings/create" className="block">
               <Button variant="outline" className="w-full justify-start">
@@ -237,9 +237,9 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Upcoming Bookings */}
-        <Card className="p-6 lg:col-span-2">
+        <Card className="p-6 lg:col-span-2 bg-[#1E1E1E] border-gray-800">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Upcoming Bookings</h2>
+            <h2 className="text-lg font-semibold text-[#F2F2F2]">Upcoming Bookings</h2>
             <Link href="/admin/bookings">
               <Button variant="ghost" size="sm">View All</Button>
             </Link>
@@ -248,27 +248,27 @@ export default function AdminDashboard() {
           {upcomingBookings.length === 0 ? (
             <div className="text-center py-8">
               <Car className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-500">No upcoming bookings</p>
+              <p className="text-[#8B8B8B]">No upcoming bookings</p>
             </div>
           ) : (
             <div className="space-y-4">
               {upcomingBookings.map((booking) => (
-                <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={booking.id} className="flex items-center justify-between p-4 bg-[#262626] rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
                       <div>
-                        <p className="font-medium text-gray-900">{booking.full_name}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-[#F2F2F2]">{booking.full_name}</p>
+                        <p className="text-sm text-[#C7C7C7]">
                           {booking.vehicles.make} {booking.vehicles.model} ({booking.vehicles.registration})
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-[#F2F2F2]">
                       {formatDate(booking.time_slots.slot_date)} at {formatTime(booking.time_slots.slot_time)}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-[#C7C7C7]">
                       {formatCurrency(booking.total_price_pence / 100)}
                     </p>
                   </div>

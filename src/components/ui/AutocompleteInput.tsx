@@ -92,18 +92,18 @@ export function AutocompleteInput({
         placeholder={placeholder}
         required={required}
         className={cn(
-          'flex h-10 w-full rounded-md border border-stone bg-transparent px-3 py-2 text-sm ring-offset-white placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-          error && 'border-error focus-visible:ring-error',
+          'flex h-10 w-full rounded-md border border-gray-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F2F2F2] ring-offset-[#141414] placeholder:text-[#8B8B8B] focus:outline-none focus:ring-2 focus:ring-[#9146FF] focus:ring-offset-2',
+          error && 'border-[#BA0C2F] focus-visible:ring-[#BA0C2F]',
           className
         )}
       />
 
       {isOpen && filteredSuggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto rounded-md border border-stone bg-white shadow-lg">
+        <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto rounded-md border border-gray-700 bg-[#262626] text-[#F2F2F2] shadow-lg">
           {filteredSuggestions.map((suggestion, index) => (
             <li
               key={`${suggestion.model}-${index}`}
-              className="px-3 py-2 text-sm cursor-pointer hover:bg-primary-50 focus:bg-primary-50"
+              className="px-3 py-2 text-sm cursor-pointer hover:bg-[#363636] focus:bg-[#363636]"
               onClick={() => {
                 onSelect(suggestion.model, ''); // Pass empty string for trim
                 setIsOpen(false);
@@ -118,7 +118,7 @@ export function AutocompleteInput({
       {helperText && (
         <p className={cn(
           'mt-1 text-sm',
-          error ? 'text-error' : 'text-muted'
+          error ? 'text-[#BA0C2F]' : 'text-[#8B8B8B]'
         )}>
           {helperText}
         </p>

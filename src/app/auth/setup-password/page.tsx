@@ -111,7 +111,7 @@ export default function SetupPasswordPage() {
 
   if (verifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414]">
         <LoadingState>Verifying invitation...</LoadingState>
       </div>
     );
@@ -119,16 +119,16 @@ export default function SetupPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-green-900 mb-2">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414]">
+        <Card className="w-full max-w-md p-8 text-center bg-[#1E1E1E] border-gray-800">
+          <CheckCircle className="h-16 w-16 text-[#28C76F] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#28C76F] mb-2">
             Account Setup Complete!
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[#C7C7C7] mb-4">
             Your password has been set successfully. You'll be redirected to your dashboard shortly.
           </p>
-          <LoadingState className="text-primary-600">
+          <LoadingState className="text-[#9146FF]">
             Redirecting to dashboard...
           </LoadingState>
         </Card>
@@ -137,26 +137,26 @@ export default function SetupPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#141414] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md p-8 bg-[#1E1E1E] border-gray-800">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-[#F2F2F2]">
             Set Up Your Password
           </h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-[#C7C7C7]">
             Complete your account setup to access your booking dashboard
           </p>
         </div>
 
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-6 bg-[#BA0C2F]/10 border-[#BA0C2F] text-[#BA0C2F]">
             {error}
           </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
               Password
             </label>
             <div className="relative">
@@ -172,18 +172,18 @@ export default function SetupPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#C7C7C7] hover:text-[#F2F2F2]"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-[#C7C7C7]">
               Must be at least 8 characters long
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
               Confirm Password
             </label>
             <div className="relative">
@@ -198,7 +198,7 @@ export default function SetupPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#C7C7C7] hover:text-[#F2F2F2]"
               >
                 {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -219,8 +219,8 @@ export default function SetupPasswordPage() {
         </form>
 
         {bookingId && (
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-6 p-4 bg-[#9146FF]/10 border border-[#9146FF] rounded-lg">
+            <p className="text-sm text-[#9146FF]">
               <strong>Your booking is confirmed!</strong> Once you complete the password setup, 
               you'll be able to view and manage your booking in the dashboard.
             </p>

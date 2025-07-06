@@ -103,7 +103,7 @@ export function SignUpForm() {
         />
       </div>
       {error && (
-        <div className="text-sm text-error">
+        <div className="text-sm text-[#BA0C2F]">
           {error}
         </div>
       )}

@@ -94,8 +94,8 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Personal Details</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-semibold mb-4 text-[#F2F2F2]">Personal Details</h2>
+        <p className="text-[#C7C7C7] mb-6">
           Please provide your contact information and vehicle photos
         </p>
       </div>
@@ -103,8 +103,8 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* First Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            First Name *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            First Name <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('personalDetails.firstName')}
@@ -112,14 +112,14 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             error={!!errors.personalDetails?.firstName}
           />
           {errors.personalDetails?.firstName && (
-            <p className="mt-1 text-sm text-red-600">{errors.personalDetails.firstName.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.firstName.message}</p>
           )}
         </div>
 
         {/* Last Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Last Name *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Last Name <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('personalDetails.lastName')}
@@ -127,14 +127,14 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             error={!!errors.personalDetails?.lastName}
           />
           {errors.personalDetails?.lastName && (
-            <p className="mt-1 text-sm text-red-600">{errors.personalDetails.lastName.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.lastName.message}</p>
           )}
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Email <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('personalDetails.email')}
@@ -143,14 +143,14 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             error={!!errors.personalDetails?.email}
           />
           {errors.personalDetails?.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.personalDetails.email.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.email.message}</p>
           )}
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone Number *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Phone Number <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('personalDetails.phone')}
@@ -159,14 +159,14 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             error={!!errors.personalDetails?.phone}
           />
           {errors.personalDetails?.phone && (
-            <p className="mt-1 text-sm text-red-600">{errors.personalDetails.phone.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.phone.message}</p>
           )}
         </div>
 
         {/* Postcode */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Service Postcode *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Service Postcode <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('personalDetails.postcode')}
@@ -175,10 +175,10 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             className="uppercase"
           />
           {errors.personalDetails?.postcode && (
-            <p className="mt-1 text-sm text-red-600">{errors.personalDetails.postcode.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.postcode.message}</p>
           )}
           {isCheckingDistance && (
-            <p className="mt-2 text-sm text-gray-600">Checking distance...</p>
+            <p className="mt-2 text-sm text-[#8B8B8B]">Checking distance...</p>
           )}
         </div>
       </div>
@@ -197,10 +197,10 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
 
       {/* Photo Upload */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Vehicle Condition Photos (Optional)
+        <label className="block text-sm font-medium text-[#C7C7C7] mb-3">
+          Vehicle Condition Photos <span className="text-[#8B8B8B]">(Optional)</span>
         </label>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-[#8B8B8B] mb-4">
           Upload up to 3 photos of your vehicle to help us assess its condition
         </p>
 

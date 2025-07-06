@@ -186,26 +186,26 @@ TIME LIMITS:
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Policy Settings</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-[#F2F2F2]">Policy Settings</h1>
+        <p className="text-[#C7C7C7] mt-1">
           Configure cancellation, rescheduling, and business policies
         </p>
       </div>
 
       <form onSubmit={form.handleSubmit(savePolicies)} className="space-y-8">
         {/* Time Windows */}
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center mb-6">
             <Clock className="h-6 w-6 text-blue-600 mr-3" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Time Windows</h2>
-              <p className="text-gray-600 mt-1">Set time limits for cancellations and rescheduling</p>
+              <h2 className="text-xl font-semibold text-[#F2F2F2]">Time Windows</h2>
+              <p className="text-[#C7C7C7] mt-1">Set time limits for cancellations and rescheduling</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Cancellation Window (Hours)
               </label>
               <Input
@@ -222,13 +222,13 @@ TIME LIMITS:
                   {form.formState.errors.cancellation_window_hours.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 Customers can cancel without penalty up to this many hours before their booking
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Reschedule Window (Hours)
               </label>
               <Input
@@ -245,7 +245,7 @@ TIME LIMITS:
                   {form.formState.errors.reschedule_window_hours.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 Customers can reschedule up to this many hours before their booking
               </p>
             </div>
@@ -253,18 +253,18 @@ TIME LIMITS:
         </Card>
 
         {/* Fees */}
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center mb-6">
             <DollarSign className="h-6 w-6 text-green-600 mr-3" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Fees</h2>
-              <p className="text-gray-600 mt-1">Set fees for late changes and cancellations</p>
+              <h2 className="text-xl font-semibold text-[#F2F2F2]">Fees</h2>
+              <p className="text-[#C7C7C7] mt-1">Set fees for late changes and cancellations</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Reschedule Fee (£)
               </label>
               <div className="relative">
@@ -286,13 +286,13 @@ TIME LIMITS:
                   {form.formState.errors.reschedule_fee_pence.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 Fee charged when customers reschedule within the time window
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Late Cancellation Fee (£)
               </label>
               <div className="relative">
@@ -314,7 +314,7 @@ TIME LIMITS:
                   {form.formState.errors.late_cancellation_fee_pence.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 Fee charged when customers cancel within the cancellation window
               </p>
             </div>
@@ -322,23 +322,23 @@ TIME LIMITS:
         </Card>
 
         {/* Policy Text */}
-        <Card className="p-6">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
           <div className="flex items-center mb-6">
             <FileText className="h-6 w-6 text-purple-600 mr-3" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Policy Text</h2>
-              <p className="text-gray-600 mt-1">Customer-facing policy descriptions</p>
+              <h2 className="text-xl font-semibold text-[#F2F2F2]">Policy Text</h2>
+              <p className="text-[#C7C7C7] mt-1">Customer-facing policy descriptions</p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Cancellation Policy Text
               </label>
               <textarea
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:outline-none focus:ring-2 focus:ring-[#9146FF] focus:border-[#9146FF]"
                 {...form.register('cancellation_policy_text')}
                 placeholder="Enter the cancellation policy that customers will see..."
               />
@@ -347,18 +347,18 @@ TIME LIMITS:
                   {form.formState.errors.cancellation_policy_text.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 This text will be displayed to customers during booking and in confirmations
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                 Terms and Conditions
               </label>
               <textarea
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:outline-none focus:ring-2 focus:ring-[#9146FF] focus:border-[#9146FF]"
                 {...form.register('terms_and_conditions')}
                 placeholder="Enter your terms and conditions..."
               />
@@ -367,7 +367,7 @@ TIME LIMITS:
                   {form.formState.errors.terms_and_conditions.message}
                 </p>
               )}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-[#8B8B8B] text-sm mt-1">
                 General terms and conditions that customers agree to when booking
               </p>
             </div>
@@ -395,12 +395,12 @@ TIME LIMITS:
       </form>
 
       {/* Warning */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+      <div className="bg-[#262626] border border-gray-800 rounded-lg p-4">
         <div className="flex items-start">
-          <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3" />
+          <AlertCircle className="h-5 w-5 text-[#9146FF] mt-0.5 mr-3" />
           <div className="text-sm">
-            <p className="font-medium text-amber-800">Policy Update Notice</p>
-            <p className="text-amber-700 mt-1">
+            <p className="font-medium text-[#F2F2F2]">Policy Update Notice</p>
+            <p className="text-[#C7C7C7] mt-1">
               Policy changes will apply to new bookings immediately. Existing bookings will continue 
               to follow the policies that were in place when they were created. Make sure to communicate 
               any significant policy changes to your customers.

@@ -88,26 +88,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-[#1E1E1E] border-gray-800">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-purple-900">
+          <CardTitle className="text-2xl font-bold text-[#F2F2F2]">
             Welcome Back
           </CardTitle>
-          <p className="text-gray-600">Sign in to your Love4Detailing account</p>
+          <p className="text-[#C7C7C7]">Sign in to your Love4Detailing account</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
+              <Alert className="border-[#BA0C2F] bg-[#BA0C2F]/10">
+                <AlertDescription className="text-[#BA0C2F]">
                   {error}
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
+              <Label htmlFor="email" className="flex items-center gap-2 text-[#C7C7C7]">
                 <Mail className="h-4 w-4" />
                 Email Address
               </Label>
@@ -123,7 +123,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
+              <Label htmlFor="password" className="flex items-center gap-2 text-[#C7C7C7]">
                 <Lock className="h-4 w-4" />
                 Password
               </Label>
@@ -152,7 +152,7 @@ export default function LoginPage() {
             </Button>
 
             <div className="text-center">
-              <span className="text-sm text-gray-500">or</span>
+              <span className="text-sm text-[#C7C7C7]">or</span>
             </div>
 
             <Button
@@ -173,13 +173,13 @@ export default function LoginPage() {
             <div className="text-center space-y-2">
               <Link 
                 href="/auth/reset-password" 
-                className="text-sm text-purple-600 hover:underline"
+                className="text-sm text-[#9146FF] hover:underline"
               >
                 Forgot your password?
               </Link>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-[#C7C7C7]">
                 Don't have an account?{' '}
-                <Link href="/auth/signup" className="text-purple-600 hover:underline">
+                <Link href="/auth/signup" className="text-[#9146FF] hover:underline">
                   Sign up here
                 </Link>
               </div>

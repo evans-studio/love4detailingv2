@@ -76,7 +76,7 @@ export default function AdminLayout({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#141414]">
         <LoadingState>Verifying admin access...</LoadingState>
       </div>
     );
@@ -84,23 +84,23 @@ export default function AdminLayout({
 
   if (!isAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#141414]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h1>
-          <p className="text-gray-600">You do not have admin privileges.</p>
+          <h1 className="text-2xl font-bold text-[#BA0C2F] mb-2">Access Denied</h1>
+          <p className="text-[#C7C7C7]">You do not have admin privileges.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-off-white">
+    <div className="flex h-screen bg-[#141414]">
       {/* Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col">
-        <aside className="w-64 border-r bg-white">
+        <aside className="w-64 border-r border-gray-800 bg-[#1E1E1E]">
           <nav className="flex flex-col h-full">
-            <div className="p-4 border-b">
-              <h1 className="text-xl font-semibold text-primary-600">Admin Portal</h1>
+            <div className="p-4 border-b border-gray-800">
+              <h1 className="text-xl font-semibold text-[#F2F2F2]">Admin Portal</h1>
             </div>
             <div className="space-y-1 p-2">
               {navigation.map((item) => {
@@ -112,8 +112,8 @@ export default function AdminLayout({
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
                       pathname === item.href
-                        ? 'bg-primary-50 text-primary-500'
-                        : 'text-gray-500 hover:bg-gray-100'
+                        ? 'bg-[#262626] text-[#9146FF]'
+                        : 'text-[#C7C7C7] hover:bg-[#262626]'
                     )}
                   >
                     <Icon className="h-5 w-5" />

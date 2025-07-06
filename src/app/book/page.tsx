@@ -51,19 +51,21 @@ export default function BookingPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#141414]">
         <LoadingState>Loading...</LoadingState>
       </div>
     );
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Book Your Detail</h1>
-        <p className="text-gray-600">Complete your booking in just a few steps</p>
+    <main className="min-h-screen bg-[#141414]">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-[#F2F2F2] mb-2">Book Your Detail</h1>
+          <p className="text-[#C7C7C7]">Complete your booking in just a few steps</p>
+        </div>
+        <UnifiedBookingForm />
       </div>
-      <UnifiedBookingForm />
     </main>
   );
 } 

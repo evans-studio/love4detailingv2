@@ -104,8 +104,8 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Select Date & Time</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-semibold mb-4 text-[#F2F2F2]">Select Date & Time</h2>
+        <p className="text-[#C7C7C7] mb-6">
           Choose your preferred date and time for the service
         </p>
       </div>
@@ -113,8 +113,8 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Calendar */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Select Date *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-3">
+            Select Date <span className="text-[#BA0C2F]">*</span>
           </label>
           <Calendar
             mode="single"
@@ -124,14 +124,14 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
             className="border rounded-lg p-3"
           />
           {errors.dateTime?.date && (
-            <p className="mt-2 text-sm text-red-600">{errors.dateTime.date.message}</p>
+            <p className="mt-2 text-sm text-[#BA0C2F]">{errors.dateTime.date.message}</p>
           )}
         </div>
 
         {/* Time Slots */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Available Time Slots *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-3">
+            Available Time Slots <span className="text-[#BA0C2F]">*</span>
           </label>
           
           {!selectedDate ? (
@@ -172,7 +172,7 @@ export function DateTimeStep({ onNext, onBack }: DateTimeStepProps) {
           )}
           
           {errors.dateTime?.timeSlotId && (
-            <p className="mt-2 text-sm text-red-600">{errors.dateTime.timeSlotId.message}</p>
+            <p className="mt-2 text-sm text-[#BA0C2F]">{errors.dateTime.timeSlotId.message}</p>
           )}
         </div>
       </div>

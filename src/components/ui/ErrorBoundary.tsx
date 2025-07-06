@@ -51,12 +51,12 @@ function ErrorFallback({ error }: ErrorFallbackProps) {
   const router = useRouter();
 
   return (
-    <div className="min-h-[400px] flex items-center justify-center p-6">
+    <div className="min-h-[400px] flex items-center justify-center p-6 bg-[#141414]">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+        <h2 className="text-2xl font-semibold text-[#F2F2F2] mb-4">
           Oops! Something went wrong
         </h2>
-        <p className="text-gray-600 mb-6 max-w-md">
+        <p className="text-[#C7C7C7] mb-6 max-w-md">
           {error?.message || 'An unexpected error occurred. Please try again later.'}
         </p>
         <div className="space-x-4">

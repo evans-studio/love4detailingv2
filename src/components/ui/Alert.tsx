@@ -18,10 +18,10 @@ export function Alert({
   className 
 }: AlertProps) {
   const variantStyles = {
-    default: 'bg-gray-100 text-gray-900',
-    destructive: 'bg-red-50 text-red-900',
-    warning: 'bg-yellow-50 text-yellow-900',
-    success: 'bg-green-50 text-green-900'
+    default: 'bg-[#262626] text-[#F2F2F2] border border-gray-700',
+    destructive: 'bg-[#BA0C2F]/10 text-[#F2F2F2] border border-[#BA0C2F]/30',
+    warning: 'bg-yellow-500/10 text-[#F2F2F2] border border-yellow-500/30',
+    success: 'bg-[#28C76F]/10 text-[#F2F2F2] border border-[#28C76F]/30'
   };
 
   return (

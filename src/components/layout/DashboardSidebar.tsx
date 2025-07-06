@@ -76,22 +76,22 @@ export function DashboardSidebar() {
   // During SSR and initial mount, render a simplified version
   if (!mounted) {
     return (
-      <aside className="w-64 border-r bg-white">
+      <aside className="w-64 border-r border-gray-800 bg-[#1E1E1E]">
         <nav className="flex flex-col h-full">
           <div className="space-y-1 p-2">
             {navigation.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-500"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#C7C7C7]"
               >
-                <div className="h-5 w-5 bg-gray-200 rounded" />
+                <div className="h-5 w-5 bg-[#262626] rounded" />
                 {item.name}
               </div>
             ))}
           </div>
           <div className="mt-auto p-2">
-            <div className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-500">
-              <div className="h-5 w-5 bg-gray-200 rounded" />
+            <div className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#C7C7C7]">
+              <div className="h-5 w-5 bg-[#262626] rounded" />
               Sign Out
             </div>
           </div>
@@ -101,7 +101,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="w-64 border-r bg-white">
+    <aside className="w-64 border-r border-gray-800 bg-[#1E1E1E]">
       <nav className="flex flex-col h-full">
         <div className="space-y-1 p-2">
           {navigation.map((item) => {
@@ -113,8 +113,8 @@ export function DashboardSidebar() {
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
                   pathname === item.href
-                    ? 'bg-primary-50 text-primary-500'
-                    : 'text-gray-500 hover:bg-gray-100'
+                    ? 'bg-[#262626] text-[#9146FF]'
+                    : 'text-[#C7C7C7] hover:text-[#F2F2F2] hover:bg-[#262626]'
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -128,10 +128,10 @@ export function DashboardSidebar() {
             <Link
               href="/admin"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium border-t mt-2 pt-2',
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium border-t border-gray-800 mt-2 pt-2',
                 pathname.startsWith('/admin')
-                  ? 'bg-primary-50 text-primary-500'
-                  : 'text-orange-600 hover:bg-orange-50'
+                  ? 'bg-[#262626] text-[#9146FF]'
+                  : 'text-orange-400 hover:bg-[#262626] hover:text-orange-300'
               )}
             >
               <Shield className="h-5 w-5" />
@@ -143,7 +143,7 @@ export function DashboardSidebar() {
         <div className="mt-auto p-2">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-red-500 hover:bg-red-50 hover:text-red-600"
+            className="w-full justify-start gap-3 text-red-400 hover:bg-[#262626] hover:text-red-300"
             onClick={handleSignOut}
           >
             <LogOut className="h-5 w-5" />

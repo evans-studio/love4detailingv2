@@ -141,8 +141,8 @@ export default function AdminTimeSlotsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Time Slots Management</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-[#F2F2F2]">Time Slots Management</h1>
+          <p className="text-[#C7C7C7] mt-2">
             Manage available booking time slots and working hours
           </p>
         </div>
@@ -180,12 +180,12 @@ export default function AdminTimeSlotsPage() {
 
       {/* Working Hours Configuration */}
       {showConfig && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Working Hours Configuration</h3>
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+          <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">Working Hours Configuration</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Start Time</label>
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">Start Time</label>
               <Input
                 type="time"
                 value={workingHours.start}
@@ -194,7 +194,7 @@ export default function AdminTimeSlotsPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-2">End Time</label>
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">End Time</label>
               <Input
                 type="time"
                 value={workingHours.end}
@@ -203,7 +203,7 @@ export default function AdminTimeSlotsPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-2">Slots Per Day</label>
+              <label className="block text-sm font-medium text-[#C7C7C7] mb-2">Slots Per Day</label>
               <Input
                 type="number"
                 min="1"
@@ -215,7 +215,7 @@ export default function AdminTimeSlotsPage() {
           </div>
 
           <div className="mt-6">
-            <label className="block text-sm font-medium mb-3">Working Days</label>
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-3">Working Days</label>
             <div className="flex gap-2">
               {weekDays.map((day, index) => (
                 <button
@@ -229,8 +229,8 @@ export default function AdminTimeSlotsPage() {
                   }}
                   className={`px-3 py-2 text-sm rounded-md border transition-colors ${
                     workingHours.workingDays.includes(index)
-                      ? 'bg-primary-600 text-white border-primary-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                      ? 'bg-[#9146FF] text-white border-[#9146FF]'
+                      : 'bg-[#262626] text-[#C7C7C7] border-gray-800 hover:bg-[#1E1E1E]'
                   }`}
                 >
                   {day}
@@ -242,11 +242,11 @@ export default function AdminTimeSlotsPage() {
       )}
 
       {/* Date Selection */}
-      <Card className="p-6">
+      <Card className="p-6 bg-[#1E1E1E] border-gray-800">
         <div className="flex items-center gap-4">
           <Calendar className="h-5 w-5 text-primary-600" />
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-2">Select Date</label>
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-2">Select Date</label>
             <Input
               type="date"
               value={selectedDate}
@@ -254,17 +254,17 @@ export default function AdminTimeSlotsPage() {
               min={format(new Date(), 'yyyy-MM-dd')}
             />
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-[#C7C7C7]">
             {format(parseISO(selectedDate), 'EEEE, MMMM d, yyyy')}
           </div>
         </div>
       </Card>
 
       {/* Time Slots List */}
-      <Card className="p-6">
+      <Card className="p-6 bg-[#1E1E1E] border-gray-800">
         <div className="flex items-center gap-2 mb-6">
           <Clock className="h-5 w-5 text-primary-600" />
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-lg font-semibold text-[#F2F2F2]">
             Time Slots for {format(parseISO(selectedDate), 'MMM d, yyyy')}
           </h3>
         </div>
@@ -274,7 +274,7 @@ export default function AdminTimeSlotsPage() {
             <LoadingState>Loading time slots...</LoadingState>
           </div>
         ) : timeSlots.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-[#8B8B8B]">
             <Clock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <p>No time slots found for this date</p>
             <p className="text-sm mt-2">Click "Generate Slots" to create time slots</p>
@@ -293,7 +293,7 @@ export default function AdminTimeSlotsPage() {
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="font-medium">
+                  <div className="font-medium text-[#F2F2F2]">
                     {formatTime(slot.slot_time)}
                   </div>
                   <div className={`px-2 py-1 text-xs rounded-full ${

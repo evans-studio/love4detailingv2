@@ -242,8 +242,8 @@ export default function PricingManagement() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Pricing Management</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-[#F2F2F2]">Pricing Management</h1>
+        <p className="text-[#C7C7C7] mt-1">
           Configure vehicle size pricing and service add-ons
         </p>
       </div>
@@ -252,8 +252,8 @@ export default function PricingManagement() {
       <Card className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Vehicle Size Pricing</h2>
-            <p className="text-gray-600 mt-1">Set base prices for different vehicle sizes</p>
+            <h2 className="text-xl font-semibold text-[#F2F2F2]">Vehicle Size Pricing</h2>
+            <p className="text-[#C7C7C7] mt-1">Set base prices for different vehicle sizes</p>
           </div>
           <Button 
             onClick={sizeForm.handleSubmit(saveVehicleSizes)}
@@ -269,7 +269,7 @@ export default function PricingManagement() {
             <div key={size.id} className="p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Label
                   </label>
                   <Input
@@ -280,7 +280,7 @@ export default function PricingManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Description
                   </label>
                   <Input
@@ -291,7 +291,7 @@ export default function PricingManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Price (£)
                   </label>
                   <div className="relative">
@@ -316,9 +316,9 @@ export default function PricingManagement() {
                       onChange={(e) => updateSizePrice(index, 'is_active', e.target.checked)}
                       className="rounded border-gray-300"
                     />
-                    <span className="text-sm text-gray-600">Active</span>
+                    <span className="text-sm text-[#C7C7C7]">Active</span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-[#8B8B8B]">
                     {formatCurrency((sizeForm.watch('sizes')?.[index]?.price_pence || 0) / 100)}
                   </div>
                 </div>
@@ -332,8 +332,8 @@ export default function PricingManagement() {
       <Card className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Service Add-ons</h2>
-            <p className="text-gray-600 mt-1">Manage additional services and their pricing</p>
+            <h2 className="text-xl font-semibold text-[#F2F2F2]">Service Add-ons</h2>
+            <p className="text-[#C7C7C7] mt-1">Manage additional services and their pricing</p>
           </div>
           <Button onClick={() => setShowAddonForm(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -344,13 +344,13 @@ export default function PricingManagement() {
         {/* Add-on Form */}
         {showAddonForm && (
           <Card className="p-4 mb-6 bg-blue-50 border-blue-200">
-            <h3 className="font-medium text-gray-900 mb-4">
+            <h3 className="font-medium text-[#F2F2F2] mb-4">
               {editingAddon ? 'Edit Service Add-on' : 'Add New Service Add-on'}
             </h3>
             <form onSubmit={addonForm.handleSubmit(addOrUpdateAddon)} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Service Name
                   </label>
                   <Input
@@ -366,7 +366,7 @@ export default function PricingManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Description
                   </label>
                   <Input
@@ -382,7 +382,7 @@ export default function PricingManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
                     Price (£)
                   </label>
                   <div className="relative">
@@ -413,7 +413,7 @@ export default function PricingManagement() {
                   {...addonForm.register('is_active')}
                   className="rounded border-gray-300"
                 />
-                <span className="text-sm text-gray-600">Service is active and available to customers</span>
+                <span className="text-sm text-[#C7C7C7]">Service is active and available to customers</span>
               </div>
 
               <div className="flex space-x-3">
@@ -433,7 +433,7 @@ export default function PricingManagement() {
         {addons.length === 0 ? (
           <div className="text-center py-8">
             <Car className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-500">No service add-ons configured</p>
+            <p className="text-[#8B8B8B]">No service add-ons configured</p>
             <p className="text-gray-400 text-sm">Add services like wax protection or pet hair removal</p>
           </div>
         ) : (
@@ -443,11 +443,11 @@ export default function PricingManagement() {
                 <div className="flex-1">
                   <div className="flex items-center space-x-3">
                     <div>
-                      <div className="font-medium text-gray-900">{addon.name}</div>
-                      <div className="text-sm text-gray-600">{addon.description}</div>
+                      <div className="font-medium text-[#F2F2F2]">{addon.name}</div>
+                      <div className="text-sm text-[#C7C7C7]">{addon.description}</div>
                     </div>
                     {!addon.is_active && (
-                      <span className="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">
+                      <span className="px-2 py-1 bg-gray-200 text-[#C7C7C7] text-xs rounded">
                         Inactive
                       </span>
                     )}
@@ -455,7 +455,7 @@ export default function PricingManagement() {
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-[#F2F2F2]">
                       {formatCurrency(addon.price_pence / 100)}
                     </div>
                   </div>

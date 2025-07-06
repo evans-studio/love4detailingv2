@@ -202,10 +202,10 @@ export default function AdminCustomers() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Users className="h-8 w-8 text-primary-500" />
+        <Users className="h-8 w-8 text-[#9146FF]" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
-          <p className="text-gray-600">View and manage customer profiles and booking history</p>
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Customer Management</h1>
+          <p className="text-[#C7C7C7]">View and manage customer profiles and booking history</p>
         </div>
       </div>
 
@@ -218,9 +218,9 @@ export default function AdminCustomers() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Customer List */}
         <div className="lg:col-span-2">
-          <Card className="p-6">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">All Customers ({filteredCustomers.length})</h2>
+              <h2 className="text-lg font-semibold text-[#F2F2F2]">All Customers ({filteredCustomers.length})</h2>
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -240,7 +240,7 @@ export default function AdminCustomers() {
             {filteredCustomers.length === 0 ? (
               <div className="text-center py-8">
                 <UserX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No customers found</p>
+                <p className="text-[#C7C7C7]">No customers found</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -249,40 +249,40 @@ export default function AdminCustomers() {
                     key={customer.id}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                       selectedCustomer?.id === customer.id 
-                        ? 'border-primary-500 bg-primary-50' 
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-[#9146FF] bg-[#262626]' 
+                        : 'border-gray-800 hover:border-gray-700'
                     }`}
                     onClick={() => fetchCustomerDetail(customer.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                            <Users className="h-5 w-5 text-primary-600" />
+                          <div className="w-10 h-10 bg-[#262626] rounded-full flex items-center justify-center">
+                            <Users className="h-5 w-5 text-[#9146FF]" />
                           </div>
                           <div>
-                            <h3 className="font-medium text-gray-900">{customer.full_name}</h3>
-                            <p className="text-sm text-gray-600">{customer.email}</p>
+                            <h3 className="font-medium text-[#F2F2F2]">{customer.full_name}</h3>
+                            <p className="text-sm text-[#C7C7C7]">{customer.email}</p>
                             {customer.phone && (
-                              <p className="text-xs text-gray-500">{customer.phone}</p>
+                              <p className="text-xs text-[#8B8B8B]">{customer.phone}</p>
                             )}
                           </div>
                         </div>
                         <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
-                            <p className="text-gray-500">Bookings</p>
-                            <p className="font-medium">{customer.bookings_count}</p>
+                            <p className="text-[#8B8B8B]">Bookings</p>
+                            <p className="font-medium text-[#F2F2F2]">{customer.bookings_count}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Vehicles</p>
-                            <p className="font-medium">{customer.vehicles_count}</p>
+                            <p className="text-[#8B8B8B]">Vehicles</p>
+                            <p className="font-medium text-[#F2F2F2]">{customer.vehicles_count}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Total Spent</p>
-                            <p className="font-medium">{formatCurrency(customer.total_spent_pence / 100)}</p>
+                            <p className="text-[#8B8B8B]">Total Spent</p>
+                            <p className="font-medium text-[#F2F2F2]">{formatCurrency(customer.total_spent_pence / 100)}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Tier</p>
+                            <p className="text-[#8B8B8B]">Tier</p>
                             <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                               customer.reward_tier === 'Gold' ? 'bg-yellow-100 text-yellow-800' :
                               customer.reward_tier === 'Silver' ? 'bg-gray-100 text-gray-800' :
@@ -304,8 +304,8 @@ export default function AdminCustomers() {
 
         {/* Customer Details */}
         <div>
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Customer Details</h2>
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">Customer Details</h2>
             
             {detailLoading ? (
               <LoadingState>Loading details...</LoadingState>
@@ -313,56 +313,56 @@ export default function AdminCustomers() {
               <div className="space-y-6">
                 {/* Customer Info */}
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">{selectedCustomer.full_name}</h3>
+                  <h3 className="font-medium text-[#F2F2F2] mb-3">{selectedCustomer.full_name}</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-gray-400" />
-                      <span>{selectedCustomer.email}</span>
+                      <span className="text-[#C7C7C7]">{selectedCustomer.email}</span>
                     </div>
                     {selectedCustomer.phone && (
                       <div className="flex items-center gap-2">
                         <Phone className="h-4 w-4 text-gray-400" />
-                        <span>{selectedCustomer.phone}</span>
+                        <span className="text-[#C7C7C7]">{selectedCustomer.phone}</span>
                       </div>
                     )}
                     <div className="flex items-center gap-2">
                       <CalendarDays className="h-4 w-4 text-gray-400" />
-                      <span>Joined {formatDate(selectedCustomer.created_at)}</span>
+                      <span className="text-[#C7C7C7]">Joined {formatDate(selectedCustomer.created_at)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <p className="text-lg font-semibold text-gray-900">{selectedCustomer.bookings_count}</p>
-                    <p className="text-xs text-gray-600">Bookings</p>
+                  <div className="text-center p-3 bg-[#262626] rounded-lg">
+                    <p className="text-lg font-semibold text-[#F2F2F2]">{selectedCustomer.bookings_count}</p>
+                    <p className="text-xs text-[#8B8B8B]">Bookings</p>
                   </div>
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <p className="text-lg font-semibold text-gray-900">{formatCurrency(selectedCustomer.total_spent_pence / 100)}</p>
-                    <p className="text-xs text-gray-600">Total Spent</p>
+                  <div className="text-center p-3 bg-[#262626] rounded-lg">
+                    <p className="text-lg font-semibold text-[#F2F2F2]">{formatCurrency(selectedCustomer.total_spent_pence / 100)}</p>
+                    <p className="text-xs text-[#8B8B8B]">Total Spent</p>
                   </div>
                 </div>
 
                 {/* Recent Bookings */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Recent Bookings</h4>
+                  <h4 className="font-medium text-[#F2F2F2] mb-3">Recent Bookings</h4>
                   {selectedCustomer.recent_bookings.length === 0 ? (
-                    <p className="text-sm text-gray-500">No bookings yet</p>
+                    <p className="text-sm text-[#8B8B8B]">No bookings yet</p>
                   ) : (
                     <div className="space-y-2">
                       {selectedCustomer.recent_bookings.slice(0, 3).map((booking) => (
-                        <div key={booking.id} className="p-3 bg-gray-50 rounded-lg text-sm">
+                        <div key={booking.id} className="p-3 bg-[#262626] rounded-lg text-sm">
                           <div className="flex justify-between items-start">
                             <div>
-                              <p className="font-medium">{booking.booking_reference}</p>
-                              <p className="text-gray-600">{booking.vehicles.make} {booking.vehicles.model}</p>
-                              <p className="text-xs text-gray-500">
+                              <p className="font-medium text-[#F2F2F2]">{booking.booking_reference}</p>
+                              <p className="text-[#C7C7C7]">{booking.vehicles.make} {booking.vehicles.model}</p>
+                              <p className="text-xs text-[#8B8B8B]">
                                 {formatDate(booking.time_slots.slot_date)}
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-medium">{formatCurrency(booking.total_price_pence / 100)}</p>
+                              <p className="font-medium text-[#F2F2F2]">{formatCurrency(booking.total_price_pence / 100)}</p>
                               <span className={`inline-flex px-2 py-1 rounded-full text-xs ${
                                 booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
                                 booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -380,19 +380,19 @@ export default function AdminCustomers() {
 
                 {/* Customer Vehicles */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Vehicles</h4>
+                  <h4 className="font-medium text-[#F2F2F2] mb-3">Vehicles</h4>
                   {selectedCustomer.vehicles.length === 0 ? (
-                    <p className="text-sm text-gray-500">No vehicles registered</p>
+                    <p className="text-sm text-[#8B8B8B]">No vehicles registered</p>
                   ) : (
                     <div className="space-y-2">
                       {selectedCustomer.vehicles.map((vehicle) => (
-                        <div key={vehicle.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div key={vehicle.id} className="flex items-center gap-3 p-3 bg-[#262626] rounded-lg">
                           <Car className="h-4 w-4 text-gray-400" />
                           <div className="flex-1">
-                            <p className="text-sm font-medium">{vehicle.make} {vehicle.model}</p>
-                            <p className="text-xs text-gray-500">{vehicle.registration} • {vehicle.year}</p>
+                            <p className="text-sm font-medium text-[#F2F2F2]">{vehicle.make} {vehicle.model}</p>
+                            <p className="text-xs text-[#8B8B8B]">{vehicle.registration} • {vehicle.year}</p>
                           </div>
-                          <span className="text-xs px-2 py-1 bg-white rounded border">
+                          <span className="text-xs px-2 py-1 bg-[#1E1E1E] text-[#C7C7C7] rounded border border-gray-800">
                             {vehicle.size_category}
                           </span>
                         </div>
@@ -412,7 +412,7 @@ export default function AdminCustomers() {
             ) : (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">Select a customer to view details</p>
+                <p className="text-[#C7C7C7]">Select a customer to view details</p>
               </div>
             )}
           </Card>
