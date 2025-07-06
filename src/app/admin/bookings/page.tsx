@@ -5,7 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
@@ -393,13 +393,17 @@ export default function AdminBookings() {
             <Select
               value={filters.status}
               onValueChange={(value) => handleFilterChange('status', value)}
-              className="h-10 sm:h-12 text-sm sm:text-base"
             >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <SelectTrigger className="h-10 sm:h-12 text-sm sm:text-base">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
@@ -700,10 +704,15 @@ export default function AdminBookings() {
                     value={editForm.watch('status')}
                     onValueChange={(value) => editForm.setValue('status', value as any)}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="confirmed">Confirmed</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
                   </Select>
                   {editForm.formState.errors.status && (
                     <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.status.message}</p>
@@ -718,9 +727,14 @@ export default function AdminBookings() {
                     value={editForm.watch('payment_status')}
                     onValueChange={(value) => editForm.setValue('payment_status', value as any)}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="paid">Paid</option>
-                    <option value="failed">Failed</option>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="failed">Failed</SelectItem>
+                    </SelectContent>
                   </Select>
                   {editForm.formState.errors.payment_status && (
                     <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.payment_status.message}</p>

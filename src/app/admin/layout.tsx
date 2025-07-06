@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '@/lib/constants/routes';
 import { cn } from '@/lib/utils';
-import { BookOpen, Settings, Users, Clock, BarChart3, TrendingUp } from 'lucide-react';
+import { BookOpen, Settings, Users, Clock, BarChart3, TrendingUp, LogOut } from 'lucide-react';
 import { checkAdminAccess } from '@/lib/auth/admin';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { Button } from '@/components/ui/Button';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const navigation = [
   {
@@ -51,6 +53,7 @@ export default function AdminLayout({
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     const verifyAdminAccess = async () => {
@@ -73,6 +76,11 @@ export default function AdminLayout({
 
     verifyAdminAccess();
   }, [router]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push(ROUTES.SIGN_IN);
+  };
 
   if (loading) {
     return (
@@ -102,7 +110,7 @@ export default function AdminLayout({
             <div className="p-4 border-b border-gray-800">
               <h1 className="text-xl font-semibold text-[#F2F2F2]">Admin Portal</h1>
             </div>
-            <div className="space-y-1 p-2">
+            <div className="flex-1 space-y-1 p-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -110,7 +118,7 @@ export default function AdminLayout({
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                       pathname === item.href
                         ? 'bg-[#262626] text-[#9146FF]'
                         : 'text-[#C7C7C7] hover:bg-[#262626]'
@@ -121,6 +129,17 @@ export default function AdminLayout({
                   </Link>
                 );
               })}
+            </div>
+            
+            <div className="p-2 border-t border-gray-800">
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 text-red-400 hover:bg-[#262626] hover:text-red-300"
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-5 w-5" />
+                Sign Out
+              </Button>
             </div>
           </nav>
         </aside>
