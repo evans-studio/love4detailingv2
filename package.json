@@ -24,7 +24,10 @@
     "test:e2e:debug": "playwright test --debug",
     "audit:features": "grep -r \"onClick\\|href=\\|onSubmit\" src/ --include=\"*.tsx\" --include=\"*.ts\" | wc -l",
     "audit:detailed": "ts-node scripts/feature-audit.ts",
-    "audit:quick": "echo 'Quick Feature Count:' && grep -r \"onClick\" src/ --include=\"*.tsx\" | wc -l && echo 'Buttons found' && grep -r \"href=\" src/ --include=\"*.tsx\" | wc -l && echo 'Links found' && grep -r \"onSubmit\" src/ --include=\"*.tsx\" | wc -l && echo 'Forms found'"
+    "audit:quick": "echo 'Quick Feature Count:' && grep -r \"onClick\" src/ --include=\"*.tsx\" | wc -l && echo 'Buttons found' && grep -r \"href=\" src/ --include=\"*.tsx\" | wc -l && echo 'Links found' && grep -r \"onSubmit\" src/ --include=\"*.tsx\" | wc -l && echo 'Forms found'",
+    "create-bookings": "ts-node scripts/create-test-bookings.ts",
+    "verify-users": "ts-node scripts/verify-users.ts",
+    "setup-january-slots": "ts-node scripts/setup-january-slots.ts"
   },
   "dependencies": {
     "@agentdeskai/browser-tools-mcp": "^1.2.1",
