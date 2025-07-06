@@ -3,6 +3,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { CancelBookingButton } from '@/components/dashboard/CancelBookingButton';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import {
@@ -141,16 +142,11 @@ export default async function BookingDetailsPage({
       </Card>
 
       {/* Actions */}
-      {canCancel && (
-        <div className="flex justify-end">
-          <Button
-            variant="destructive"
-            onClick={() => {/* Add cancel booking logic */}}
-          >
-            Cancel Booking
-          </Button>
-        </div>
-      )}
+      <CancelBookingButton 
+        bookingId={booking.id}
+        bookingReference={booking.booking_reference}
+        canCancel={canCancel}
+      />
     </div>
   );
 } 

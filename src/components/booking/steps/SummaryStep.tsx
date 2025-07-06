@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { Alert } from '@/components/ui/Alert';
 import type { UnifiedBookingForm } from '@/lib/validation/booking';
@@ -25,6 +26,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
     formState: { errors }
   } = useFormContext<UnifiedBookingForm>();
 
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -93,9 +95,9 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
       const result = await response.json();
       setIsSuccess(true);
       
-      // Redirect to confirmation page after success
+      // Redirect to confirmation page after success using Next.js router
       setTimeout(() => {
-        window.location.href = `/confirmation?booking=${result.booking.id}`;
+        router.push(`/confirmation?booking=${result.booking.id}`);
       }, 2000);
 
     } catch (error) {
@@ -287,7 +289,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
         <button
           type="button"
           onClick={onBack}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSuccess}
           className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           Back
@@ -295,8 +297,8 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
         <button
           type="button"
           onClick={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+          disabled={isSubmitting || isSuccess}
+          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <div className="flex items-center">
