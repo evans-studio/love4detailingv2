@@ -12,7 +12,8 @@ async function testBookingAPI() {
       model: 'Corolla',
       year: '2020',
       color: 'White',
-      sizeId: '1', // Assuming this exists
+      sizeId: '027cbc8f-db2a-4856-9673-e5a17db2ac66', // Medium size
+      size: 'Medium', // Required by validation
     },
     personalDetails: {
       firstName: 'Test',
@@ -22,11 +23,11 @@ async function testBookingAPI() {
       postcode: 'SW1A 1AA',
     },
     dateTime: {
-      timeSlotId: '1', // This would need to be a valid time slot ID
-      date: '2025-07-10',
+      timeSlotId: '2064f932-cdfa-4db0-98ec-6b5a923234c1', // Valid time slot
+      date: '2025-07-16',
       time: '10:00',
     },
-    vehicleSizeId: '1',
+    vehicleSizeId: '027cbc8f-db2a-4856-9673-e5a17db2ac66',
     totalPrice: 6000, // £60.00 in pence
   };
   
