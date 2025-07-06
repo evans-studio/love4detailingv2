@@ -101,9 +101,9 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="w-64 border-r border-gray-800 bg-[#1E1E1E]">
+    <aside className="w-64 border-r border-gray-800 bg-[#1E1E1E] h-full">
       <nav className="flex flex-col h-full">
-        <div className="space-y-1 p-2">
+        <div className="flex-1 space-y-1 p-4 sm:p-6">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
@@ -111,7 +111,7 @@ export function DashboardSidebar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   pathname === item.href
                     ? 'bg-[#262626] text-[#9146FF]'
                     : 'text-[#C7C7C7] hover:text-[#F2F2F2] hover:bg-[#262626]'
@@ -128,7 +128,7 @@ export function DashboardSidebar() {
             <Link
               href="/admin"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium border-t border-gray-800 mt-2 pt-2',
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium border-t border-gray-800 mt-2 pt-2 transition-colors',
                 pathname.startsWith('/admin')
                   ? 'bg-[#262626] text-[#9146FF]'
                   : 'text-orange-400 hover:bg-[#262626] hover:text-orange-300'
@@ -140,7 +140,7 @@ export function DashboardSidebar() {
           )}
         </div>
 
-        <div className="mt-auto p-2">
+        <div className="p-4 sm:p-6 border-t border-gray-800">
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-red-400 hover:bg-[#262626] hover:text-red-300"

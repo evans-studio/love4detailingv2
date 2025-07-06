@@ -56,18 +56,19 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#141414]">
-      {/* Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col">
+    <div className="flex min-h-screen bg-[#141414]">
+      {/* Mobile: Hidden sidebar with hamburger menu */}
+      {/* Desktop: Fixed sidebar */}
+      <aside className="hidden lg:block w-64 bg-[#1E1E1E] border-r border-gray-800">
         <DashboardSidebar />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col">
-        <main className="flex-1 overflow-y-auto p-6">
+      </aside>
+      
+      {/* Main content area */}
+      <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 } 
