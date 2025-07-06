@@ -3,9 +3,9 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { startOfDay, format } from 'date-fns';
 import type { Database } from '@/types/supabase';
-import type { DbTimeSlot } from '@/types';
+import type { DbAvailableSlot } from '@/types';
 
-export async function getAvailableTimeSlots(date: string): Promise<DbTimeSlot[]> {
+export async function getAvailableTimeSlots(date: string): Promise<DbAvailableSlot[]> {
   const supabase = createClientComponentClient<Database>();
 
   // Format date to match database format (YYYY-MM-DD)
@@ -31,7 +31,10 @@ export async function getAvailableTimeSlots(date: string): Promise<DbTimeSlot[]>
     slot_date: slot.slot_date,
     start_time: slot.start_time,
     end_time: slot.end_time,
+    max_bookings: slot.max_bookings,
+    current_bookings: slot.current_bookings,
     is_blocked: slot.is_blocked,
+    block_reason: slot.block_reason,
     created_at: slot.created_at,
     updated_at: slot.updated_at
   })) || [];

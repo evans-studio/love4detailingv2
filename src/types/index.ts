@@ -9,8 +9,7 @@ export type DbAvailableSlot = Database['public']['Tables']['available_slots']['R
 export type DbCustomerReward = Database['public']['Tables']['customer_rewards']['Row'];
 export type DbServicePricing = Database['public']['Tables']['service_pricing']['Row'];
 export type DbRewardTransaction = Database['public']['Tables']['reward_transactions']['Row'];
-export type DbAdminNote = Database['public']['Tables']['admin_notes']['Row'];
-export type DbMissingVehicleModel = Database['public']['Tables']['missing_vehicle_models']['Row'];
+// Note: admin_notes and missing_vehicle_models tables removed in schema refactor
 
 // User Types
 export interface User {
@@ -303,7 +302,7 @@ export interface WeeklyScheduleTemplate {
   created_at: string;
 }
 
-export interface TimeSlotWithAvailability extends TimeSlot {
+export interface TimeSlotWithAvailability extends DbAvailableSlot {
   slot_number: number;
   buffer_minutes: number;
   is_available: boolean;

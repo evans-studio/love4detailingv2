@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { sizeMap } from '../utils/vehicle-data';
-import type { DbVehicleSize, DbBooking } from '@/types';
+import type { Booking } from '@/types';
 
 // Additional regex patterns for unified form
 const PHONE_REGEX = /^(?:(?:\+44)|(?:0))(?:(?:(?:\d{10})|(?:\d{9})|(?:\d{8})|(?:\d{7})|(?:\d{6})|(?:\d{5})))$/;
@@ -64,12 +64,12 @@ export const bookingSchema = z.object({
 export type VehicleRegistrationInput = z.infer<typeof vehicleRegistrationSchema>;
 export type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 export type PersonalDetails = z.infer<typeof personalDetailsSchema>;
-export type VehicleSize = DbVehicleSize;
+export type VehicleSize = z.infer<typeof vehicleSizeSchema>;
 export type TimeSlot = z.infer<typeof timeSlotSchema>;
 export type BookingData = z.infer<typeof bookingSchema>;
 
 // Extended booking type with relations
-export interface BookingWithRelations extends DbBooking {
+export interface BookingWithRelations extends Booking {
   users?: {
     first_name: string;
     last_name: string;

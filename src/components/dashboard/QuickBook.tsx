@@ -21,7 +21,7 @@ import { getAvailableTimeSlots, getAvailableDates, createBooking } from '@/lib/a
 import { ROUTES } from '@/lib/constants/routes';
 import { useBooking } from '@/lib/context/BookingContext';
 import type { Database } from '@/types/supabase';
-import type { DbTimeSlot } from '@/types';
+import type { DbAvailableSlot } from '@/types';
 
 type Vehicle = Database['public']['Tables']['vehicles']['Row'] & {
   vehicle_sizes: {
@@ -40,9 +40,9 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
   const router = useRouter();
   const { dispatch } = useBooking();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<DbTimeSlot | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<DbAvailableSlot | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<DbTimeSlot[]>([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<DbAvailableSlot[]>([]);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -248,7 +248,7 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
                     <SelectContent>
                       {availableTimeSlots.map((slot) => (
                         <SelectItem key={slot.id} value={slot.id}>
-                          {format(new Date(`2000-01-01T${slot.slot_time}`), 'h:mm aa')}
+                          {format(new Date(`2000-01-01T${slot.start_time}`), 'h:mm aa')}
                         </SelectItem>
                       ))}
                     </SelectContent>

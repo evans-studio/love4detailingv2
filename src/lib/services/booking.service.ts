@@ -65,14 +65,16 @@ export class BookingService {
       .select('*')
       .eq('slot_date', date)
       .eq('is_blocked', false)
-      .lt('current_bookings', this.supabase.raw('max_bookings'))
       .order('start_time')
 
     if (error) {
       console.error('Error fetching available slots:', error)
       throw new Error('Failed to fetch available time slots')
     }
-    return data
+    
+    // Filter available slots where current_bookings < max_bookings
+    const availableSlots = data?.filter(slot => slot.current_bookings < slot.max_bookings) || []
+    return availableSlots
   }
 
   async createBooking(bookingData: BookingCreateData): Promise<BookingTransactionResult> {

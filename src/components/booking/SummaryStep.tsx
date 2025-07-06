@@ -6,7 +6,7 @@ import { useBooking } from '@/lib/context/BookingContext';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { formatDate, formatTime, formatCurrency } from '@/lib/utils';
-import { createBooking } from '@/lib/services/booking';
+import { BookingService } from '@/lib/services/booking.service';
 import { LoadingState } from '@/components/ui/LoadingState';
 
 export function SummaryStep() {
@@ -32,39 +32,20 @@ export function SummaryStep() {
     setError(null);
 
     try {
-      const result = await createBooking({
-        vehicle_registration: vehicle.registration,
-        vehicle_make: vehicle.make,
-        vehicle_model: vehicle.model,
-        vehicle_year: vehicle.year,
-        vehicle_color: vehicle.color,
-        vehicle_size_id: vehicleSize.id,
-        time_slot_id: timeSlot.id,
-        email: customer.email,
-        full_name: `${customer.firstName} ${customer.lastName}`,
-        phone: customer.phone
+      const bookingService = new BookingService();
+      const result = await bookingService.createBooking({
+        customerEmail: customer.email,
+        customerName: `${customer.firstName} ${customer.lastName}`,
+        customerPhone: customer.phone,
+        slotId: timeSlot.id,
+        vehicleId: undefined, // Will be handled by the service
+        userId: undefined, // Will be determined by service
       });
 
-      if (!result.success || !result.booking) {
-        throw new Error(result.error || 'Failed to create booking');
-      }
-
-      // Redirect to confirmation page with booking ID and setup link if provided
+      // Redirect to confirmation page with booking reference
       const params = new URLSearchParams({
-        booking: result.booking.id
+        booking: result.booking_reference
       });
-
-      if (result.password_reset_link) {
-        params.append('setup', result.password_reset_link);
-      }
-
-      // Add user status flags
-      if (result.userExists !== undefined) {
-        params.append('userExists', result.userExists.toString());
-      }
-      if (result.hasPassword !== undefined) {
-        params.append('hasPassword', result.hasPassword.toString());
-      }
 
       router.push(`/confirmation?${params.toString()}`);
     } catch (err) {
@@ -134,7 +115,7 @@ export function SummaryStep() {
             </div>
             <div>
               <dt className="text-sm text-gray-600">Time</dt>
-              <dd className="font-medium">{formatTime(timeSlot.slot_time)}</dd>
+              <dd className="font-medium">{formatTime(timeSlot.start_time)}</dd>
             </div>
           </dl>
         </div>

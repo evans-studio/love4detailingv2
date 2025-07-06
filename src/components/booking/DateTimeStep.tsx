@@ -45,7 +45,7 @@ export default function DateTimeStep() {
       try {
         const slots = await getAvailableTimeSlots(date);
         if (!isMounted) return;
-        setAvailableTimeSlots(slots.map(slot => ({ id: slot.id, slot_time: slot.slot_time })));
+        setAvailableTimeSlots(slots.map(slot => ({ id: slot.id, slot_time: slot.start_time })));
         if (slots.length === 0) {
           setError('No time slots available for the selected date. Please try another date.');
         }
@@ -83,8 +83,12 @@ export default function DateTimeStep() {
       const timeSlot = {
         id: state.data.selectedTimeSlotId,
         slot_date: state.data.selectedDate,
-        slot_time: state.data.selectedTime,
-        is_booked: false,
+        start_time: state.data.selectedTime || '09:00',
+        end_time: state.data.selectedTime ? (parseInt(state.data.selectedTime.split(':')[0]) + 2) + ':00' : '11:00',
+        max_bookings: 1,
+        current_bookings: 0,
+        is_blocked: false,
+        block_reason: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };

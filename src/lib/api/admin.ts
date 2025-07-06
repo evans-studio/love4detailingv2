@@ -95,11 +95,11 @@ export const adminApi = {
     return data;
   },
 
-  async createTimeSlot(timeSlot: Database['public']['Tables']['time_slots']['Insert']) {
+  async createTimeSlot(timeSlot: Database['public']['Tables']['available_slots']['Insert']) {
     const supabase = createAdminClient();
     
     const { data, error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .insert(timeSlot)
       .select()
       .single();
@@ -108,11 +108,11 @@ export const adminApi = {
     return data;
   },
 
-  async updateTimeSlot(id: string, updates: Partial<Database['public']['Tables']['time_slots']['Update']>) {
+  async updateTimeSlot(id: string, updates: Partial<Database['public']['Tables']['available_slots']['Update']>) {
     const supabase = createAdminClient();
     
     const { data, error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .update(updates)
       .eq('id', id)
       .select()
@@ -126,39 +126,15 @@ export const adminApi = {
     const supabase = createAdminClient();
     
     const { error } = await supabase
-      .from('time_slots')
+      .from('available_slots')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
   },
 
-  // Vehicle Sizes
-  async getAllVehicleSizes() {
-    const supabase = createAdminClient();
-    
-    const { data, error } = await supabase
-      .from('vehicle_sizes')
-      .select('*')
-      .order('label');
-
-    if (error) throw error;
-    return data;
-  },
-
-  async updateVehicleSize(id: string, updates: Partial<Database['public']['Tables']['vehicle_sizes']['Update']>) {
-    const supabase = createAdminClient();
-    
-    const { data, error } = await supabase
-      .from('vehicle_sizes')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
+  // Vehicle Sizes - Now handled via JSON detection
+  // These functions are deprecated in favor of JSON-based vehicle size detection
 
   // Users
   async getAllUsers() {
