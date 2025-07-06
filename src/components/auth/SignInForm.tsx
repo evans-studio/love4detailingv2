@@ -73,7 +73,7 @@ export function SignInForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md mx-auto space-y-4">
       {message && (
         <div className="text-sm text-[#28C76F] bg-[#1E1E1E] border border-gray-800 p-3 rounded-md">
           {message}
@@ -86,6 +86,7 @@ export function SignInForm() {
           {...register('email')}
           error={!!errors.email}
           helperText={errors.email?.message}
+          className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base"
         />
       </div>
       <div className="space-y-2">
@@ -95,6 +96,7 @@ export function SignInForm() {
           {...register('password')}
           error={!!errors.password}
           helperText={errors.password?.message}
+          className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base"
         />
       </div>
       {error && (
@@ -104,7 +106,7 @@ export function SignInForm() {
       )}
       <Button
         type="submit"
-        className="w-full"
+        className="w-full h-10 sm:h-12 text-sm sm:text-base"
         disabled={loading}
       >
         {loading ? 'Signing in...' : 'Sign in'}

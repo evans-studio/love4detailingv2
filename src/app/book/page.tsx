@@ -57,10 +57,10 @@ export default function BookingPage() {
 
   return (
     <main className="min-h-screen bg-[#141414]">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[#F2F2F2] mb-2">Book Your Detail</h1>
-          <p className="text-[#C7C7C7]">Complete your booking in just a few steps</p>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#F2F2F2] mb-2">Book Your Detail</h1>
+          <p className="text-sm sm:text-base text-[#C7C7C7]">Complete your booking in just a few steps</p>
         </div>
         <UnifiedBookingForm />
       </div>
