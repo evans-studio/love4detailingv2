@@ -87,8 +87,15 @@ export class TestHelpers {
     await this.page.click('text=Add Vehicle');
     
     await this.page.fill(SELECTORS.registrationInput, vehicle.registration);
-    await this.page.fill(SELECTORS.makeInput, vehicle.make);
-    await this.page.fill(SELECTORS.modelInput, vehicle.model);
+    
+    // Handle make selection (dropdown)
+    await this.page.click(SELECTORS.makeSelect);
+    await this.page.click(`text=${vehicle.make}`);
+    
+    // Handle model selection (dropdown)
+    await this.page.click(SELECTORS.modelSelect);
+    await this.page.click(`text=${vehicle.model}`);
+    
     await this.page.fill(SELECTORS.yearInput, vehicle.year);
     await this.page.fill(SELECTORS.colorInput, vehicle.color);
     
@@ -110,8 +117,15 @@ export class TestHelpers {
     // If vehicle provided, fill vehicle details
     if (vehicle) {
       await this.page.fill(SELECTORS.registrationInput, vehicle.registration);
-      await this.page.fill(SELECTORS.makeInput, vehicle.make);
-      await this.page.fill(SELECTORS.modelInput, vehicle.model);
+      
+      // Handle make selection (dropdown)
+      await this.page.click(SELECTORS.makeSelect);
+      await this.page.click(`text=${vehicle.make}`);
+      
+      // Handle model selection (dropdown)
+      await this.page.click(SELECTORS.modelSelect);
+      await this.page.click(`text=${vehicle.model}`);
+      
       await this.page.fill(SELECTORS.yearInput, vehicle.year);
       await this.page.fill(SELECTORS.colorInput, vehicle.color);
     }
