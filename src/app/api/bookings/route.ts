@@ -94,6 +94,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // Set up base URL for API calls
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || 'https://love4detailingv2.vercel.app';
+    
     // Log incoming data for debugging
     console.log('Incoming booking data:', JSON.stringify(body, null, 2));
     
@@ -165,7 +168,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Try to create new user via anonymous auth endpoint first
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/api/auth/anonymous`, {
+        const response = await fetch(`${baseUrl}/api/auth/anonymous`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -335,7 +338,7 @@ export async function POST(request: NextRequest) {
 
     // Send booking confirmation email
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/email`, {
+      await fetch(`${baseUrl}/api/email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
