@@ -20,6 +20,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState('');
   
   const router = useRouter();
   const supabase = createClientComponentClient();
@@ -56,32 +57,22 @@ export default function SignupPage() {
       });
 
       if (error) {
+        console.error('Signup error:', error);
         setError(error.message);
         return;
       }
 
-      if (data.user) {
-        // Create user profile
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            first_name: firstName,
-            last_name: lastName,
-            role: 'customer',
-            created_at: new Date().toISOString()
-          });
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-        }
-
+      if (data.user && !data.session) {
+        // Email confirmation required
         setSuccess(true);
+        setMessage('Please check your email and click the confirmation link.');
+      } else if (data.session) {
+        // User is immediately signed in
+        window.location.href = '/dashboard';
       }
     } catch (error) {
-      setError('An unexpected error occurred');
       console.error('Signup error:', error);
+      setError('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -100,7 +91,7 @@ export default function SignupPage() {
               We've sent you a confirmation link at <strong>{email}</strong>
             </p>
             <p className="text-sm text-gray-500">
-              Click the link in your email to activate your account.
+              {message || 'Click the link in your email to activate your account.'}
             </p>
           </CardContent>
         </Card>
