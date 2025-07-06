@@ -6,7 +6,6 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ROUTES } from '@/lib/constants/routes';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { UnifiedBookingForm } from '@/components/booking/UnifiedBookingForm';
-import { clearLocalSession } from '@/lib/supabase';
 
 export default function BookingPage() {
   const router = useRouter();
@@ -16,14 +15,13 @@ export default function BookingPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // First clear any stale session data
-        await clearLocalSession();
-
-        // Now check auth state
+        // Check auth state without clearing session
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          throw error;
+          console.error('Auth check error:', error);
+          setIsLoading(false);
+          return;
         }
 
         if (session?.user) {
