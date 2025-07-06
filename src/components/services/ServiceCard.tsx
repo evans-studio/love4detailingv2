@@ -32,6 +32,7 @@ export function ServiceCard({
         className
       )}
       onClick={() => service.available && onSelect?.(service.id)}
+      data-testid={`service-card-${service.id}`}
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">

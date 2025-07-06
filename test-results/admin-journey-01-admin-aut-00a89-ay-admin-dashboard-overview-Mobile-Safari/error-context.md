@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - link "Love4Detailing":
+    - /url: /
+  - link "Book Detail":
+    - /url: /book
+    - button "Book Detail"
+  - link "Dashboard":
+    - /url: /dashboard
+    - button "Dashboard"
+- main:
+  - main:
+    - heading "Admin Dashboard" [level=1]
+    - paragraph: Welcome to the Love4Detailing control panel
+    - text: "Last updated: 5:58:42 PM"
+    - paragraph: Total Bookings
+    - paragraph: "1"
+    - paragraph: All time
+    - paragraph: This Month
+    - paragraph: "1"
+    - paragraph: Bookings
+    - paragraph: Active Customers
+    - paragraph: "1"
+    - paragraph: Registered users
+    - paragraph: Monthly Revenue
+    - paragraph: £0.60
+    - paragraph: "Total: £0.60"
+    - heading "Quick Actions" [level=2]
+    - link "Create Manual Booking":
+      - /url: /admin/bookings/create
+      - button "Create Manual Booking"
+    - link "Edit Pricing":
+      - /url: /admin/pricing
+      - button "Edit Pricing"
+    - link "View Booking Logs":
+      - /url: /admin/bookings
+      - button "View Booking Logs"
+    - link "Manage Availability":
+      - /url: /admin/availability
+      - button "Manage Availability"
+    - heading "Upcoming Bookings" [level=2]
+    - link "View All":
+      - /url: /admin/bookings
+      - button "View All"
+    - paragraph: No upcoming bookings
+- contentinfo:
+  - heading "Love4Detailing" [level=3]
+  - paragraph: Professional car detailing services in London. Transform your vehicle with our expert care.
+  - link "Book Service":
+    - /url: /book
+    - button "Book Service"
+  - heading "Quick Links" [level=4]
+  - list:
+    - listitem:
+      - link "Book Service":
+        - /url: /book
+    - listitem:
+      - link "Customer Dashboard":
+        - /url: /dashboard
+    - listitem:
+      - link "Sign In":
+        - /url: /auth/sign-in
+  - heading "Contact Us" [level=4]
+  - list:
+    - listitem: 123 Detail Street London, SW1A 1AA
+    - listitem:
+      - link "020 1234 5678":
+        - /url: tel:+442012345678
+    - listitem:
+      - link "info@love4detailing.com":
+        - /url: mailto:info@love4detailing.com
+  - heading "Support" [level=4]
+  - list:
+    - listitem:
+      - link "My Account":
+        - /url: /dashboard/profile
+    - listitem:
+      - link "My Bookings":
+        - /url: /dashboard/bookings
+    - listitem:
+      - link "Loyalty Points":
+        - /url: /dashboard/rewards
+  - paragraph: © 2025 Love4Detailing. All rights reserved.
+- alert: Love4Detailing - Professional Car Detailing Services
+```

@@ -14,24 +14,28 @@ test.describe('New User Registration', () => {
 
     await page.goto('/auth/sign-up');
     
-    // Fill registration form
-    await page.fill('input[name="name"]', user.name);
+    // Fill registration form with correct field names
+    const nameParts = user.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await page.fill('input[name="firstName"]', firstName);
+    await page.fill('input[name="lastName"]', lastName);
     await page.fill('input[name="email"]', user.email);
     await page.fill('input[name="password"]', user.password);
-    await page.fill('input[name="phone"]', user.phone);
-    
-    // Accept terms and conditions
-    await page.check('input[name="terms"]');
+    await page.fill('input[name="confirmPassword"]', user.password);
     
     // Submit registration
     await page.click('button[type="submit"]');
     
-    // Should redirect to dashboard
-    await page.waitForURL('/dashboard');
+    // Should redirect to verify email page
+    await page.waitForURL('/auth/verify-email');
     
-    // Verify user is logged in
-    await expect(page.locator('text=' + user.name)).toBeVisible();
-    await expect(page.locator('text=Welcome')).toBeVisible();
+    // Verify we're on the email verification page
+    await expect(page.locator('h1, h2').filter({ hasText: /verify|email/i })).toBeVisible();
+    await expect(page.locator('text=check your email')).toBeVisible({ timeout: 5000 }).catch(() => 
+      expect(page.locator('text=verification')).toBeVisible()
+    );
   });
 
   test('should validate email format', async ({ page }) => {
@@ -43,11 +47,15 @@ test.describe('New User Registration', () => {
     const invalidEmails = ['invalid-email', 'test@', '@domain.com', 'test.domain.com'];
     
     for (const invalidEmail of invalidEmails) {
-      await page.fill('input[name="name"]', user.name);
+      const nameParts = user.name.split(' ');
+      const firstName = nameParts[0] || 'Test';
+      const lastName = nameParts.slice(1).join(' ') || 'User';
+      
+      await page.fill('input[name="firstName"]', firstName);
+      await page.fill('input[name="lastName"]', lastName);
       await page.fill('input[name="email"]', invalidEmail);
       await page.fill('input[name="password"]', user.password);
-      await page.fill('input[name="phone"]', user.phone);
-      await page.check('input[name="terms"]');
+      await page.fill('input[name="confirmPassword"]', user.password);
       
       await page.click('button[type="submit"]');
       
@@ -65,11 +73,15 @@ test.describe('New User Registration', () => {
     const weakPasswords = ['123', 'password', 'abc123', 'PASSWORD'];
     
     for (const weakPassword of weakPasswords) {
-      await page.fill('input[name="name"]', user.name);
+      const nameParts = user.name.split(' ');
+      const firstName = nameParts[0] || 'Test';
+      const lastName = nameParts.slice(1).join(' ') || 'User';
+      
+      await page.fill('input[name="firstName"]', firstName);
+      await page.fill('input[name="lastName"]', lastName);
       await page.fill('input[name="email"]', user.email);
       await page.fill('input[name="password"]', weakPassword);
-      await page.fill('input[name="phone"]', user.phone);
-      await page.check('input[name="terms"]');
+      await page.fill('input[name="confirmPassword"]', weakPassword);
       
       await page.click('button[type="submit"]');
       
@@ -78,51 +90,25 @@ test.describe('New User Registration', () => {
     }
   });
 
-  test('should validate phone number format', async ({ page }) => {
+  test('should validate confirm password matching', async ({ page }) => {
     const user = generateUser();
 
     await page.goto('/auth/sign-up');
     
-    // Test invalid phone formats
-    const invalidPhones = ['123', '123456789012345', 'abc123', '+44 abc'];
+    const nameParts = user.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
     
-    for (const invalidPhone of invalidPhones) {
-      await page.fill('input[name="name"]', user.name);
-      await page.fill('input[name="email"]', user.email);
-      await page.fill('input[name="password"]', user.password);
-      await page.fill('input[name="phone"]', invalidPhone);
-      await page.check('input[name="terms"]');
-      
-      await page.click('button[type="submit"]');
-      
-      // Should show phone validation error
-      await expect(page.locator('.error-message, .field-error')).toBeVisible();
-    }
-  });
-
-  test('should require terms and conditions acceptance', async ({ page }) => {
-    const user = generateUser();
-
-    await page.goto('/auth/sign-up');
-    
-    // Fill form without accepting terms
-    await page.fill('input[name="name"]', user.name);
+    await page.fill('input[name="firstName"]', firstName);
+    await page.fill('input[name="lastName"]', lastName);
     await page.fill('input[name="email"]', user.email);
     await page.fill('input[name="password"]', user.password);
-    await page.fill('input[name="phone"]', user.phone);
+    await page.fill('input[name="confirmPassword"]', 'different-password');
     
-    // Don't check terms checkbox
     await page.click('button[type="submit"]');
     
-    // Should show terms validation error
+    // Should show password mismatch error
     await expect(page.locator('.error-message, .field-error')).toBeVisible();
-    
-    // Now check terms and submit
-    await page.check('input[name="terms"]');
-    await page.click('button[type="submit"]');
-    
-    // Should proceed to dashboard
-    await page.waitForURL('/dashboard');
   });
 
   test('should handle duplicate email registration', async ({ page }) => {
@@ -130,24 +116,27 @@ test.describe('New User Registration', () => {
     
     // First registration
     await page.goto('/auth/sign-up');
-    await page.fill('input[name="name"]', user.name);
+    const nameParts = user.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await page.fill('input[name="firstName"]', firstName);
+    await page.fill('input[name="lastName"]', lastName);
     await page.fill('input[name="email"]', user.email);
     await page.fill('input[name="password"]', user.password);
-    await page.fill('input[name="phone"]', user.phone);
-    await page.check('input[name="terms"]');
+    await page.fill('input[name="confirmPassword"]', user.password);
     await page.click('button[type="submit"]');
     
-    // Wait for registration and logout
-    await page.waitForURL('/dashboard');
-    await helpers.logout();
+    // Wait for registration response
+    await page.waitForURL('/auth/verify-email');
     
     // Try to register again with same email
     await page.goto('/auth/sign-up');
-    await page.fill('input[name="name"]', 'Another User');
+    await page.fill('input[name="firstName"]', 'Another');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="email"]', user.email);
     await page.fill('input[name="password"]', user.password);
-    await page.fill('input[name="phone"]', '+44 7888 888888');
-    await page.check('input[name="terms"]');
+    await page.fill('input[name="confirmPassword"]', user.password);
     await page.click('button[type="submit"]');
     
     // Should show duplicate email error
@@ -164,6 +153,6 @@ test.describe('New User Registration', () => {
     
     // Should navigate to login page
     await page.waitForURL('/auth/sign-in');
-    await expect(page.locator('h1')).toContainText('Sign In');
+    await expect(page.locator('h1, h2').filter({ hasText: 'Sign in' })).toBeVisible();
   });
 });
