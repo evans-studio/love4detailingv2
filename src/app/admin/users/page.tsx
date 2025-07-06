@@ -105,10 +105,10 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <User className="h-8 w-8 text-primary-500" />
+        <User className="h-8 w-8 text-[#9146FF]" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600">Manage user roles and permissions</p>
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">User Management</h1>
+          <p className="text-[#C7C7C7]">Manage user roles and permissions</p>
         </div>
       </div>
 
@@ -118,10 +118,10 @@ export default function AdminUsers() {
         </Alert>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="bg-[#1E1E1E] border-gray-800 rounded-lg shadow-sm border">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold">All Users ({users.length})</h2>
+            <h2 className="text-lg font-semibold text-[#F2F2F2]">All Users ({users.length})</h2>
             <Button
               variant="outline"
               onClick={() => fetchUsers()}
@@ -134,51 +134,51 @@ export default function AdminUsers() {
           {users.length === 0 ? (
             <div className="text-center py-8">
               <UserX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No users found</p>
+              <p className="text-[#C7C7C7]">No users found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Contact</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Role</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Stats</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Joined</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                  <tr className="border-b border-gray-800">
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">User</th>
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">Contact</th>
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">Role</th>
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">Stats</th>
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">Joined</th>
+                    <th className="text-left py-3 px-4 font-medium text-[#F2F2F2]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={user.id} className="border-b border-gray-800 hover:bg-[#262626]">
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 bg-[#262626] rounded-full flex items-center justify-center">
                             {user.role === 'admin' ? (
-                              <Crown className="h-5 w-5 text-primary-600" />
+                              <Crown className="h-5 w-5 text-[#9146FF]" />
                             ) : (
-                              <User className="h-5 w-5 text-primary-600" />
+                              <User className="h-5 w-5 text-[#9146FF]" />
                             )}
                           </div>
                           <div>
-                            <div className="font-medium text-gray-900">{user.full_name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+                            <div className="font-medium text-[#F2F2F2]">{user.full_name}</div>
+                            <div className="text-sm text-[#C7C7C7]">{user.email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <div className="text-sm text-gray-900">{user.phone || 'N/A'}</div>
+                        <div className="text-sm text-[#C7C7C7]">{user.phone || 'N/A'}</div>
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
                           {user.role === 'admin' ? (
-                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
+                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#262626] text-[#9146FF] rounded-full text-xs font-medium">
                               <Shield className="h-3 w-3" />
                               Admin
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#262626] text-[#C7C7C7] rounded-full text-xs font-medium">
                               <User className="h-3 w-3" />
                               Customer
                             </div>
@@ -186,11 +186,11 @@ export default function AdminUsers() {
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <div className="text-sm text-gray-900">{user.bookings_count} bookings</div>
-                        <div className="text-xs text-gray-500">{user.vehicles_count} vehicles</div>
+                        <div className="text-sm text-[#F2F2F2]">{user.bookings_count} bookings</div>
+                        <div className="text-xs text-[#8B8B8B]">{user.vehicles_count} vehicles</div>
                       </td>
                       <td className="py-4 px-4">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-[#F2F2F2]">
                           {format(new Date(user.created_at), 'dd MMM yyyy')}
                         </div>
                       </td>

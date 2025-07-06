@@ -257,10 +257,10 @@ export default function AdminSettings() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Settings className="h-8 w-8 text-primary-500" />
+        <Settings className="h-8 w-8 text-[#9146FF]" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600">Configure business and system settings</p>
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Settings</h1>
+          <p className="text-[#C7C7C7]">Configure business and system settings</p>
         </div>
       </div>
 
@@ -277,14 +277,14 @@ export default function AdminSettings() {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-800">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('business')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'business'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-[#9146FF] text-[#9146FF]'
+                : 'border-transparent text-[#C7C7C7] hover:text-[#F2F2F2] hover:border-gray-700'
             }`}
           >
             <Building2 className="h-5 w-5 inline mr-2" />
@@ -294,8 +294,8 @@ export default function AdminSettings() {
             onClick={() => setActiveTab('system')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'system'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-[#9146FF] text-[#9146FF]'
+                : 'border-transparent text-[#C7C7C7] hover:text-[#F2F2F2] hover:border-gray-700'
             }`}
           >
             <Shield className="h-5 w-5 inline mr-2" />
@@ -307,11 +307,11 @@ export default function AdminSettings() {
       {activeTab === 'business' && (
         <div className="space-y-6">
           {/* Company Information */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h2>
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">Company Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Company Name
                 </label>
                 <Input
@@ -321,7 +321,7 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   <Mail className="h-4 w-4 inline mr-1" />
                   Email Address
                 </label>
@@ -333,7 +333,7 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   <Phone className="h-4 w-4 inline mr-1" />
                   Phone Number
                 </label>
@@ -344,7 +344,7 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   <MapPin className="h-4 w-4 inline mr-1" />
                   Service Area
                 </label>
@@ -358,8 +358,8 @@ export default function AdminSettings() {
           </Card>
 
           {/* Business Hours */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">
               <Clock className="h-5 w-5 inline mr-2" />
               Business Hours
             </h2>
@@ -373,7 +373,7 @@ export default function AdminSettings() {
                       onChange={(e) => updateBusinessHours(day, 'enabled', e.target.checked)}
                       className="mr-2"
                     />
-                    <span className="text-sm font-medium text-gray-700 capitalize">
+                    <span className="text-sm font-medium text-[#C7C7C7] capitalize">
                       {day}
                     </span>
                   </div>
@@ -395,7 +395,7 @@ export default function AdminSettings() {
                       className="text-sm"
                     />
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-[#8B8B8B]">
                     {hours.enabled ? 'Open' : 'Closed'}
                   </div>
                 </div>
@@ -404,11 +404,11 @@ export default function AdminSettings() {
           </Card>
 
           {/* Booking Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Booking Configuration</h2>
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">Booking Configuration</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Advance Booking Days
                 </label>
                 <Input
@@ -424,10 +424,10 @@ export default function AdminSettings() {
                   min="1"
                   max="90"
                 />
-                <p className="text-xs text-gray-500 mt-1">How far in advance customers can book</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">How far in advance customers can book</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Slot Duration (minutes)
                 </label>
                 <Input
@@ -446,7 +446,7 @@ export default function AdminSettings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Buffer Time (minutes)
                 </label>
                 <Input
@@ -463,10 +463,10 @@ export default function AdminSettings() {
                   max="60"
                   step="5"
                 />
-                <p className="text-xs text-gray-500 mt-1">Time between bookings</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">Time between bookings</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Cancellation Notice (hours)
                 </label>
                 <Input
@@ -482,20 +482,20 @@ export default function AdminSettings() {
                   min="1"
                   max="72"
                 />
-                <p className="text-xs text-gray-500 mt-1">Minimum notice required to cancel</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">Minimum notice required to cancel</p>
               </div>
             </div>
           </Card>
 
           {/* Pricing Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">
               <DollarSign className="h-5 w-5 inline mr-2" />
               Base Pricing
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Small Vehicles (£)
                 </label>
                 <Input
@@ -505,10 +505,10 @@ export default function AdminSettings() {
                   min="0"
                   step="0.01"
                 />
-                <p className="text-xs text-gray-500 mt-1">Hatchbacks, small cars</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">Hatchbacks, small cars</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Medium Vehicles (£)
                 </label>
                 <Input
@@ -518,10 +518,10 @@ export default function AdminSettings() {
                   min="0"
                   step="0.01"
                 />
-                <p className="text-xs text-gray-500 mt-1">Saloons, estates</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">Saloons, estates</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Large Vehicles (£)
                 </label>
                 <Input
@@ -531,10 +531,10 @@ export default function AdminSettings() {
                   min="0"
                   step="0.01"
                 />
-                <p className="text-xs text-gray-500 mt-1">SUVs, MPVs</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">SUVs, MPVs</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Extra Large (£)
                 </label>
                 <Input
@@ -544,7 +544,7 @@ export default function AdminSettings() {
                   min="0"
                   step="0.01"
                 />
-                <p className="text-xs text-gray-500 mt-1">Vans, trucks</p>
+                <p className="text-xs text-[#8B8B8B] mt-1">Vans, trucks</p>
               </div>
             </div>
           </Card>
@@ -570,16 +570,16 @@ export default function AdminSettings() {
       {activeTab === 'system' && (
         <div className="space-y-6">
           {/* Notification Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">
               <Mail className="h-5 w-5 inline mr-2" />
               Notification Settings
             </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Email Notifications</h3>
-                  <p className="text-xs text-gray-500">Send email notifications to customers</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">Email Notifications</h3>
+                  <p className="text-xs text-[#8B8B8B]">Send email notifications to customers</p>
                 </div>
                 <input
                   type="checkbox"
@@ -590,8 +590,8 @@ export default function AdminSettings() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">SMS Notifications</h3>
-                  <p className="text-xs text-gray-500">Send SMS notifications to customers</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">SMS Notifications</h3>
+                  <p className="text-xs text-[#8B8B8B]">Send SMS notifications to customers</p>
                 </div>
                 <input
                   type="checkbox"
@@ -602,8 +602,8 @@ export default function AdminSettings() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Booking Confirmations</h3>
-                  <p className="text-xs text-gray-500">Send confirmation emails for new bookings</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">Booking Confirmations</h3>
+                  <p className="text-xs text-[#8B8B8B]">Send confirmation emails for new bookings</p>
                 </div>
                 <input
                   type="checkbox"
@@ -614,8 +614,8 @@ export default function AdminSettings() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Reminder Emails</h3>
-                  <p className="text-xs text-gray-500">Send reminder emails before appointments</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">Reminder Emails</h3>
+                  <p className="text-xs text-[#8B8B8B]">Send reminder emails before appointments</p>
                 </div>
                 <input
                   type="checkbox"
@@ -626,8 +626,8 @@ export default function AdminSettings() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Admin Notifications</h3>
-                  <p className="text-xs text-gray-500">Receive notifications for new bookings</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">Admin Notifications</h3>
+                  <p className="text-xs text-[#8B8B8B]">Receive notifications for new bookings</p>
                 </div>
                 <input
                   type="checkbox"
@@ -640,13 +640,13 @@ export default function AdminSettings() {
           </Card>
 
           {/* System Status */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">System Status</h2>
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+            <h2 className="text-lg font-semibold text-[#F2F2F2] mb-4">System Status</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Maintenance Mode</h3>
-                  <p className="text-xs text-gray-500">Temporarily disable new bookings</p>
+                  <h3 className="text-sm font-medium text-[#F2F2F2]">Maintenance Mode</h3>
+                  <p className="text-xs text-[#8B8B8B]">Temporarily disable new bookings</p>
                 </div>
                 <input
                   type="checkbox"

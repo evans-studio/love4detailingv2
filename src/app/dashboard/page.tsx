@@ -65,21 +65,21 @@ export default async function DashboardPage() {
   return (
     <DashboardLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Welcome Back</h1>
+        <h1 className="text-2xl font-bold mb-6 text-[#F2F2F2]">Welcome Back</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <QuickBook userVehicles={vehicles || []} />
 
           {/* Loyalty Points Card */}
-          <Card>
+          <Card className="bg-[#1E1E1E] border-gray-800">
             <CardHeader>
-              <CardTitle>Loyalty Points</CardTitle>
-              <CardDescription>Your rewards balance</CardDescription>
+              <CardTitle className="text-[#F2F2F2]">Loyalty Points</CardTitle>
+              <CardDescription className="text-[#C7C7C7]">Your rewards balance</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <p className="text-5xl font-bold text-primary-500">150</p>
-                <p className="text-sm text-muted mt-2">Points Available</p>
+                <p className="text-5xl font-bold text-[#9146FF]">150</p>
+                <p className="text-sm text-[#8B8B8B] mt-2">Points Available</p>
               </div>
             </CardContent>
             <CardFooter className="justify-between">
@@ -89,18 +89,18 @@ export default async function DashboardPage() {
           </Card>
 
           {/* Recent Bookings Card */}
-          <Card>
+          <Card className="bg-[#1E1E1E] border-gray-800">
             <CardHeader>
-              <CardTitle>Recent Bookings</CardTitle>
-              <CardDescription>Your booking history</CardDescription>
+              <CardTitle className="text-[#F2F2F2]">Recent Bookings</CardTitle>
+              <CardDescription className="text-[#C7C7C7]">Your booking history</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recentBookings?.map((booking) => (
                   <div key={booking.id} className="flex justify-between items-center">
                     <div>
-                      <p className="font-medium">{booking.vehicles.vehicle_sizes.label} Vehicle</p>
-                      <p className="text-sm text-muted">
+                      <p className="font-medium text-[#F2F2F2]">{booking.vehicles.vehicle_sizes.label} Vehicle</p>
+                      <p className="text-sm text-[#C7C7C7]">
                         {new Date(booking.time_slots.slot_date).toLocaleDateString()}
                       </p>
                     </div>
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
                       size="sm"
                       asChild
                     >
-                      <Link href={`/dashboard/bookings/${booking.id}`}>
+                      <Link href={`/dashboard/bookings/${booking.id}`} className="text-[#9146FF] hover:text-[#9146FF]/80">
                         View Details
                       </Link>
                     </Button>
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
             </CardContent>
             <CardFooter>
               <Button variant="link" className="w-full" asChild>
-                <Link href="/dashboard/bookings">View All History</Link>
+                <Link href="/dashboard/bookings" className="text-[#9146FF] hover:text-[#9146FF]/80">View All History</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
         {/* Admin-only section */}
         {isAdmin && (
           <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Admin Tools</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[#F2F2F2]">Admin Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UnmatchedVehiclesCard />
               {/* Add other admin cards here */}

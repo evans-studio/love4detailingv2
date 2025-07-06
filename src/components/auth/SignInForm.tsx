@@ -75,7 +75,7 @@ export function SignInForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {message && (
-        <div className="text-sm text-green-600 bg-green-50 p-3 rounded-md">
+        <div className="text-sm text-[#28C76F] bg-[#1E1E1E] border border-gray-800 p-3 rounded-md">
           {message}
         </div>
       )}
@@ -98,7 +98,7 @@ export function SignInForm() {
         />
       </div>
       {error && (
-        <div className="text-sm text-error">
+        <div className="text-sm text-[#BA0C2F]">
           {error}
         </div>
       )}

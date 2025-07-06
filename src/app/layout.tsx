@@ -50,8 +50,8 @@ export default async function RootLayout({
   const initialUser = await getInitialUser();
 
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} flex min-h-screen flex-col`}>
+    <html lang="en" className="dark bg-[#141414] h-full">
+      <body className={`${inter.className} bg-[#141414] text-[#F2F2F2] min-h-screen flex flex-col`}>
         <ErrorBoundary>
           <AuthProvider initialUser={initialUser}>
             <BookingProvider>

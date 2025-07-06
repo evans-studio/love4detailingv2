@@ -29,7 +29,7 @@ export function ProgressRing({
       >
         {/* Background circle */}
         <circle
-          className="text-gray-200"
+          className="text-[#262626]"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
@@ -39,7 +39,7 @@ export function ProgressRing({
         />
         {/* Progress circle */}
         <circle
-          className="text-primary-600 transition-all duration-1000 ease-out"
+          className="text-[#9146FF] transition-all duration-1000 ease-out"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={offset}

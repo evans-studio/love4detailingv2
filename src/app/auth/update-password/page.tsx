@@ -111,11 +111,11 @@ export default function UpdatePasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414]">
         <div className="max-w-md w-full space-y-8 p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-green-600">Password Updated!</h2>
-            <p className="mt-2 text-gray-600">
+            <h2 className="text-2xl font-bold text-[#28C76F]">Password Updated!</h2>
+            <p className="mt-2 text-[#C7C7C7]">
               Your password has been successfully updated. You will be redirected to the sign-in page.
             </p>
             <LoadingState className="mt-4">Redirecting...</LoadingState>
@@ -126,24 +126,24 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-[#141414]">
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Update Your Password</h2>
-          <p className="mt-2 text-gray-600">
+          <h2 className="text-2xl font-bold text-[#F2F2F2]">Update Your Password</h2>
+          <p className="mt-2 text-[#C7C7C7]">
             Enter your new password below
           </p>
         </div>
 
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="bg-[#BA0C2F]/10 border-[#BA0C2F] text-[#BA0C2F]">
             {error}
           </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block text-sm font-medium text-[#C7C7C7]">
               New Password
             </label>
             <div className="mt-1 relative">
@@ -162,16 +162,16 @@ export default function UpdatePasswordPage() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" />
+                  <EyeOff className="h-5 w-5 text-[#C7C7C7]" />
                 ) : (
-                  <Eye className="h-5 w-5 text-gray-400" />
+                  <Eye className="h-5 w-5 text-[#C7C7C7]" />
                 )}
               </button>
             </div>
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#C7C7C7]">
               Confirm New Password
             </label>
             <div className="mt-1 relative">
@@ -190,9 +190,9 @@ export default function UpdatePasswordPage() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" />
+                  <EyeOff className="h-5 w-5 text-[#C7C7C7]" />
                 ) : (
-                  <Eye className="h-5 w-5 text-gray-400" />
+                  <Eye className="h-5 w-5 text-[#C7C7C7]" />
                 )}
               </button>
             </div>
@@ -214,7 +214,7 @@ export default function UpdatePasswordPage() {
         <div className="text-center">
           <button
             onClick={() => router.push('/auth/sign-in')}
-            className="text-sm text-primary-600 hover:text-primary-500"
+            className="text-sm text-[#9146FF] hover:text-[#9146FF]/80"
           >
             Back to Sign In
           </button>

@@ -348,8 +348,8 @@ export default function AdminBookings() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Booking Management</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Booking Management</h1>
+          <p className="text-[#C7C7C7] mt-1">
             Showing {filteredBookings.length} of {bookings.length} bookings
           </p>
         </div>
@@ -368,10 +368,10 @@ export default function AdminBookings() {
       </div>
 
       {/* Filters */}
-      <Card className="p-6">
+      <Card className="p-6 bg-[#1E1E1E] border-gray-800">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
               Search
             </label>
             <div className="relative">
@@ -387,7 +387,7 @@ export default function AdminBookings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
               Status
             </label>
             <Select
@@ -403,7 +403,7 @@ export default function AdminBookings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
               From Date
             </label>
             <Input
@@ -414,7 +414,7 @@ export default function AdminBookings() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
               To Date
             </label>
             <Input
@@ -434,35 +434,35 @@ export default function AdminBookings() {
       </Card>
 
       {/* Bookings Table */}
-      <Card>
+      <Card className="bg-[#1E1E1E] border-gray-800">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-800">
+            <thead className="bg-[#262626]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Reference
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Vehicle
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Date & Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-[#1E1E1E] divide-y divide-gray-800">
               {filteredBookings.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center">
@@ -476,29 +476,29 @@ export default function AdminBookings() {
                 </tr>
               ) : (
                 filteredBookings.map((booking) => (
-                  <tr key={booking.id} className="hover:bg-gray-50">
+                  <tr key={booking.id} className="hover:bg-[#262626]">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-[#F2F2F2]">
                         {booking.booking_reference}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-[#8B8B8B]">
                         {formatDate(booking.created_at)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                            <User className="h-4 w-4 text-gray-600" />
+                          <div className="h-8 w-8 rounded-full bg-[#262626] flex items-center justify-center">
+                            <User className="h-4 w-4 text-[#C7C7C7]" />
                           </div>
                         </div>
                         <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-[#F2F2F2]">
                             {booking.full_name}
                           </div>
-                          <div className="text-sm text-gray-500">{booking.email}</div>
+                          <div className="text-sm text-[#C7C7C7]">{booking.email}</div>
                           {booking.phone && (
-                            <div className="text-xs text-gray-400">{booking.phone}</div>
+                            <div className="text-xs text-[#8B8B8B]">{booking.phone}</div>
                           )}
                         </div>
                       </div>
@@ -509,18 +509,18 @@ export default function AdminBookings() {
                         <div>
                           {booking.vehicle ? (
                             <>
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-[#F2F2F2]">
                                 {booking.vehicle.registration}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-[#C7C7C7]">
                                 {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.year})
                               </div>
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-[#8B8B8B]">
                                 {booking.vehicle.vehicle_size?.label || 'Unknown size'} • {booking.vehicle.color}
                               </div>
                             </>
                           ) : (
-                            <div className="text-sm text-gray-500 italic">
+                            <div className="text-sm text-[#8B8B8B] italic">
                               Vehicle information unavailable
                             </div>
                           )}
@@ -533,15 +533,15 @@ export default function AdminBookings() {
                         <div>
                           {booking.time_slot ? (
                             <>
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-[#F2F2F2]">
                                 {booking.time_slot?.slot_date ? formatDate(booking.time_slot.slot_date) : 'No date'}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-[#C7C7C7]">
                                 {booking.time_slot?.slot_time ? formatTime(booking.time_slot.slot_time) : 'No time'}
                               </div>
                             </>
                           ) : (
-                            <div className="text-sm text-gray-500 italic">
+                            <div className="text-sm text-[#8B8B8B] italic">
                               Time slot unavailable
                             </div>
                           )}
@@ -555,7 +555,7 @@ export default function AdminBookings() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-[#F2F2F2]">
                         {formatCurrency(booking.total_price_pence / 100)}
                       </div>
                     </td>
@@ -588,7 +588,7 @@ export default function AdminBookings() {
 
       {/* Edit Booking Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-[#1E1E1E] border-gray-800">
           <DialogHeader>
             <DialogTitle>Edit Booking</DialogTitle>
           </DialogHeader>
@@ -597,7 +597,7 @@ export default function AdminBookings() {
             <form onSubmit={editForm.handleSubmit(handleUpdateBooking)} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                     Booking Status
                   </label>
                   <Select
@@ -615,7 +615,7 @@ export default function AdminBookings() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                     Payment Status
                   </label>
                   <Select
@@ -632,7 +632,7 @@ export default function AdminBookings() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                     Date
                   </label>
                   <Input
@@ -646,7 +646,7 @@ export default function AdminBookings() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                     Time
                   </label>
                   <Input
@@ -661,13 +661,13 @@ export default function AdminBookings() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
                   Notes
                 </label>
                 <textarea
                   {...editForm.register('notes')}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:outline-none focus:ring-2 focus:ring-[#9146FF]"
                   placeholder="Add any notes about this booking..."
                 />
                 {editForm.formState.errors.notes && (

@@ -45,21 +45,25 @@ async function BookingConfirmation({
 
   if (error || !booking) {
     return (
-      <Card className="p-6">
-        <div className="text-red-500">
-          Booking not found. Please contact support if you believe this is an error.
-        </div>
-      </Card>
+      <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+          <div className="text-[#BA0C2F]">
+            Booking not found. Please contact support if you believe this is an error.
+          </div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <ConfirmationDetails 
-      booking={booking} 
-      setupLink={setupLink}
-      userExists={userExists}
-      hasPassword={hasPassword}
-    />
+    <div className="min-h-screen bg-[#141414] p-4">
+      <ConfirmationDetails 
+        booking={booking} 
+        setupLink={setupLink}
+        userExists={userExists}
+        hasPassword={hasPassword}
+      />
+    </div>
   );
 }
 
@@ -71,22 +75,26 @@ export default function ConfirmationPage({ searchParams }: BookingConfirmationPr
 
   if (!bookingId) {
     return (
-      <Card className="p-6">
-        <div className="text-red-500">
-          No booking ID provided. Please contact support if you believe this is an error.
-        </div>
-      </Card>
+      <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+        <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+          <div className="text-[#BA0C2F]">
+            No booking ID provided. Please contact support if you believe this is an error.
+          </div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BookingConfirmation 
-        bookingId={bookingId} 
-        setupLink={setupLink}
-        userExists={userExists}
-        hasPassword={hasPassword}
-      />
-    </Suspense>
+    <div className="min-h-screen bg-[#141414]">
+      <Suspense fallback={<div className="flex items-center justify-center py-8 text-[#C7C7C7]">Loading...</div>}>
+        <BookingConfirmation 
+          bookingId={bookingId} 
+          setupLink={setupLink}
+          userExists={userExists}
+          hasPassword={hasPassword}
+        />
+      </Suspense>
+    </div>
   );
 } 

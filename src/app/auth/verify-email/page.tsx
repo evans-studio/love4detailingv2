@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 
 export default function VerifyEmailPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Card className="w-full max-w-lg">
+    <div className="min-h-screen bg-[#141414] flex items-center justify-center p-4">
+      <Card className="w-full max-w-lg bg-[#1E1E1E] border-gray-800">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Check your email</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-[#F2F2F2]">Check your email</CardTitle>
+          <CardDescription className="text-[#C7C7C7]">
             We&apos;ve sent you a verification link to complete your registration
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-[#C7C7C7]">
             Please check your email inbox and click the verification link to complete your registration.
             If you don&apos;t see the email, please check your spam folder.
           </p>

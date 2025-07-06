@@ -45,11 +45,11 @@ async function getProfileData() {
 
 function VehicleCard({ vehicle }: { vehicle: any }) {
   return (
-    <Card className="p-6">
+    <Card className="p-6 bg-[#1E1E1E] border-gray-800">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="font-semibold">{vehicle.make} {vehicle.model}</h3>
-          <p className="text-sm text-gray-600">{vehicle.registration}</p>
+          <h3 className="font-semibold text-[#F2F2F2]">{vehicle.make} {vehicle.model}</h3>
+          <p className="text-sm text-[#C7C7C7]">{vehicle.registration}</p>
         </div>
         <Button
           variant="outline"
@@ -62,14 +62,14 @@ function VehicleCard({ vehicle }: { vehicle: any }) {
         </Button>
       </div>
       <div className="space-y-2">
-        <p className="text-sm">
-          <span className="text-gray-600">Year:</span> {vehicle.year}
+        <p className="text-sm text-[#C7C7C7]">
+          <span className="text-[#8B8B8B]">Year:</span> {vehicle.year}
         </p>
-        <p className="text-sm">
-          <span className="text-gray-600">Color:</span> {vehicle.color}
+        <p className="text-sm text-[#C7C7C7]">
+          <span className="text-[#8B8B8B]">Color:</span> {vehicle.color}
         </p>
-        <p className="text-sm">
-          <span className="text-gray-600">Size:</span>{' '}
+        <p className="text-sm text-[#C7C7C7]">
+          <span className="text-[#8B8B8B]">Size:</span>{' '}
           <span className="capitalize">{vehicle.size}</span>
         </p>
       </div>
@@ -83,8 +83,8 @@ export default async function ProfilePage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">My Profile</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-bold mb-2 text-[#F2F2F2]">My Profile</h1>
+        <p className="text-[#C7C7C7]">
           Manage your account settings and saved vehicles.
         </p>
       </div>
@@ -93,13 +93,13 @@ export default async function ProfilePage() {
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
-          <Card className="p-6">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-3">
-                <UserCircleIcon className="w-6 h-6 text-gray-600" />
+                <UserCircleIcon className="w-6 h-6 text-[#8B8B8B]" />
                 <div>
-                  <h2 className="text-xl font-semibold">Personal Information</h2>
-                  <p className="text-sm text-gray-600">Update your personal details</p>
+                  <h2 className="text-xl font-semibold text-[#F2F2F2]">Personal Information</h2>
+                  <p className="text-sm text-[#C7C7C7]">Update your personal details</p>
                 </div>
               </div>
               <Button asChild>
@@ -110,29 +110,29 @@ export default async function ProfilePage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-600">Name</p>
-                <p className="font-medium">
+                <p className="text-sm text-[#8B8B8B]">Name</p>
+                <p className="font-medium text-[#F2F2F2]">
                   {profile.firstName} {profile.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-medium">{profile.email}</p>
+                <p className="text-sm text-[#8B8B8B]">Email</p>
+                <p className="font-medium text-[#F2F2F2]">{profile.email}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Phone</p>
-                <p className="font-medium">{profile.phone}</p>
+                <p className="text-sm text-[#8B8B8B]">Phone</p>
+                <p className="font-medium text-[#F2F2F2]">{profile.phone}</p>
               </div>
             </div>
           </Card>
 
           {/* Security */}
-          <Card className="p-6">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
             <div className="flex items-center gap-3 mb-6">
-              <KeyIcon className="w-6 h-6 text-gray-600" />
+              <KeyIcon className="w-6 h-6 text-[#8B8B8B]" />
               <div>
-                <h2 className="text-xl font-semibold">Security</h2>
-                <p className="text-sm text-gray-600">Manage your password and security settings</p>
+                <h2 className="text-xl font-semibold text-[#F2F2F2]">Security</h2>
+                <p className="text-sm text-[#C7C7C7]">Manage your password and security settings</p>
               </div>
             </div>
             <div className="space-y-4">
@@ -158,12 +158,12 @@ export default async function ProfilePage() {
           </Card>
 
           {/* Notifications */}
-          <Card className="p-6">
+          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
             <div className="flex items-center gap-3 mb-6">
-              <BellIcon className="w-6 h-6 text-gray-600" />
+              <BellIcon className="w-6 h-6 text-[#8B8B8B]" />
               <div>
-                <h2 className="text-xl font-semibold">Notifications</h2>
-                <p className="text-sm text-gray-600">Choose what updates you want to receive</p>
+                <h2 className="text-xl font-semibold text-[#F2F2F2]">Notifications</h2>
+                <p className="text-sm text-[#C7C7C7]">Choose what updates you want to receive</p>
               </div>
             </div>
             <Button
@@ -182,8 +182,8 @@ export default async function ProfilePage() {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <TruckIcon className="w-6 h-6 text-gray-600" />
-              <h2 className="text-xl font-semibold">Saved Vehicles</h2>
+              <TruckIcon className="w-6 h-6 text-[#8B8B8B]" />
+              <h2 className="text-xl font-semibold text-[#F2F2F2]">Saved Vehicles</h2>
             </div>
             <Button asChild>
               <Link href="/dashboard/profile/vehicles/new">
@@ -199,8 +199,8 @@ export default async function ProfilePage() {
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))
             ) : (
-              <Card className="p-6 text-center">
-                <p className="text-gray-600 mb-4">No vehicles saved yet</p>
+              <Card className="p-6 text-center bg-[#1E1E1E] border-gray-800">
+                <p className="text-[#C7C7C7] mb-4">No vehicles saved yet</p>
                 <Button asChild>
                   <Link href="/dashboard/profile/vehicles/new">
                     Add Your First Vehicle

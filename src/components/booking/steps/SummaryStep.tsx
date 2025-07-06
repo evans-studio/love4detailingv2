@@ -132,8 +132,8 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Review & Confirm</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-semibold mb-4 text-[#F2F2F2]">Review & Confirm</h2>
+        <p className="text-[#C7C7C7] mb-6">
           Please review your booking details before confirming
         </p>
       </div>
@@ -142,34 +142,34 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
       <div className="bg-white border rounded-lg p-6">
         <div className="flex items-center mb-4">
           <Car className="h-5 w-5 text-primary-600 mr-2" />
-          <h3 className="font-semibold text-gray-900">Vehicle Information</h3>
+          <h3 className="font-semibold text-[#F2F2F2]">Vehicle Information</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <span className="text-sm text-gray-600">Make & Model:</span>
+            <span className="text-sm text-[#C7C7C7]">Make & Model:</span>
             <p className="font-medium">{formData.vehicle?.make} {formData.vehicle?.model}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Registration:</span>
+            <span className="text-sm text-[#C7C7C7]">Registration:</span>
             <p className="font-medium">{formData.vehicle?.registration}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Size:</span>
+            <span className="text-sm text-[#C7C7C7]">Size:</span>
             <p className="font-medium">{vehicleSize?.label}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Price:</span>
+            <span className="text-sm text-[#C7C7C7]">Price:</span>
             <p className="font-medium">£{(totalPrice / 100).toFixed(2)}</p>
           </div>
           {formData.vehicle?.year && (
             <div>
-              <span className="text-sm text-gray-600">Year:</span>
+              <span className="text-sm text-[#C7C7C7]">Year:</span>
               <p className="font-medium">{formData.vehicle.year}</p>
             </div>
           )}
           {formData.vehicle?.color && (
             <div>
-              <span className="text-sm text-gray-600">Color:</span>
+              <span className="text-sm text-[#C7C7C7]">Color:</span>
               <p className="font-medium">{formData.vehicle.color}</p>
             </div>
           )}
@@ -180,25 +180,25 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
       <div className="bg-white border rounded-lg p-6">
         <div className="flex items-center mb-4">
           <User className="h-5 w-5 text-primary-600 mr-2" />
-          <h3 className="font-semibold text-gray-900">Personal Details</h3>
+          <h3 className="font-semibold text-[#F2F2F2]">Personal Details</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <span className="text-sm text-gray-600">Name:</span>
+            <span className="text-sm text-[#C7C7C7]">Name:</span>
             <p className="font-medium">
               {formData.personalDetails?.firstName} {formData.personalDetails?.lastName}
             </p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Email:</span>
+            <span className="text-sm text-[#C7C7C7]">Email:</span>
             <p className="font-medium">{formData.personalDetails?.email}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Phone:</span>
+            <span className="text-sm text-[#C7C7C7]">Phone:</span>
             <p className="font-medium">{formData.personalDetails?.phone}</p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Service Postcode:</span>
+            <span className="text-sm text-[#C7C7C7]">Service Postcode:</span>
             <p className="font-medium">{formData.personalDetails?.postcode}</p>
           </div>
         </div>
@@ -208,17 +208,17 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
       <div className="bg-white border rounded-lg p-6">
         <div className="flex items-center mb-4">
           <Calendar className="h-5 w-5 text-primary-600 mr-2" />
-          <h3 className="font-semibold text-gray-900">Appointment Details</h3>
+          <h3 className="font-semibold text-[#F2F2F2]">Appointment Details</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <span className="text-sm text-gray-600">Date:</span>
+            <span className="text-sm text-[#C7C7C7]">Date:</span>
             <p className="font-medium">
               {formData.dateTime?.date && format(new Date(formData.dateTime.date), 'EEEE, MMMM d, yyyy')}
             </p>
           </div>
           <div>
-            <span className="text-sm text-gray-600">Time:</span>
+            <span className="text-sm text-[#C7C7C7]">Time:</span>
             <p className="font-medium">
               {formData.dateTime?.time && formatTimeSlot(formData.dateTime.time)}
             </p>
@@ -231,7 +231,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
         <div className="bg-white border rounded-lg p-6">
           <div className="flex items-center mb-4">
             <Image className="h-5 w-5 text-primary-600 mr-2" />
-            <h3 className="font-semibold text-gray-900">Vehicle Photos</h3>
+            <h3 className="font-semibold text-[#F2F2F2]">Vehicle Photos</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {formData.personalDetails.photos.map((photo, index) => (

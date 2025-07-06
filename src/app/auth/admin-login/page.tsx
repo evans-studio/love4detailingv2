@@ -51,17 +51,17 @@ export default function AdminLoginPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414] p-4">
+        <Card className="w-full max-w-md bg-[#1E1E1E] border-gray-800">
           <CardContent className="text-center p-8">
-            <Mail className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <Mail className="h-16 w-16 text-[#28C76F] mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-[#F2F2F2] mb-2">
               Magic Link Sent!
             </h2>
-            <p className="text-gray-600 mb-4">
-              Check your email at <strong>{email}</strong> for the magic link.
+            <p className="text-[#C7C7C7] mb-4">
+              Check your email at <strong className="text-[#F2F2F2]">{email}</strong> for the magic link.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#8B8B8B]">
               Click the link to access the admin dashboard.
             </p>
           </CardContent>
@@ -71,27 +71,27 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#141414] p-4">
+      <Card className="w-full max-w-md bg-[#1E1E1E] border-gray-800">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-purple-900 flex items-center justify-center gap-2">
+          <CardTitle className="text-2xl font-bold text-[#9146FF] flex items-center justify-center gap-2">
             <Shield className="h-6 w-6" />
             Admin Access
           </CardTitle>
-          <p className="text-gray-600">Get admin access via magic link</p>
+          <p className="text-[#C7C7C7]">Get admin access via magic link</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleMagicLink} className="space-y-4">
             {error && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
+              <Alert className="border-red-800 bg-red-900/20">
+                <AlertDescription className="text-[#BA0C2F]">
                   {error}
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
+              <Label htmlFor="email" className="flex items-center gap-2 text-[#C7C7C7]">
                 <Mail className="h-4 w-4" />
                 Admin Email Address
               </Label>
@@ -103,8 +103,9 @@ export default function AdminLoginPage() {
                 placeholder="admin@love4detailing.com"
                 required
                 disabled={loading}
+                className="bg-[#1A1A1A] border-gray-700 text-[#F2F2F2] placeholder:text-[#8B8B8B]"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-[#8B8B8B]">
                 Enter your admin email to receive a magic link
               </p>
             </div>
@@ -122,7 +123,7 @@ export default function AdminLoginPage() {
               Send Magic Link
             </Button>
 
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-sm text-[#C7C7C7]">
               <p>This will send a magic link to your admin email.</p>
               <p className="mt-1">No password required.</p>
             </div>

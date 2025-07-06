@@ -119,8 +119,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Vehicle Information</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-semibold mb-4 text-[#F2F2F2]">Vehicle Information</h2>
+        <p className="text-[#C7C7C7] mb-6">
           Please provide details about your vehicle
         </p>
       </div>
@@ -128,8 +128,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Make */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Make *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Make <span className="text-[#BA0C2F]">*</span>
           </label>
           <Select value={watchedMake} onValueChange={(value) => setValue('vehicle.make', value)}>
             <SelectTrigger className={errors.vehicle?.make ? 'border-red-500' : ''}>
@@ -144,14 +144,14 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
             </SelectContent>
           </Select>
           {errors.vehicle?.make && (
-            <p className="mt-1 text-sm text-red-600">{errors.vehicle.make.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.vehicle.make.message}</p>
           )}
         </div>
 
         {/* Model */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Model *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Model <span className="text-[#BA0C2F]">*</span>
           </label>
           <Select 
             value={watchedModel} 
@@ -170,14 +170,14 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
             </SelectContent>
           </Select>
           {errors.vehicle?.model && (
-            <p className="mt-1 text-sm text-red-600">{errors.vehicle.model.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.vehicle.model.message}</p>
           )}
         </div>
 
         {/* Registration */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Registration *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Registration <span className="text-[#BA0C2F]">*</span>
           </label>
           <Input
             {...register('vehicle.registration')}
@@ -186,14 +186,14 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
             className="uppercase"
           />
           {errors.vehicle?.registration && (
-            <p className="mt-1 text-sm text-red-600">{errors.vehicle.registration.message}</p>
+            <p className="mt-1 text-sm text-[#BA0C2F]">{errors.vehicle.registration.message}</p>
           )}
         </div>
 
         {/* Year */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Year (Optional)
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Year <span className="text-[#8B8B8B]">(Optional)</span>
           </label>
           <Input
             {...register('vehicle.year')}
@@ -206,8 +206,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
 
         {/* Color */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Color (Optional)
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
+            Color <span className="text-[#8B8B8B]">(Optional)</span>
           </label>
           <Input
             {...register('vehicle.color')}
@@ -232,8 +232,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
       {/* Size Selection */}
       {vehicleSizes.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Vehicle Size *
+          <label className="block text-sm font-medium text-[#C7C7C7] mb-3">
+            Vehicle Size <span className="text-[#BA0C2F]">*</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {vehicleSizes.map((size) => (
@@ -256,7 +256,7 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
             ))}
           </div>
           {errors.vehicle?.sizeId && (
-            <p className="mt-2 text-sm text-red-600">{errors.vehicle.sizeId.message}</p>
+            <p className="mt-2 text-sm text-[#BA0C2F]">{errors.vehicle.sizeId.message}</p>
           )}
         </div>
       )}

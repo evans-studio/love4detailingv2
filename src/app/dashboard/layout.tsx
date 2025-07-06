@@ -45,7 +45,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#141414]">
         <LoadingState>Loading your dashboard...</LoadingState>
       </div>
     );
@@ -56,7 +56,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-off-white">
+    <div className="flex h-screen bg-[#141414]">
       {/* Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col">
         <DashboardSidebar />
