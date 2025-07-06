@@ -52,7 +52,11 @@ export default function WeeklyScheduleConfig() {
       const response = await fetch('/api/admin/weekly-schedule');
       
       if (!response.ok) {
-        throw new Error('Failed to load schedule');
+        const errorData = await response.json();
+        if (errorData.needsMigration) {
+          alert(`Database Migration Required:\n\n${errorData.message}\n\nPlease contact your developer to run the migration.`);
+        }
+        throw new Error(errorData.message || 'Failed to load schedule');
       }
       
       const data = await response.json();
@@ -136,7 +140,11 @@ export default function WeeklyScheduleConfig() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to update schedule');
+        const errorData = await response.json();
+        if (errorData.needsMigration) {
+          alert(`Database Migration Required:\n\n${errorData.message}\n\nPlease contact your developer to run the migration.`);
+        }
+        throw new Error(errorData.message || 'Failed to update schedule');
       }
       
       const updatedData = await response.json();
