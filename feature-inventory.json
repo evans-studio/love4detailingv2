@@ -1,0 +1,2414 @@
+{
+  "buttons": [
+    {
+      "id": "BTN-001",
+      "type": "button",
+      "name": "Add Vehicle Button",
+      "location": "src/components/dashboard/QuickBook.tsx:169",
+      "line": 169,
+      "code": "<Button onClick={() => router.push(ROUTES.DASHBOARD_VEHICLES)}>",
+      "description": "Button that navigates",
+      "expectedBehavior": "Navigate to target page"
+    },
+    {
+      "id": "BTN-002",
+      "type": "button",
+      "name": "Back Button",
+      "location": "src/components/booking/PersonalDetailsStep.tsx:221",
+      "line": 221,
+      "code": "<Button type=\"button\" variant=\"outline\" onClick={handleBack}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-003",
+      "type": "button",
+      "name": "Back Button",
+      "location": "src/components/booking/DateTimeStep.tsx:160",
+      "line": 160,
+      "code": "<Button onClick={handleBack} variant=\"outline\">",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-004",
+      "type": "button",
+      "name": "<X className=\"h-4 w-4 mr-2\" /> Button",
+      "location": "src/components/admin/EditBookingModal.tsx:494",
+      "line": 494,
+      "code": "<Button type=\"button\" variant=\"outline\" onClick={onClose}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-005",
+      "type": "button",
+      "name": "Add Vehicle Button",
+      "location": "src/app/dashboard/vehicles/page.tsx:42",
+      "line": 42,
+      "code": "<Button onClick={handleAddVehicle}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-006",
+      "type": "button",
+      "name": "{saving ? ( Button",
+      "location": "src/app/admin/settings/page.tsx:580",
+      "line": 580,
+      "code": "<Button onClick={saveBusinessSettings} disabled={saving}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-007",
+      "type": "button",
+      "name": "{saving ? ( Button",
+      "location": "src/app/admin/settings/page.tsx:689",
+      "line": 689,
+      "code": "<Button onClick={saveSystemSettings} disabled={saving}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-008",
+      "type": "button",
+      "name": "<Plus className=\"h-4 w-4 mr-2\" /> Button",
+      "location": "src/app/admin/pricing/page.tsx:338",
+      "line": 338,
+      "code": "<Button onClick={() => setShowAddonForm(true)}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-009",
+      "type": "button",
+      "name": "Cancel Button",
+      "location": "src/app/admin/pricing/page.tsx:424",
+      "line": 424,
+      "code": "<Button type=\"button\" variant=\"outline\" onClick={cancelAddonForm}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-010",
+      "type": "button",
+      "name": "<RefreshCw className=\"h-4 w-4 mr-2\" /> Button",
+      "location": "src/app/admin/policies/page.tsx:380",
+      "line": 380,
+      "code": "<Button type=\"button\" variant=\"outline\" onClick={resetToDefaults}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-011",
+      "type": "button",
+      "name": "<Shield className=\"h-4 w-4 mr-2\" /> Button",
+      "location": "src/app/admin/policies/page.tsx:384",
+      "line": 384,
+      "code": "<Button type=\"button\" variant=\"outline\" onClick={previewPolicy}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-012",
+      "type": "button",
+      "name": "Refresh Button",
+      "location": "src/app/admin/customers/page.tsx:234",
+      "line": 234,
+      "code": "<Button variant=\"outline\" onClick={fetchCustomers}>",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    },
+    {
+      "id": "BTN-013",
+      "type": "button",
+      "name": "<Filter className=\"h-4 w-4 mr-2\" /> Button",
+      "location": "src/app/admin/bookings/page.tsx:428",
+      "line": 428,
+      "code": "<Button variant=\"outline\" onClick={clearFilters} className=\"w-full\">",
+      "description": "Button that performs action",
+      "expectedBehavior": "Execute click handler"
+    }
+  ],
+  "links": [
+    {
+      "id": "LNK-001",
+      "type": "link",
+      "name": "<span className=\"text-xl font-bold text-[#F2F2F2]\">Love4Detailing</span> Link",
+      "location": "src/components/layout/Header.tsx:10",
+      "line": 10,
+      "code": "<Link href=\"/\" className=\"flex items-center space-x-2\">",
+      "description": "Link to /",
+      "expectedBehavior": "Navigate to /"
+    },
+    {
+      "id": "LNK-002",
+      "type": "link",
+      "name": "<Button variant=\"ghost\">View Pricing</Button> Link",
+      "location": "src/components/layout/Header.tsx:15",
+      "line": 15,
+      "code": "<Link href=\"/#pricing\">",
+      "description": "Link to /#pricing",
+      "expectedBehavior": "Navigate to /#pricing"
+    },
+    {
+      "id": "LNK-003",
+      "type": "link",
+      "name": "<Button>Book Detail</Button> Link",
+      "location": "src/components/layout/Header.tsx:18",
+      "line": 18,
+      "code": "<Link href=\"/book\">",
+      "description": "Link to /book",
+      "expectedBehavior": "Navigate to /book"
+    },
+    {
+      "id": "LNK-004",
+      "type": "link",
+      "name": "<Button variant=\"outline\">Dashboard</Button> Link",
+      "location": "src/components/layout/Header.tsx:21",
+      "line": 21,
+      "code": "<Link href=\"/dashboard\">",
+      "description": "Link to /dashboard",
+      "expectedBehavior": "Navigate to /dashboard"
+    },
+    {
+      "id": "LNK-005",
+      "type": "link",
+      "name": "<Button>Book Service</Button> Link",
+      "location": "src/components/layout/Footer.tsx:17",
+      "line": 17,
+      "code": "<Link href={ROUTES.BOOK}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-006",
+      "type": "link",
+      "name": "Book Service Link",
+      "location": "src/components/layout/Footer.tsx:28",
+      "line": 28,
+      "code": "<Link href={ROUTES.BOOK} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-007",
+      "type": "link",
+      "name": "Customer Dashboard Link",
+      "location": "src/components/layout/Footer.tsx:33",
+      "line": 33,
+      "code": "<Link href={ROUTES.DASHBOARD} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-008",
+      "type": "link",
+      "name": "Sign In Link",
+      "location": "src/components/layout/Footer.tsx:38",
+      "line": 38,
+      "code": "<Link href={ROUTES.SIGN_IN} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-009",
+      "type": "link",
+      "name": "My Account Link",
+      "location": "src/components/layout/Footer.tsx:72",
+      "line": 72,
+      "code": "<Link href={ROUTES.DASHBOARD_PROFILE} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-010",
+      "type": "link",
+      "name": "My Bookings Link",
+      "location": "src/components/layout/Footer.tsx:77",
+      "line": 77,
+      "code": "<Link href={ROUTES.DASHBOARD_BOOKINGS} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-011",
+      "type": "link",
+      "name": "Loyalty Points Link",
+      "location": "src/components/layout/Footer.tsx:82",
+      "line": 82,
+      "code": "<Link href={ROUTES.DASHBOARD_REWARDS} className=\"text-sm text-[#C7C7C7] hover:text-[#9146FF]\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-012",
+      "type": "link",
+      "name": "<Button variant=\"default\" className=\"w-full\"> Link",
+      "location": "src/components/booking/ConfirmationDetails.tsx:109",
+      "line": 109,
+      "code": "<Link href={setupLink}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-013",
+      "type": "link",
+      "name": "<Button variant=\"outline\" size=\"sm\" className=\"w-full\"> Link",
+      "location": "src/components/booking/ConfirmationDetails.tsx:135",
+      "line": 135,
+      "code": "<Link href={fallbackInfo.signInUrl}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-014",
+      "type": "link",
+      "name": "<Button variant=\"default\" className=\"w-full\"> Link",
+      "location": "src/components/booking/ConfirmationDetails.tsx:154",
+      "line": 154,
+      "code": "<Link href={`/auth/sign-in?redirect=/dashboard/bookings/${booking.id}`}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-015",
+      "type": "link",
+      "name": "<Button variant=\"outline\"> Link",
+      "location": "src/components/booking/ConfirmationDetails.tsx:230",
+      "line": 230,
+      "code": "<Link href=\"/\">",
+      "description": "Link to /",
+      "expectedBehavior": "Navigate to /"
+    },
+    {
+      "id": "LNK-016",
+      "type": "link",
+      "name": "View Details Link",
+      "location": "src/app/dashboard/page.tsx:112",
+      "line": 112,
+      "code": "<Link href={`/dashboard/bookings/${booking.id}`} className=\"text-[#9146FF] hover:text-[#9146FF]/80\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-017",
+      "type": "link",
+      "name": "View All History Link",
+      "location": "src/app/dashboard/page.tsx:122",
+      "line": 122,
+      "code": "<Link href=\"/dashboard/bookings\" className=\"text-[#9146FF] hover:text-[#9146FF]/80\">View All History</Link>",
+      "description": "Link to /dashboard/bookings",
+      "expectedBehavior": "Navigate to /dashboard/bookings"
+    },
+    {
+      "id": "LNK-018",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full justify-start\"> Link",
+      "location": "src/app/admin/page.tsx:212",
+      "line": 212,
+      "code": "<Link href=\"/admin/bookings/create\" className=\"block\">",
+      "description": "Link to /admin/bookings/create",
+      "expectedBehavior": "Navigate to /admin/bookings/create"
+    },
+    {
+      "id": "LNK-019",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full justify-start\"> Link",
+      "location": "src/app/admin/page.tsx:218",
+      "line": 218,
+      "code": "<Link href=\"/admin/pricing\" className=\"block\">",
+      "description": "Link to /admin/pricing",
+      "expectedBehavior": "Navigate to /admin/pricing"
+    },
+    {
+      "id": "LNK-020",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full justify-start\"> Link",
+      "location": "src/app/admin/page.tsx:224",
+      "line": 224,
+      "code": "<Link href=\"/admin/bookings\" className=\"block\">",
+      "description": "Link to /admin/bookings",
+      "expectedBehavior": "Navigate to /admin/bookings"
+    },
+    {
+      "id": "LNK-021",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full justify-start\"> Link",
+      "location": "src/app/admin/page.tsx:230",
+      "line": 230,
+      "code": "<Link href=\"/admin/availability\" className=\"block\">",
+      "description": "Link to /admin/availability",
+      "expectedBehavior": "Navigate to /admin/availability"
+    },
+    {
+      "id": "LNK-022",
+      "type": "link",
+      "name": "<Button variant=\"ghost\" size=\"sm\">View All</Button> Link",
+      "location": "src/app/admin/page.tsx:243",
+      "line": 243,
+      "code": "<Link href=\"/admin/bookings\">",
+      "description": "Link to /admin/bookings",
+      "expectedBehavior": "Navigate to /admin/bookings"
+    },
+    {
+      "id": "LNK-023",
+      "type": "link",
+      "name": "<Button variant=\"ghost\" size=\"sm\">View</Button> Link",
+      "location": "src/app/admin/page.tsx:276",
+      "line": 276,
+      "code": "<Link href={`/admin/bookings/${booking.id}`}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-024",
+      "type": "link",
+      "name": "<Plus className=\"h-4 w-4\" /> Link",
+      "location": "src/app/dashboard/bookings/page.tsx:110",
+      "line": 110,
+      "code": "<Link href=\"/book\" className=\"flex items-center gap-2\">",
+      "description": "Link to /book",
+      "expectedBehavior": "Navigate to /book"
+    },
+    {
+      "id": "LNK-025",
+      "type": "link",
+      "name": "Book Your First Service Link",
+      "location": "src/app/dashboard/bookings/page.tsx:134",
+      "line": 134,
+      "code": "<Link href=\"/book\">Book Your First Service</Link>",
+      "description": "Link to /book",
+      "expectedBehavior": "Navigate to /book"
+    },
+    {
+      "id": "LNK-026",
+      "type": "link",
+      "name": "<Eye className=\"h-4 w-4\" /> Link",
+      "location": "src/app/dashboard/bookings/page.tsx:206",
+      "line": 206,
+      "code": "<Link href={`/dashboard/bookings/${booking.id}`} className=\"flex items-center gap-2\">",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-027",
+      "type": "link",
+      "name": "Edit Link",
+      "location": "src/app/dashboard/profile/page.tsx:59",
+      "line": 59,
+      "code": "<Link href={`/dashboard/profile/vehicles/${vehicle.id}`}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-028",
+      "type": "link",
+      "name": "Edit Link",
+      "location": "src/app/dashboard/profile/page.tsx:106",
+      "line": 106,
+      "code": "<Link href=\"/dashboard/profile/edit\">",
+      "description": "Link to /dashboard/profile/edit",
+      "expectedBehavior": "Navigate to /dashboard/profile/edit"
+    },
+    {
+      "id": "LNK-029",
+      "type": "link",
+      "name": "Change Password Link",
+      "location": "src/app/dashboard/profile/page.tsx:144",
+      "line": 144,
+      "code": "<Link href=\"/dashboard/profile/change-password\">",
+      "description": "Link to /dashboard/profile/change-password",
+      "expectedBehavior": "Navigate to /dashboard/profile/change-password"
+    },
+    {
+      "id": "LNK-030",
+      "type": "link",
+      "name": "Two-Factor Authentication Link",
+      "location": "src/app/dashboard/profile/page.tsx:153",
+      "line": 153,
+      "code": "<Link href=\"/dashboard/profile/two-factor\">",
+      "description": "Link to /dashboard/profile/two-factor",
+      "expectedBehavior": "Navigate to /dashboard/profile/two-factor"
+    },
+    {
+      "id": "LNK-031",
+      "type": "link",
+      "name": "Manage Notification Preferences Link",
+      "location": "src/app/dashboard/profile/page.tsx:174",
+      "line": 174,
+      "code": "<Link href=\"/dashboard/profile/notifications\">",
+      "description": "Link to /dashboard/profile/notifications",
+      "expectedBehavior": "Navigate to /dashboard/profile/notifications"
+    },
+    {
+      "id": "LNK-032",
+      "type": "link",
+      "name": "<PlusIcon className=\"w-4 h-4 mr-2\" /> Link",
+      "location": "src/app/dashboard/profile/page.tsx:189",
+      "line": 189,
+      "code": "<Link href=\"/dashboard/profile/vehicles/new\">",
+      "description": "Link to /dashboard/profile/vehicles/new",
+      "expectedBehavior": "Navigate to /dashboard/profile/vehicles/new"
+    },
+    {
+      "id": "LNK-033",
+      "type": "link",
+      "name": "Add Your First Vehicle Link",
+      "location": "src/app/dashboard/profile/page.tsx:205",
+      "line": 205,
+      "code": "<Link href=\"/dashboard/profile/vehicles/new\">",
+      "description": "Link to /dashboard/profile/vehicles/new",
+      "expectedBehavior": "Navigate to /dashboard/profile/vehicles/new"
+    },
+    {
+      "id": "LNK-034",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full\"> Link",
+      "location": "src/app/auth/verify-email/page.tsx:27",
+      "line": 27,
+      "code": "<Link href=\"/auth/sign-in\">",
+      "description": "Link to /auth/sign-in",
+      "expectedBehavior": "Navigate to /auth/sign-in"
+    },
+    {
+      "id": "LNK-035",
+      "type": "link",
+      "name": "Sign in here Link",
+      "location": "src/app/auth/signup/page.tsx:206",
+      "line": 206,
+      "code": "<Link href=\"/auth/login\" className=\"text-[#9146FF] hover:underline\">",
+      "description": "Link to /auth/login",
+      "expectedBehavior": "Navigate to /auth/login"
+    },
+    {
+      "id": "LNK-036",
+      "type": "link",
+      "name": "Sign up here Link",
+      "location": "src/app/auth/login/page.tsx:182",
+      "line": 182,
+      "code": "<Link href=\"/auth/signup\" className=\"text-[#9146FF] hover:underline\">",
+      "description": "Link to /auth/signup",
+      "expectedBehavior": "Navigate to /auth/signup"
+    },
+    {
+      "id": "LNK-037",
+      "type": "link",
+      "name": "<Button variant=\"outline\" className=\"w-full\"> Link",
+      "location": "src/app/admin/customers/page.tsx:405",
+      "line": 405,
+      "code": "<Link href={`/admin/bookings?customer=${selectedCustomer.id}`}>",
+      "description": "Link to unknown",
+      "expectedBehavior": "Navigate to unknown"
+    },
+    {
+      "id": "LNK-038",
+      "type": "link",
+      "name": "<Button> Link",
+      "location": "src/app/admin/bookings/page.tsx:361",
+      "line": 361,
+      "code": "<Link href=\"/admin/bookings/create\">",
+      "description": "Link to /admin/bookings/create",
+      "expectedBehavior": "Navigate to /admin/bookings/create"
+    },
+    {
+      "id": "LNK-039",
+      "type": "link",
+      "name": "<Button variant=\"ghost\" size=\"sm\"> Link",
+      "location": "src/app/admin/bookings/create/page.tsx:245",
+      "line": 245,
+      "code": "<Link href=\"/admin/bookings\">",
+      "description": "Link to /admin/bookings",
+      "expectedBehavior": "Navigate to /admin/bookings"
+    },
+    {
+      "id": "LNK-040",
+      "type": "link",
+      "name": "<Button variant=\"outline\" disabled={saving}> Link",
+      "location": "src/app/admin/bookings/create/page.tsx:389",
+      "line": 389,
+      "code": "<Link href=\"/admin/bookings\">",
+      "description": "Link to /admin/bookings",
+      "expectedBehavior": "Navigate to /admin/bookings"
+    }
+  ],
+  "forms": [
+    {
+      "id": "FRM-001",
+      "type": "form",
+      "name": "Vehicle Form",
+      "location": "src/components/vehicles/VehicleForm.tsx:38",
+      "line": 38,
+      "code": "const onSubmit = async (data: VehicleFormData) => {",
+      "description": "Form submission handler for Vehicle",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-002",
+      "type": "form",
+      "name": "Vehicle Form",
+      "location": "src/components/vehicles/VehicleForm.tsx:84",
+      "line": 84,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-4\">",
+      "description": "Form submission handler for Vehicle",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-003",
+      "type": "form",
+      "name": "onSubmit Form",
+      "location": "src/components/booking/UserStep.tsx:42",
+      "line": 42,
+      "code": "const onSubmit = async (data: UserFormData) => {",
+      "description": "Form submission handler for onSubmit",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-004",
+      "type": "form",
+      "name": "handleBack Form",
+      "location": "src/components/booking/UserStep.tsx:66",
+      "line": 66,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-6\">",
+      "description": "Form submission handler for handleBack",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-005",
+      "type": "form",
+      "name": "onSubmit Form",
+      "location": "src/components/booking/PersonalDetailsStep.tsx:51",
+      "line": 51,
+      "code": "const onSubmit = async (data: PersonalDetails) => {",
+      "description": "Form submission handler for onSubmit",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-006",
+      "type": "form",
+      "name": "to Form",
+      "location": "src/components/booking/PersonalDetailsStep.tsx:93",
+      "line": 93,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-6\" autoComplete=\"on\">",
+      "description": "Form submission handler for to",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-007",
+      "type": "form",
+      "name": "onSubmit Form",
+      "location": "src/components/booking/PaymentStep.tsx:51",
+      "line": 51,
+      "code": "const onSubmit = async (data: PaymentFormData) => {",
+      "description": "Form submission handler for onSubmit",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-008",
+      "type": "form",
+      "name": "PaymentStep Form",
+      "location": "src/components/booking/PaymentStep.tsx:99",
+      "line": 99,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-4\">",
+      "description": "Form submission handler for PaymentStep",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-009",
+      "type": "form",
+      "name": "SignUp Form",
+      "location": "src/components/auth/SignUpForm.tsx:43",
+      "line": 43,
+      "code": "const onSubmit = async (data: SignUpFormData) => {",
+      "description": "Form submission handler for SignUp",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-010",
+      "type": "form",
+      "name": "SignUp Form",
+      "location": "src/components/auth/SignUpForm.tsx:59",
+      "line": 59,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-4\">",
+      "description": "Form submission handler for SignUp",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-011",
+      "type": "form",
+      "name": "SignIn Form",
+      "location": "src/components/auth/SignInForm.tsx:37",
+      "line": 37,
+      "code": "const onSubmit = async (data: SignInFormData) => {",
+      "description": "Form submission handler for SignIn",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-012",
+      "type": "form",
+      "name": "SignIn Form",
+      "location": "src/components/auth/SignInForm.tsx:76",
+      "line": 76,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-4\">",
+      "description": "Form submission handler for SignIn",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-013",
+      "type": "form",
+      "name": "ResetPassword Form",
+      "location": "src/components/auth/ResetPasswordForm.tsx:32",
+      "line": 32,
+      "code": "const onSubmit = async (data: ResetPasswordFormData) => {",
+      "description": "Form submission handler for ResetPassword",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-014",
+      "type": "form",
+      "name": "ResetPassword Form",
+      "location": "src/components/auth/ResetPasswordForm.tsx:66",
+      "line": 66,
+      "code": "<form onSubmit={handleSubmit(onSubmit)} className=\"space-y-4\">",
+      "description": "Form submission handler for ResetPassword",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-015",
+      "type": "form",
+      "name": "EditBookingModal Form",
+      "location": "src/components/admin/EditBookingModal.tsx:348",
+      "line": 348,
+      "code": "<form onSubmit={form.handleSubmit(handleSubmit)} className=\"space-y-6\">",
+      "description": "Form submission handler for EditBookingModal",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-016",
+      "type": "form",
+      "name": "formData Form",
+      "location": "src/components/booking/steps/SummaryStep.tsx:40",
+      "line": 40,
+      "code": "const onSubmit = async (data: UnifiedBookingForm) => {",
+      "description": "Form submission handler for formData",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-017",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/auth/update-password/page.tsx:144",
+      "line": 144,
+      "code": "<form onSubmit={handleSubmit} className=\"space-y-6\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-018",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/auth/signup/page.tsx:112",
+      "line": 112,
+      "code": "<form onSubmit={handleSignup} className=\"space-y-4\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-019",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/auth/login/page.tsx:100",
+      "line": 100,
+      "code": "<form onSubmit={handleLogin} className=\"space-y-4\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-020",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/auth/admin-login/page.tsx:84",
+      "line": 84,
+      "code": "<form onSubmit={handleMagicLink} className=\"space-y-4\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-021",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/auth/setup-password/page.tsx:157",
+      "line": 157,
+      "code": "<form onSubmit={handleSubmit} className=\"space-y-6\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-022",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/admin/pricing/page.tsx:350",
+      "line": 350,
+      "code": "<form onSubmit={addonForm.handleSubmit(addOrUpdateAddon)} className=\"space-y-4\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-023",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/admin/policies/page.tsx:195",
+      "line": 195,
+      "code": "<form onSubmit={form.handleSubmit(savePolicies)} className=\"space-y-8\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-024",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/admin/bookings/page.tsx:597",
+      "line": 597,
+      "code": "<form onSubmit={editForm.handleSubmit(handleUpdateBooking)} className=\"space-y-6\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    },
+    {
+      "id": "FRM-025",
+      "type": "form",
+      "name": "page Form",
+      "location": "src/app/admin/bookings/create/page.tsx:270",
+      "line": 270,
+      "code": "<form onSubmit={handleSubmit} className=\"space-y-6\">",
+      "description": "Form submission handler for page",
+      "expectedBehavior": "Submit form data and handle response"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "id": "API-001",
+      "type": "api",
+      "name": "POST /api/email",
+      "location": "src/lib/services/email.ts:20",
+      "line": 20,
+      "code": "const response = await fetch('/api/email', {",
+      "description": "API call to email",
+      "expectedBehavior": "Make POST request to /api/email"
+    },
+    {
+      "id": "API-002",
+      "type": "api",
+      "name": "POST /api/email",
+      "location": "src/lib/services/email.ts:38",
+      "line": 38,
+      "code": "const response = await fetch('/api/email', {",
+      "description": "API call to email",
+      "expectedBehavior": "Make POST request to /api/email"
+    },
+    {
+      "id": "API-003",
+      "type": "api",
+      "name": "POST /api/email",
+      "location": "src/lib/services/email.ts:56",
+      "line": 56,
+      "code": "const response = await fetch('/api/email', {",
+      "description": "API call to email",
+      "expectedBehavior": "Make POST request to /api/email"
+    },
+    {
+      "id": "API-004",
+      "type": "api",
+      "name": "POST /api/email",
+      "location": "src/lib/services/email.ts:80",
+      "line": 80,
+      "code": "const response = await fetch('/api/email', {",
+      "description": "API call to email",
+      "expectedBehavior": "Make POST request to /api/email"
+    },
+    {
+      "id": "API-005",
+      "type": "api",
+      "name": "POST /api/auth/anonymous",
+      "location": "src/lib/services/booking.ts:385",
+      "line": 385,
+      "code": "const response = await fetch('/api/auth/anonymous', {",
+      "description": "API call to auth/anonymous",
+      "expectedBehavior": "Make POST request to /api/auth/anonymous"
+    },
+    {
+      "id": "API-006",
+      "type": "api",
+      "name": "POST /api/time-slots/generate",
+      "location": "src/lib/api/time-slots.ts:65",
+      "line": 65,
+      "code": "const response = await fetch('/api/time-slots/generate', {",
+      "description": "API call to time-slots/generate",
+      "expectedBehavior": "Make POST request to /api/time-slots/generate"
+    },
+    {
+      "id": "API-007",
+      "type": "api",
+      "name": "PATCH /api/bookings/${bookingId}",
+      "location": "src/components/dashboard/CancelBookingButton.tsx:30",
+      "line": 30,
+      "code": "const response = await fetch(`/api/bookings/${bookingId}`, {",
+      "description": "API call to bookings/${bookingId}",
+      "expectedBehavior": "Make PATCH request to /api/bookings/${bookingId}"
+    },
+    {
+      "id": "API-008",
+      "type": "api",
+      "name": "GET /api/vehicle-sizes",
+      "location": "src/components/booking/UnifiedBookingForm.tsx:85",
+      "line": 85,
+      "code": "const response = await fetch('/api/vehicle-sizes');",
+      "description": "API call to vehicle-sizes",
+      "expectedBehavior": "Make GET request to /api/vehicle-sizes"
+    },
+    {
+      "id": "API-009",
+      "type": "api",
+      "name": "POST /api/auth/resend-setup",
+      "location": "src/components/booking/ConfirmationDetails.tsx:49",
+      "line": 49,
+      "code": "const response = await fetch('/api/auth/resend-setup', {",
+      "description": "API call to auth/resend-setup",
+      "expectedBehavior": "Make POST request to /api/auth/resend-setup"
+    },
+    {
+      "id": "API-010",
+      "type": "api",
+      "name": "GET /api/admin/weekly-schedule",
+      "location": "src/components/admin/WeeklyScheduleConfig.tsx:52",
+      "line": 52,
+      "code": "const response = await fetch('/api/admin/weekly-schedule');",
+      "description": "API call to admin/weekly-schedule",
+      "expectedBehavior": "Make GET request to /api/admin/weekly-schedule"
+    },
+    {
+      "id": "API-011",
+      "type": "api",
+      "name": "POST /api/admin/weekly-schedule",
+      "location": "src/components/admin/WeeklyScheduleConfig.tsx:150",
+      "line": 150,
+      "code": "const response = await fetch('/api/admin/weekly-schedule', {",
+      "description": "API call to admin/weekly-schedule",
+      "expectedBehavior": "Make POST request to /api/admin/weekly-schedule"
+    },
+    {
+      "id": "API-012",
+      "type": "api",
+      "name": "GET /api/bookings/available-slots?date=${date}",
+      "location": "src/components/admin/EditBookingModal.tsx:136",
+      "line": 136,
+      "code": "const response = await fetch(`/api/bookings/available-slots?date=${date}`);",
+      "description": "API call to bookings/available-slots?date=${date}",
+      "expectedBehavior": "Make GET request to /api/bookings/available-slots?date=${date}"
+    },
+    {
+      "id": "API-013",
+      "type": "api",
+      "name": "POST /api/admin/availability/generate-week",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:76",
+      "line": 76,
+      "code": "const response = await fetch('/api/admin/availability/generate-week', {",
+      "description": "API call to admin/availability/generate-week",
+      "expectedBehavior": "Make POST request to /api/admin/availability/generate-week"
+    },
+    {
+      "id": "API-014",
+      "type": "api",
+      "name": "POST /api/upload-vehicle-photo",
+      "location": "src/components/booking/steps/SummaryStep.tsx:53",
+      "line": 53,
+      "code": "const uploadResponse = await fetch('/api/upload-vehicle-photo', {",
+      "description": "API call to upload-vehicle-photo",
+      "expectedBehavior": "Make POST request to /api/upload-vehicle-photo"
+    },
+    {
+      "id": "API-015",
+      "type": "api",
+      "name": "POST /api/bookings",
+      "location": "src/components/booking/steps/SummaryStep.tsx:82",
+      "line": 82,
+      "code": "const response = await fetch('/api/bookings', {",
+      "description": "API call to bookings",
+      "expectedBehavior": "Make POST request to /api/bookings"
+    },
+    {
+      "id": "API-016",
+      "type": "api",
+      "name": "GET /api/postcode-distance?postcode=${encodeURIComponent(postcode)}",
+      "location": "src/components/booking/steps/PersonalDetailsStep.tsx:49",
+      "line": 49,
+      "code": "const response = await fetch(`/api/postcode-distance?postcode=${encodeURIComponent(postcode)}`);",
+      "description": "API call to postcode-distance?postcode=${encodeURIComponent(postcode)}",
+      "expectedBehavior": "Make GET request to /api/postcode-distance?postcode=${encodeURIComponent(postcode)}"
+    },
+    {
+      "id": "API-017",
+      "type": "api",
+      "name": "GET /api/time-slots?date=${dateStr}",
+      "location": "src/components/booking/steps/DateTimeStep.tsx:56",
+      "line": 56,
+      "code": "const response = await fetch(`/api/time-slots?date=${dateStr}`);",
+      "description": "API call to time-slots?date=${dateStr}",
+      "expectedBehavior": "Make GET request to /api/time-slots?date=${dateStr}"
+    },
+    {
+      "id": "API-018",
+      "type": "api",
+      "name": "GET /api/bookings",
+      "location": "src/app/dashboard/bookings/page.tsx:58",
+      "line": 58,
+      "code": "const response = await fetch('/api/bookings');",
+      "description": "API call to bookings",
+      "expectedBehavior": "Make GET request to /api/bookings"
+    },
+    {
+      "id": "API-019",
+      "type": "api",
+      "name": "PATCH /api/admin/users/${userId}/role",
+      "location": "src/app/admin/users/page.tsx:69",
+      "line": 69,
+      "code": "const response = await fetch(`/api/admin/users/${userId}/role`, {",
+      "description": "API call to admin/users/${userId}/role",
+      "expectedBehavior": "Make PATCH request to /api/admin/users/${userId}/role"
+    },
+    {
+      "id": "API-020",
+      "type": "api",
+      "name": "GET /api/admin/time-slots?date=${selectedDate}",
+      "location": "src/app/admin/time-slots/page.tsx:54",
+      "line": 54,
+      "code": "const response = await fetch(`/api/admin/time-slots?date=${selectedDate}`);",
+      "description": "API call to admin/time-slots?date=${selectedDate}",
+      "expectedBehavior": "Make GET request to /api/admin/time-slots?date=${selectedDate}"
+    },
+    {
+      "id": "API-021",
+      "type": "api",
+      "name": "POST /api/admin/time-slots/generate",
+      "location": "src/app/admin/time-slots/page.tsx:71",
+      "line": 71,
+      "code": "const response = await fetch('/api/admin/time-slots/generate', {",
+      "description": "API call to admin/time-slots/generate",
+      "expectedBehavior": "Make POST request to /api/admin/time-slots/generate"
+    },
+    {
+      "id": "API-022",
+      "type": "api",
+      "name": "PATCH /api/admin/time-slots/${slotId}",
+      "location": "src/app/admin/time-slots/page.tsx:98",
+      "line": 98,
+      "code": "const response = await fetch(`/api/admin/time-slots/${slotId}`, {",
+      "description": "API call to admin/time-slots/${slotId}",
+      "expectedBehavior": "Make PATCH request to /api/admin/time-slots/${slotId}"
+    },
+    {
+      "id": "API-023",
+      "type": "api",
+      "name": "DELETE /api/admin/time-slots/${slotId}",
+      "location": "src/app/admin/time-slots/page.tsx:118",
+      "line": 118,
+      "code": "const response = await fetch(`/api/admin/time-slots/${slotId}`, {",
+      "description": "API call to admin/time-slots/${slotId}",
+      "expectedBehavior": "Make DELETE request to /api/admin/time-slots/${slotId}"
+    },
+    {
+      "id": "API-024",
+      "type": "api",
+      "name": "GET /api/admin/settings",
+      "location": "src/app/admin/settings/page.tsx:129",
+      "line": 129,
+      "code": "const response = await fetch('/api/admin/settings');",
+      "description": "API call to admin/settings",
+      "expectedBehavior": "Make GET request to /api/admin/settings"
+    },
+    {
+      "id": "API-025",
+      "type": "api",
+      "name": "PUT /api/admin/settings",
+      "location": "src/app/admin/settings/page.tsx:177",
+      "line": 177,
+      "code": "const response = await fetch('/api/admin/settings', {",
+      "description": "API call to admin/settings",
+      "expectedBehavior": "Make PUT request to /api/admin/settings"
+    },
+    {
+      "id": "API-026",
+      "type": "api",
+      "name": "PUT /api/admin/settings",
+      "location": "src/app/admin/settings/page.tsx:211",
+      "line": 211,
+      "code": "const response = await fetch('/api/admin/settings', {",
+      "description": "API call to admin/settings",
+      "expectedBehavior": "Make PUT request to /api/admin/settings"
+    },
+    {
+      "id": "API-027",
+      "type": "api",
+      "name": "GET /api/admin/customers",
+      "location": "src/app/admin/bookings/create/page.tsx:75",
+      "line": 75,
+      "code": "fetch('/api/admin/customers').catch(e => null),",
+      "description": "API call to admin/customers",
+      "expectedBehavior": "Make GET request to /api/admin/customers"
+    },
+    {
+      "id": "API-028",
+      "type": "api",
+      "name": "GET /api/vehicle-sizes",
+      "location": "src/app/admin/bookings/create/page.tsx:76",
+      "line": 76,
+      "code": "fetch('/api/vehicle-sizes').catch(e => null)",
+      "description": "API call to vehicle-sizes",
+      "expectedBehavior": "Make GET request to /api/vehicle-sizes"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "INT-001",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/not-found.tsx:21",
+      "line": 21,
+      "code": "onClick={() => router.back()}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-002",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/not-found.tsx:26",
+      "line": 26,
+      "code": "onClick={() => router.push('/')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-003",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/vehicles/VehicleList.tsx:180",
+      "line": 180,
+      "code": "onClick={() => handleDelete(vehicle.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-004",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/vehicles/VehicleForm.tsx:165",
+      "line": 165,
+      "code": "onClick={onCancel}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-005",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/ErrorBoundary.tsx:64",
+      "line": 64,
+      "code": "onClick={() => router.refresh()}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-006",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/ErrorBoundary.tsx:70",
+      "line": 70,
+      "code": "onClick={() => router.push('/')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-007",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/Dialog.tsx:19",
+      "line": 19,
+      "code": "onClick={() => onOpenChange(false)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-008",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/AutocompleteInput.tsx:14",
+      "line": 14,
+      "code": "onChange: (value: string) => void;",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-009",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/AutocompleteInput.tsx:87",
+      "line": 87,
+      "code": "onChange={(e) => {",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-010",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/AutocompleteInput.tsx:91",
+      "line": 91,
+      "code": "onFocus={() => setIsOpen(true)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-011",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/ui/AutocompleteInput.tsx:107",
+      "line": 107,
+      "code": "onClick={() => {",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-012",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/services/ServiceCard.tsx:34",
+      "line": 34,
+      "code": "onClick={() => service.available && onSelect?.(service.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-013",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/layout/DashboardSidebar.tsx:147",
+      "line": 147,
+      "code": "onClick={handleSignOut}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-014",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/dashboard/QuickBook.tsx:274",
+      "line": 274,
+      "code": "onClick={handleBooking}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-015",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/dashboard/CancelBookingButton.tsx:87",
+      "line": 87,
+      "code": "onClick={handleCancelBooking}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-016",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/dashboard/CancelBookingButton.tsx:102",
+      "line": 102,
+      "code": "onClick={() => setShowConfirm(false)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-017",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/dashboard/CancelBookingButton.tsx:119",
+      "line": 119,
+      "code": "onClick={() => setShowConfirm(true)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-018",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/VehicleStep.tsx:206",
+      "line": 206,
+      "code": "onClick={() => {",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-019",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/VehicleStep.tsx:245",
+      "line": 245,
+      "code": "onChange={setModelInput}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-020",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/VehicleStep.tsx:262",
+      "line": 262,
+      "code": "onChange={(e) => {",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-021",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/VehicleStep.tsx:300",
+      "line": 300,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-022",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/UserStep.tsx:131",
+      "line": 131,
+      "code": "onClick={handleBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-023",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/UnifiedBookingForm.tsx:178",
+      "line": 178,
+      "code": "onClick={() => goToStep(step.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-024",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/SummaryStep.tsx:163",
+      "line": 163,
+      "code": "onClick={handleConfirmBooking}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-025",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/PaymentStep.tsx:190",
+      "line": 190,
+      "code": "onClick={onBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-026",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/DateTimeStep.tsx:118",
+      "line": 118,
+      "code": "onClick={() => handleDateSelect(value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-027",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/DateTimeStep.tsx:144",
+      "line": 144,
+      "code": "onClick={() => handleTimeSelect(slot)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-028",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/DateTimeStep.tsx:164",
+      "line": 164,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-029",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/ConfirmationDetails.tsx:119",
+      "line": 119,
+      "code": "onClick={handleResendSetupEmail}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-030",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/BookingStepper.tsx:67",
+      "line": 67,
+      "code": "onClick: () => void;",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-031",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/BookingStepper.tsx:98",
+      "line": 98,
+      "code": "onClick={onClick}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-032",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/BookingStepper.tsx:202",
+      "line": 202,
+      "code": "onClick={() => handleStepClick(step.key)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-033",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/auth/ResetPasswordForm.tsx:57",
+      "line": 57,
+      "code": "onClick={() => setSuccess(false)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-034",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/WeeklyScheduleConfig.tsx:305",
+      "line": 305,
+      "code": "onChange={(e) => updateSlotTime(dayOfWeek, index, e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-035",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/UnmatchedVehiclesCard.tsx:117",
+      "line": 117,
+      "code": "onClick={() => fetchUnmatchedVehicles()}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-036",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/EditBookingModal.tsx:409",
+      "line": 409,
+      "code": "onChange={(e) => handleDateChange(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-037",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/EditBookingModal.tsx:440",
+      "line": 440,
+      "code": "onClick={() => isClickable && handleSlotSelect(slotNumber)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-038",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:165",
+      "line": 165,
+      "code": "onClick={() => generateWeekSlots(formatDate(currentWeekStart))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-039",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:183",
+      "line": 183,
+      "code": "onClick={() => navigateWeek('prev')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-040",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:192",
+      "line": 192,
+      "code": "onClick={() => navigateWeek('next')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-041",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:258",
+      "line": 258,
+      "code": "onClick={() => onSlotClick?.(day.date, slot.slot_number)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-042",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/admin/AvailabilityCalendar.tsx:287",
+      "line": 287,
+      "code": "onClick={() => onDateGenerate?.(day.date)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-043",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/confirmation/error.tsx:59",
+      "line": 59,
+      "code": "onClick={() => router.push('/dashboard/bookings')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-044",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/confirmation/error.tsx:65",
+      "line": 65,
+      "code": "onClick={() => reset()}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-045",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/confirmation/error.tsx:72",
+      "line": 72,
+      "code": "onClick={() => router.push('/book')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-046",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/VehicleInfoStep.tsx:243",
+      "line": 243,
+      "code": "onClick={() => handleSizeChange(size.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-047",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/VehicleInfoStep.tsx:268",
+      "line": 268,
+      "code": "onClick={onBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-048",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/VehicleInfoStep.tsx:276",
+      "line": 276,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-049",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/SummaryStep.tsx:291",
+      "line": 291,
+      "code": "onClick={onBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-050",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/SummaryStep.tsx:299",
+      "line": 299,
+      "code": "onClick={handleSubmit(onSubmit)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-051",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/ServiceSelectionStep.tsx:85",
+      "line": 85,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-052",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/PersonalDetailsStep.tsx:214",
+      "line": 214,
+      "code": "onChange={handlePhotoUpload}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-053",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/PersonalDetailsStep.tsx:245",
+      "line": 245,
+      "code": "onClick={() => removePhoto(photo.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-054",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/PersonalDetailsStep.tsx:272",
+      "line": 272,
+      "code": "onClick={onBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-055",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/PersonalDetailsStep.tsx:279",
+      "line": 279,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-056",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/DateTimeStep.tsx:156",
+      "line": 156,
+      "code": "onClick={() => handleSlotSelect(slot)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-057",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/DateTimeStep.tsx:195",
+      "line": 195,
+      "code": "onClick={onBack}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-058",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/components/booking/steps/DateTimeStep.tsx:202",
+      "line": 202,
+      "code": "onClick={handleNext}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-059",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/update-password/page.tsx:154",
+      "line": 154,
+      "code": "onChange={(e) => setPassword(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-060",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/update-password/page.tsx:161",
+      "line": 161,
+      "code": "onClick={() => setShowPassword(!showPassword)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-061",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/update-password/page.tsx:182",
+      "line": 182,
+      "code": "onChange={(e) => setConfirmPassword(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-062",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/update-password/page.tsx:189",
+      "line": 189,
+      "code": "onClick={() => setShowConfirmPassword(!showConfirmPassword)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-063",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/update-password/page.tsx:216",
+      "line": 216,
+      "code": "onClick={() => router.push('/auth/sign-in')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-064",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/signup/page.tsx:127",
+      "line": 127,
+      "code": "onChange={(e) => setFirstName(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-065",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/signup/page.tsx:138",
+      "line": 138,
+      "code": "onChange={(e) => setLastName(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-066",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/signup/page.tsx:155",
+      "line": 155,
+      "code": "onChange={(e) => setEmail(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-067",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/signup/page.tsx:171",
+      "line": 171,
+      "code": "onChange={(e) => setPassword(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-068",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/signup/page.tsx:184",
+      "line": 184,
+      "code": "onChange={(e) => setConfirmPassword(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-069",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/login/page.tsx:118",
+      "line": 118,
+      "code": "onChange={(e) => setEmail(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-070",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/login/page.tsx:134",
+      "line": 134,
+      "code": "onChange={(e) => setPassword(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-071",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/login/page.tsx:162",
+      "line": 162,
+      "code": "onClick={handleMagicLink}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-072",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/admin-login/page.tsx:102",
+      "line": 102,
+      "code": "onChange={(e) => setEmail(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-073",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/setup-password/page.tsx:166",
+      "line": 166,
+      "code": "onChange={handleInputChange('password')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-074",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/setup-password/page.tsx:174",
+      "line": 174,
+      "code": "onClick={() => setShowPassword(!showPassword)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-075",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/setup-password/page.tsx:193",
+      "line": 193,
+      "code": "onChange={handleInputChange('confirmPassword')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-076",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/auth/setup-password/page.tsx:200",
+      "line": 200,
+      "code": "onClick={() => setShowConfirmPassword(!showConfirmPassword)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-077",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/users/page.tsx:127",
+      "line": 127,
+      "code": "onClick={() => fetchUsers()}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-078",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/users/page.tsx:203",
+      "line": 203,
+      "code": "onClick={() => updateUserRole(user.id, 'customer')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-079",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/users/page.tsx:217",
+      "line": 217,
+      "code": "onClick={() => updateUserRole(user.id, 'admin')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-080",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:153",
+      "line": 153,
+      "code": "onClick={() => setShowConfig(!showConfig)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-081",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:161",
+      "line": 161,
+      "code": "onClick={generateTimeSlots}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-082",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:192",
+      "line": 192,
+      "code": "onChange={(e) => setWorkingHours(prev => ({ ...prev, start: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-083",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:201",
+      "line": 201,
+      "code": "onChange={(e) => setWorkingHours(prev => ({ ...prev, end: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-084",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:212",
+      "line": 212,
+      "code": "onChange={(e) => setWorkingHours(prev => ({ ...prev, slotsCount: parseInt(e.target.value) }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-085",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:224",
+      "line": 224,
+      "code": "onClick={() => {",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-086",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:253",
+      "line": 253,
+      "code": "onChange={(e) => setSelectedDate(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-087",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:315",
+      "line": 315,
+      "code": "onClick={() => toggleSlotAvailability(slot.id, slot.is_available)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-088",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/time-slots/page.tsx:324",
+      "line": 324,
+      "code": "onClick={() => deleteTimeSlot(slot.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-089",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:310",
+      "line": 310,
+      "code": "onClick={() => setActiveTab('business')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-090",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:321",
+      "line": 321,
+      "code": "onClick={() => setActiveTab('system')}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-091",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:346",
+      "line": 346,
+      "code": "onChange={(e) => updateBusinessSetting('company_name', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-092",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:358",
+      "line": 358,
+      "code": "onChange={(e) => updateBusinessSetting('email', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-093",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:369",
+      "line": 369,
+      "code": "onChange={(e) => updateBusinessSetting('phone', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-094",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:380",
+      "line": 380,
+      "code": "onChange={(e) => updateBusinessSetting('address', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-095",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:400",
+      "line": 400,
+      "code": "onChange={(e) => updateBusinessHours(day, 'enabled', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-096",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:411",
+      "line": 411,
+      "code": "onChange={(e) => updateBusinessHours(day, 'open', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-097",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:420",
+      "line": 420,
+      "code": "onChange={(e) => updateBusinessHours(day, 'close', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-098",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:444",
+      "line": 444,
+      "code": "onChange={(e) => setBusinessSettings(prev => ({",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-099",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:463",
+      "line": 463,
+      "code": "onChange={(e) => setBusinessSettings(prev => ({",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-100",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:482",
+      "line": 482,
+      "code": "onChange={(e) => setBusinessSettings(prev => ({",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-101",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:502",
+      "line": 502,
+      "code": "onChange={(e) => setBusinessSettings(prev => ({",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-102",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:531",
+      "line": 531,
+      "code": "onChange={(e) => updatePricingSetting('small_base_price', parseFloat(e.target.value) || 0)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-103",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:544",
+      "line": 544,
+      "code": "onChange={(e) => updatePricingSetting('medium_base_price', parseFloat(e.target.value) || 0)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-104",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:557",
+      "line": 557,
+      "code": "onChange={(e) => updatePricingSetting('large_base_price', parseFloat(e.target.value) || 0)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-105",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:570",
+      "line": 570,
+      "code": "onChange={(e) => updatePricingSetting('extra_large_base_price', parseFloat(e.target.value) || 0)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-106",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:614",
+      "line": 614,
+      "code": "onChange={(e) => updateSystemSetting('email_notifications', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-107",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:626",
+      "line": 626,
+      "code": "onChange={(e) => updateSystemSetting('sms_notifications', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-108",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:638",
+      "line": 638,
+      "code": "onChange={(e) => updateSystemSetting('booking_confirmations', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-109",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:650",
+      "line": 650,
+      "code": "onChange={(e) => updateSystemSetting('reminder_emails', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-110",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:662",
+      "line": 662,
+      "code": "onChange={(e) => updateSystemSetting('admin_notifications', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-111",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/settings/page.tsx:681",
+      "line": 681,
+      "code": "onChange={(e) => updateSystemSetting('maintenance_mode', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-112",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:259",
+      "line": 259,
+      "code": "onClick={sizeForm.handleSubmit(saveVehicleSizes)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-113",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:277",
+      "line": 277,
+      "code": "onChange={(e) => updateSizePrice(index, 'label', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-114",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:288",
+      "line": 288,
+      "code": "onChange={(e) => updateSizePrice(index, 'description', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-115",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:304",
+      "line": 304,
+      "code": "onChange={(e) => updateSizePrice(index, 'price_pounds', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-116",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:316",
+      "line": 316,
+      "code": "onChange={(e) => updateSizePrice(index, 'is_active', e.target.checked)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-117",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:466",
+      "line": 466,
+      "code": "onClick={() => startEditAddon(addon)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-118",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/pricing/page.tsx:473",
+      "line": 473,
+      "code": "onClick={() => deleteAddon(addon.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-119",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/customers/page.tsx:230",
+      "line": 230,
+      "code": "onChange={(e) => setSearchTerm(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-120",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/customers/page.tsx:255",
+      "line": 255,
+      "code": "onClick={() => fetchCustomerDetail(customer.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-121",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:383",
+      "line": 383,
+      "code": "onChange={(e) => handleFilterChange('search', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-122",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:412",
+      "line": 412,
+      "code": "onChange={(e) => handleFilterChange('dateFrom', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-123",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:423",
+      "line": 423,
+      "code": "onChange={(e) => handleFilterChange('dateTo', e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-124",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:567",
+      "line": 567,
+      "code": "onClick={() => handleEditBooking(booking)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-125",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:575",
+      "line": 575,
+      "code": "onClick={() => handleDeleteBooking(booking.id)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-126",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/page.tsx:682",
+      "line": 682,
+      "code": "onClick={() => setIsEditModalOpen(false)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-127",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/analytics/page.tsx:391",
+      "line": 391,
+      "code": "onClick={fetchAnalytics}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-128",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/analytics/page.tsx:399",
+      "line": 399,
+      "code": "onClick={exportData}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-129",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:281",
+      "line": 281,
+      "code": "onChange={(e) => handleUserChange(e.target.value)}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-130",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:300",
+      "line": 300,
+      "code": "onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-131",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:316",
+      "line": 316,
+      "code": "onChange={(e) => setFormData(prev => ({ ...prev, vehicle_id: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-132",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:342",
+      "line": 342,
+      "code": "onChange={(e) => setFormData(prev => ({ ...prev, time_slot_id: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-133",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:366",
+      "line": 366,
+      "code": "onChange={(e) => setFormData(prev => ({ ...prev, special_requests: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    },
+    {
+      "id": "INT-134",
+      "type": "interaction",
+      "name": "element Interaction",
+      "location": "src/app/admin/bookings/create/page.tsx:378",
+      "line": 378,
+      "code": "onChange={(e) => setFormData(prev => ({ ...prev, admin_notes: e.target.value }))}",
+      "description": "Interactive element element",
+      "expectedBehavior": "Respond to user interaction"
+    }
+  ],
+  "totalCount": 240,
+  "lastUpdated": "2025-07-06T18:13:31.905Z"
+}
