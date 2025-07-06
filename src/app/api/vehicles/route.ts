@@ -7,6 +7,17 @@ import { determineVehicleSize } from '@/lib/utils/vehicle-size';
 
 export const dynamic = 'force-dynamic';
 
+// Helper function to get pricing for vehicle sizes
+function getVehicleSizePrice(sizeId: string): number {
+  const prices = {
+    small: 3500,
+    medium: 4500, 
+    large: 5500,
+    extra_large: 6500
+  };
+  return prices[sizeId as keyof typeof prices] || 4500;
+}
+
 const supabaseServiceRole = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -38,15 +49,7 @@ export async function GET(request: NextRequest) {
 
     const { data: vehicles, error: vehiclesError } = await supabaseServiceRole
       .from('vehicles')
-      .select(`
-        *,
-        vehicle_sizes (
-          id,
-          label,
-          description,
-          price_pence
-        )
-      `)
+      .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -57,9 +60,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Add vehicle size information dynamically
+    const vehiclesWithSizes = (vehicles || []).map(vehicle => ({
+      ...vehicle,
+      vehicle_sizes: vehicle.size_id ? {
+        id: vehicle.size_id,
+        label: vehicle.size_id.charAt(0).toUpperCase() + vehicle.size_id.slice(1),
+        description: `${vehicle.size_id} sized vehicle`,
+        price_pence: getVehicleSizePrice(vehicle.size_id)
+      } : null
+    }));
+
     return NextResponse.json({
       success: true,
-      vehicles: vehicles || []
+      vehicles: vehiclesWithSizes
     });
 
   } catch (error) {

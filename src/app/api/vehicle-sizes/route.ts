@@ -1,28 +1,38 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Vehicle sizes are now determined dynamically from JSON detection
+// Return the standard size categories with pricing
+const VEHICLE_SIZES = [
+  {
+    id: 'small',
+    label: 'Small',
+    description: 'Compact cars, hatchbacks',
+    price_pence: 3500, // £35
+  },
+  {
+    id: 'medium', 
+    label: 'Medium',
+    description: 'Saloons, small SUVs',
+    price_pence: 4500, // £45
+  },
+  {
+    id: 'large',
+    label: 'Large', 
+    description: 'Large SUVs, estates',
+    price_pence: 5500, // £55
+  },
+  {
+    id: 'extra_large',
+    label: 'Extra Large',
+    description: 'Vans, large trucks',
+    price_pence: 6500, // £65
+  }
+];
 
 export async function GET() {
   try {
-    const { data: vehicleSizes, error } = await supabase
-      .from('vehicle_sizes')
-      .select('*')
-      .order('price_pence', { ascending: true });
-
-    if (error) {
-      console.error('Database error:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch vehicle sizes' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(vehicleSizes);
-
+    // Return static vehicle sizes since we now use JSON-based detection
+    return NextResponse.json(VEHICLE_SIZES);
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
