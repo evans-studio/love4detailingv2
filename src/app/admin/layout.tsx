@@ -62,13 +62,13 @@ export default function AdminLayout({
         setIsAdmin(hasAccess);
         
         if (!hasAccess) {
-          // Redirect to sign-in if not admin
-          router.replace('/auth/sign-in?message=Admin access required');
+          // Redirect to admin login if not admin
+          router.replace('/auth/admin-login');
         }
       } catch (error) {
         console.error('Admin verification error:', error);
         setIsAdmin(false);
-        router.replace('/auth/sign-in?message=Admin access required');
+        router.replace('/auth/admin-login');
       } finally {
         setLoading(false);
       }

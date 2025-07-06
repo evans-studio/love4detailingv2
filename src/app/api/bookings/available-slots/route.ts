@@ -12,7 +12,25 @@ export async function GET(request: Request) {
     
     if (!date) {
       return NextResponse.json(
-        { error: 'date parameter is required' }, 
+        { 
+          error: 'date parameter is required',
+          message: 'Please provide a date parameter in YYYY-MM-DD format',
+          example: '/api/bookings/available-slots?date=2025-01-08'
+        }, 
+        { status: 400 }
+      );
+    }
+
+    // Validate date format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(date)) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid date format',
+          message: 'Date must be in YYYY-MM-DD format',
+          provided: date,
+          example: '2025-01-08'
+        }, 
         { status: 400 }
       );
     }
