@@ -12,7 +12,16 @@
     "setup-database": "supabase db reset && ts-node scripts/setup-database.ts",
     "setup-admin": "ts-node scripts/setup-admin.ts",
     "test:email": "ts-node -P tsconfig.test.json src/lib/test-email.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:customer": "playwright test --grep \"Customer Journey\"",
+    "test:e2e:admin": "playwright test --grep \"Admin Journey\"",
+    "test:e2e:mobile": "playwright test --grep \"Mobile\"",
+    "test:e2e:performance": "playwright test --grep \"Performance\"",
+    "test:e2e:accessibility": "playwright test --grep \"Accessibility\"",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -48,6 +57,8 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "@playwright/test": "^1.53.2",
     "@types/dotenv": "^6.1.1",
     "@types/node": "^20.19.4",
     "@types/react": "^18.2.57",
