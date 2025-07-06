@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { VehicleDetails, PersonalDetails, BookingData, VehicleSize } from '@/lib/validation/booking';
-import type { DbTimeSlot } from '@/types';
+import type { DbAvailableSlot } from '@/types';
 
 export enum BookingStep {
   Registration = 'registration',
@@ -25,7 +25,7 @@ interface BookingState {
   data: {
     vehicle?: VehicleDetails | null;
     customer?: PersonalDetails | null;
-    timeSlot?: DbTimeSlot | null;
+    timeSlot?: DbAvailableSlot | null;
     vehicleSize?: VehicleSize | null;
     selectedDate?: string | null;
     selectedTime?: string | null;
@@ -46,7 +46,7 @@ type BookingAction =
   | { type: 'SET_STEP'; payload: BookingStep }
   | { type: 'SET_VEHICLE_DETAILS'; payload: VehicleDetails | null }
   | { type: 'SET_CUSTOMER_DETAILS'; payload: PersonalDetails | null }
-  | { type: 'SET_TIME_SLOT'; payload: DbTimeSlot | null }
+  | { type: 'SET_TIME_SLOT'; payload: DbAvailableSlot | null }
   | { type: 'SET_VEHICLE_SIZE'; payload: VehicleSize | null }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_LOADING'; payload: boolean }

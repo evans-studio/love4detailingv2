@@ -116,7 +116,7 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
           registration: vehicle.registration,
           make: vehicle.make || '',
           model: vehicle.model || '',
-          year: vehicle.year || '',
+          year: vehicle.year?.toString() || '',
           color: vehicle.color || '',
         }
       });
