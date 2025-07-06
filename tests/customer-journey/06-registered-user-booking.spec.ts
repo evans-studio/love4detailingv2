@@ -23,9 +23,14 @@ test.describe('Registered User Booking Flow', () => {
     
     // Start booking process
     await page.click('text=Book Now');
-    await page.waitForURL('/booking');
+    await page.waitForURL('/book');
     
-    // Should show saved vehicles
+    // Step 1: Select service
+    const serviceCard = page.locator('[data-testid="service-card-full-valet"]').first();
+    await serviceCard.click();
+    await page.click('button:has-text("Next: Vehicle Details")');
+    
+    // Step 2: Should show saved vehicles
     await expect(page.locator('.saved-vehicles')).toBeVisible();
     await expect(page.locator('text=' + vehicle.registration)).toBeVisible();
     
@@ -33,11 +38,7 @@ test.describe('Registered User Booking Flow', () => {
     await page.click(`[data-registration="${vehicle.registration}"]`);
     await page.click('button:has-text("Continue")');
     
-    // Select service
-    await page.selectOption('select[name="service"]', booking.serviceType);
-    await page.click('button:has-text("Continue")');
-    
-    // Select date and time
+    // Step 3: Select date and time
     const availableDateButton = page.locator('.react-calendar__tile:not([disabled])').first();
     await availableDateButton.click();
     
@@ -46,10 +47,14 @@ test.describe('Registered User Booking Flow', () => {
     
     await page.click('button:has-text("Continue")');
     
-    // Personal details should be pre-filled
-    await expect(page.locator('input[name="name"]')).toHaveValue(testUser.name);
+    // Step 4: Personal details should be pre-filled
+    const nameParts = testUser.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await expect(page.locator('input[name="firstName"]')).toHaveValue(firstName);
+    await expect(page.locator('input[name="lastName"]')).toHaveValue(lastName);
     await expect(page.locator('input[name="email"]')).toHaveValue(testUser.email);
-    await expect(page.locator('input[name="phone"]')).toHaveValue(testUser.phone);
     
     // Add notes if provided
     if (booking.notes) {
@@ -58,7 +63,7 @@ test.describe('Registered User Booking Flow', () => {
     
     await page.click('button:has-text("Continue")');
     
-    // Review and confirm
+    // Step 5: Review and confirm
     await expect(page.locator('.booking-summary')).toBeVisible();
     await page.click('button:has-text("Confirm Booking")');
     
@@ -219,13 +224,17 @@ test.describe('Registered User Booking Flow', () => {
     await page.click('button:has-text("Continue")');
     
     // Personal details should be pre-filled
-    await expect(page.locator('input[name="name"]')).toHaveValue(testUser.name);
+    const nameParts = testUser.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await expect(page.locator('input[name="firstName"]')).toHaveValue(firstName);
+    await expect(page.locator('input[name="lastName"]')).toHaveValue(lastName);
     await expect(page.locator('input[name="email"]')).toHaveValue(testUser.email);
-    await expect(page.locator('input[name="phone"]')).toHaveValue(testUser.phone);
     
     // Fields should be editable
-    await page.fill('input[name="name"]', 'Updated Name');
-    await expect(page.locator('input[name="name"]')).toHaveValue('Updated Name');
+    await page.fill('input[name="firstName"]', 'Updated');
+    await expect(page.locator('input[name="firstName"]')).toHaveValue('Updated');
   });
 
   test('should show booking confirmation with all details', async ({ page }) => {

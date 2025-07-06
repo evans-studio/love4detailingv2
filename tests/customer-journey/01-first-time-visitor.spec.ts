@@ -40,8 +40,8 @@ test.describe('First-time Visitor Experience', () => {
   test('should display primary CTA button prominently', async ({ page }) => {
     await page.goto('/');
     
-    // Check for primary CTA buttons - actual buttons found: "Book Detail", "Book Service"
-    const bookButton = page.locator('button:has-text("Book"), a:has-text("Book")').first();
+    // Check for primary CTA buttons - should be "Book Your Service Now"
+    const bookButton = page.locator('text=Book Your Service Now').first();
     await expect(bookButton).toBeVisible();
     
     // Verify button is clickable and styled as primary CTA
@@ -51,23 +51,27 @@ test.describe('First-time Visitor Experience', () => {
     await bookButton.click();
     await page.waitForLoadState('networkidle');
     
-    // Should navigate to booking-related page (/book found in links)
-    await expect(page).toHaveURL(/\/(book|booking)/);
+    // Should navigate to booking page with new URL structure
+    await expect(page).toHaveURL(/\/book/);
   });
 
   test('should display essential business information', async ({ page }) => {
     await page.goto('/');
     
     // Check for business name/logo (use specific heading to avoid strict mode violation)
-    await expect(page.locator('h1:has-text("Love 4 Detailing")')).toBeVisible();
+    await expect(page.locator('h1:has-text("Love 4 Detailing"), h1:has-text("Love4Detailing")').first()).toBeVisible();
     await expect(page.locator('span:has-text("Love4Detailing")').first()).toBeVisible();
     
     // Check for contact information (phone and email links found)
     await expect(page.locator('a[href*="tel"]')).toBeVisible();
     await expect(page.locator('a[href*="mailto"]')).toBeVisible();
     
-    // Check for professional service indicators (use first instance to avoid strict mode violation)
-    await expect(page.locator('p:has-text("Professional car detailing services")').first()).toBeVisible();
+    // Check for service information - should show Full Valet & Detail service
+    await expect(page.locator('text=Full Valet & Detail')).toBeVisible();
+    
+    // Check for pricing information
+    await expect(page.locator('text=£55')).toBeVisible();
+    await expect(page.locator('text=£70')).toBeVisible();
     
     // Verify business contact details are displayed
     await expect(page.locator('text=020 1234 5678')).toBeVisible();
@@ -102,13 +106,13 @@ test.describe('First-time Visitor Experience', () => {
     await expect(page.locator('h1')).toBeVisible();
     
     // Check that booking buttons are accessible on mobile (use first to avoid strict mode violation)
-    await expect(page.locator('button:has-text("Book"), a:has-text("Book")').first()).toBeVisible();
+    await expect(page.locator('text=Book Your Service Now').first()).toBeVisible();
     
     // Verify essential contact information is still visible
     await expect(page.locator('a[href*="tel"]')).toBeVisible();
     
     // Check that content fits within mobile viewport
-    const bookButton = page.locator('button:has-text("Book")').first();
+    const bookButton = page.locator('text=Book Your Service Now').first();
     if (await bookButton.isVisible()) {
       const boundingBox = await bookButton.boundingBox();
       if (boundingBox) {

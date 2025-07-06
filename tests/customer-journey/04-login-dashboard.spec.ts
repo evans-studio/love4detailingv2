@@ -134,9 +134,13 @@ test.describe('User Login and Dashboard Exploration', () => {
     await page.waitForURL('/dashboard/profile');
     
     // Check profile information
-    await expect(page.locator('input[name="name"]')).toHaveValue(testUser.name);
+    const nameParts = testUser.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await expect(page.locator('input[name="firstName"], input[name="first_name"]')).toHaveValue(firstName);
+    await expect(page.locator('input[name="lastName"], input[name="last_name"]')).toHaveValue(lastName);
     await expect(page.locator('input[name="email"]')).toHaveValue(testUser.email);
-    await expect(page.locator('input[name="phone"]')).toHaveValue(testUser.phone);
   });
 
   test('should display correct user role and permissions', async ({ page }) => {

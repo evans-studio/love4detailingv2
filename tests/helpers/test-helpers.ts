@@ -15,20 +15,32 @@ export class TestHelpers {
 
   async loginAsAdmin() {
     await this.page.goto('/auth/sign-in');
-    await this.page.fill(SELECTORS.emailInput, ADMIN_CREDENTIALS.email);
-    await this.page.fill(SELECTORS.passwordInput, ADMIN_CREDENTIALS.password);
+    
+    // Use admin credentials from setup script
+    const testEmail = 'zell@love4detailing.com';
+    const testPassword = 'Love4Detailing2025!';
+    
+    await this.page.fill(SELECTORS.emailInput, testEmail);
+    await this.page.fill(SELECTORS.passwordInput, testPassword);
     await this.page.click(SELECTORS.loginButton);
-    await this.page.waitForURL('/admin');
+    await this.page.waitForURL('/admin', { timeout: 15000 });
   }
 
   async registerUser(user: TestUser) {
     await this.page.goto('/auth/sign-up');
-    await this.page.fill(SELECTORS.nameInput, user.name);
+    
+    // Split the full name into first and last name
+    const nameParts = user.name.split(' ');
+    const firstName = nameParts[0] || 'Test';
+    const lastName = nameParts.slice(1).join(' ') || 'User';
+    
+    await this.page.fill(SELECTORS.firstNameInput, firstName);
+    await this.page.fill(SELECTORS.lastNameInput, lastName);
     await this.page.fill(SELECTORS.emailInput, user.email);
     await this.page.fill(SELECTORS.passwordInput, user.password);
-    await this.page.fill(SELECTORS.phoneInput, user.phone);
+    await this.page.fill('input[name="confirmPassword"]', user.password);
     await this.page.click(SELECTORS.signUpButton);
-    await this.page.waitForURL('/dashboard');
+    await this.page.waitForURL('/auth/verify-email', { timeout: 10000 });
   }
 
   async logout() {

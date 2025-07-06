@@ -44,7 +44,8 @@ export function generateVehicle(): TestVehicle {
 }
 
 export function generateBooking(): TestBooking {
-  const services = ['Interior & Exterior Detail', 'Exterior Detail Only', 'Interior Detail Only', 'Mini Valet'];
+  // Updated to match new service configuration - only "Full Valet & Detail" service available
+  const services = ['Full Valet & Detail'];
   
   // Generate a future date within the next 30 days
   const futureDate = faker.date.future({ years: 1 });
@@ -84,10 +85,12 @@ export const ADMIN_CREDENTIALS = {
 
 // Common test selectors
 export const SELECTORS = {
-  // Authentication
+  // Authentication - Updated to match actual form structure
   emailInput: 'input[type="email"]',
   passwordInput: 'input[type="password"]',
-  nameInput: 'input[name="name"]',
+  firstNameInput: 'input[name="firstName"]',
+  lastNameInput: 'input[name="lastName"]',
+  nameInput: 'input[name="firstName"]', // Fallback for single name tests
   phoneInput: 'input[name="phone"]',
   loginButton: 'button[type="submit"]',
   signUpButton: 'button[type="submit"]',
@@ -100,20 +103,23 @@ export const SELECTORS = {
   profileLink: 'text=Profile, a[href*="profile"]',
   rewardsLink: 'text=Rewards, a[href*="rewards"]',
   
-  // Vehicle form
-  registrationInput: 'input[name="registration"]',
-  makeInput: 'input[name="make"]',
-  modelInput: 'input[name="model"]',
-  yearInput: 'input[name="year"]',
-  colorInput: 'input[name="color"]',
+  // Vehicle form - Updated for react-hook-form nested names
+  registrationInput: 'input[name="vehicle.registration"]',
+  makeSelect: '[data-testid="vehicle-make-select"], button[role="combobox"]:has-text("Select make")',
+  modelSelect: '[data-testid="vehicle-model-select"], button[role="combobox"]:has-text("Select model")',
+  yearInput: 'input[name="vehicle.year"]',
+  colorInput: 'input[name="vehicle.color"]',
   
-  // Booking flow
+  // Booking flow - Updated to match actual components
+  serviceCard: '[data-testid^="service-card-"]',
+  fullValetServiceCard: '[data-testid="service-card-full-valet"]',
   serviceSelect: 'select[name="service"]',
   calendarTile: 'button.react-calendar__tile',
   timeSlotButton: '.time-slot-button',
   bookingForm: '.booking-form',
   bookingSummary: '.booking-summary',
   confirmButton: 'button:has-text("Confirm")',
+  nextButton: 'button:has-text("Next")',
   
   // Dashboard
   vehicleCard: '.vehicle-card',
