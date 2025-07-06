@@ -21,6 +21,7 @@ import type { UnifiedBookingForm } from '@/lib/validation/booking';
 
 interface VehicleInfoStepProps {
   onNext: () => void;
+  onBack?: () => void;
   vehicleSizes: Array<{
     id: string;
     label: string;
@@ -29,7 +30,7 @@ interface VehicleInfoStepProps {
   }>;
 }
 
-export function VehicleInfoStep({ onNext, vehicleSizes }: VehicleInfoStepProps) {
+export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoStepProps) {
   const { 
     register, 
     watch, 
@@ -260,11 +261,20 @@ export function VehicleInfoStep({ onNext, vehicleSizes }: VehicleInfoStepProps) 
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Back: Service Selection
+          </button>
+        )}
         <button
           type="button"
           onClick={handleNext}
-          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors ml-auto"
         >
           Next: Personal Details
         </button>

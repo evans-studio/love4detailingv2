@@ -100,7 +100,13 @@ export interface BookingWithRelations extends DbBooking {
 
 // Unified booking form schema for single-form flow
 export const unifiedBookingSchema = z.object({
-  // Step 1: Vehicle Info
+  // Step 1: Service Selection
+  service: z.object({
+    serviceId: z.string().min(1, 'Service is required'),
+    serviceName: z.string().min(1, 'Service name is required'),
+  }),
+  
+  // Step 2: Vehicle Info
   vehicle: z.object({
     make: z.string().min(1, 'Make is required'),
     model: z.string().min(1, 'Model is required'),
@@ -114,7 +120,7 @@ export const unifiedBookingSchema = z.object({
     size: z.string().min(1, 'Vehicle size is required'),
   }),
   
-  // Step 2: Personal Details
+  // Step 3: Personal Details
   personalDetails: z.object({
     firstName: z.string().min(2, 'First name is required'),
     lastName: z.string().min(2, 'Last name is required'),
@@ -128,7 +134,7 @@ export const unifiedBookingSchema = z.object({
     })).max(3, 'Maximum 3 photos allowed').optional(),
   }),
   
-  // Step 3: Date & Time
+  // Step 4: Date & Time
   dateTime: z.object({
     timeSlotId: z.string().min(1, 'Time slot is required'),
     date: z.string().min(1, 'Date is required'),
@@ -136,7 +142,7 @@ export const unifiedBookingSchema = z.object({
   }),
   
   // Internal fields
-  currentStep: z.number().min(1).max(4).default(1),
+  currentStep: z.number().min(1).max(5).default(1),
   vehicleSizeId: z.string().optional(),
   totalPrice: z.number().optional(),
   distanceWarning: z.boolean().default(false),
@@ -145,6 +151,7 @@ export const unifiedBookingSchema = z.object({
 export type UnifiedBookingForm = z.infer<typeof unifiedBookingSchema>;
 
 // Individual step schemas for validation
+export const serviceStepSchema = unifiedBookingSchema.pick({ service: true });
 export const vehicleStepSchema = unifiedBookingSchema.pick({ vehicle: true });
 export const personalDetailsStepSchema = unifiedBookingSchema.pick({ personalDetails: true });
 export const dateTimeStepSchema = unifiedBookingSchema.pick({ dateTime: true });

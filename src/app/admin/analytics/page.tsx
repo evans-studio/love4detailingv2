@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Select';
 import { Alert } from '@/components/ui/Alert';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { getAvailableServices, calculateServicePrice } from '@/lib/config/services';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -18,7 +19,8 @@ import {
   Clock,
   Target,
   Download,
-  RefreshCw
+  RefreshCw,
+  Wrench
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -59,6 +61,21 @@ interface AnalyticsData {
       booking_count: number;
       revenue: number;
     }>;
+  };
+  services: {
+    totalOffered: number;
+    mostPopular: {
+      name: string;
+      bookings: number;
+      revenue: number;
+    };
+    revenueBySize: Array<{
+      size: string;
+      revenue: number;
+      bookings: number;
+      avgPrice: number;
+    }>;
+    conversionRate: number;
   };
   monthlyData: Array<{
     month: string;
@@ -252,6 +269,34 @@ export default function AdminAnalytics() {
       const utilizationRate = totalAvailableSlotsRes.count ? 
         ((totalBookingsRes.count || 0) / (totalAvailableSlotsRes.count || 1)) * 100 : 0;
 
+      // Service Analytics
+      const availableServices = getAvailableServices();
+      const mainService = availableServices[0]; // Full Valet & Detail
+      
+      // Calculate revenue by vehicle size for the main service
+      const revenueBySize = topServices.map(service => ({
+        size: service.size_category,
+        revenue: service.revenue,
+        bookings: service.booking_count,
+        avgPrice: service.booking_count > 0 ? service.revenue / service.booking_count : 0
+      }));
+      
+      // Most popular service is essentially our single service across all sizes
+      const totalServiceBookings = revenueBySize.reduce((sum, size) => sum + size.bookings, 0);
+      const totalServiceRevenue = revenueBySize.reduce((sum, size) => sum + size.revenue, 0);
+      
+      const serviceAnalytics = {
+        totalOffered: availableServices.length,
+        mostPopular: {
+          name: mainService?.name || 'Full Valet & Detail',
+          bookings: totalServiceBookings,
+          revenue: totalServiceRevenue
+        },
+        revenueBySize,
+        conversionRate: totalAvailableSlotsRes.count ? 
+          (totalServiceBookings / (totalAvailableSlotsRes.count || 1)) * 100 : 0
+      };
+
       setAnalytics({
         revenue: {
           total: totalRevenue,
@@ -284,6 +329,7 @@ export default function AdminAnalytics() {
           popularTimeSlots,
           topServices,
         },
+        services: serviceAnalytics,
         monthlyData,
       });
 
@@ -570,6 +616,70 @@ export default function AdminAnalytics() {
                       </div>
                       <div className="text-xs text-gray-500">
                         {service.booking_count} bookings
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* Service Analytics Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Service Overview */}
+            <Card className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-[#9146FF]/10 rounded-full">
+                  <Wrench className="h-5 w-5 text-[#9146FF]" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900">Service Overview</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Services Offered</span>
+                  <span className="text-lg font-semibold text-gray-900">
+                    {analytics.services.totalOffered}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Conversion Rate</span>
+                  <span className="text-lg font-semibold text-gray-900">
+                    {analytics.services.conversionRate.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-gray-200">
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">Most Popular Service</h3>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="font-medium text-gray-900">{analytics.services.mostPopular.name}</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      {analytics.services.mostPopular.bookings} bookings • {formatCurrency(analytics.services.mostPopular.revenue / 100)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Revenue by Vehicle Size */}
+            <Card className="p-6 lg:col-span-2">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Vehicle Size</h2>
+              <div className="space-y-4">
+                {analytics.services.revenueBySize.map((sizeData) => (
+                  <div key={sizeData.size} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-[#9146FF]/10 rounded-full flex items-center justify-center">
+                        <Car className="h-4 w-4 text-[#9146FF]" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900 capitalize">{sizeData.size} Vehicles</div>
+                        <div className="text-sm text-gray-600">{sizeData.bookings} bookings</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-gray-900">
+                        {formatCurrency(sizeData.revenue / 100)}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Avg: {formatCurrency(sizeData.avgPrice / 100)}
                       </div>
                     </div>
                   </div>

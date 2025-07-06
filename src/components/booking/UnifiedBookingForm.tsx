@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { unifiedBookingSchema, type UnifiedBookingForm } from '@/lib/validation/booking';
+import { ServiceSelectionStep } from './steps/ServiceSelectionStep';
 import { VehicleInfoStep } from './steps/VehicleInfoStep';
 import { PersonalDetailsStep } from './steps/PersonalDetailsStep';
 import { DateTimeStep } from './steps/DateTimeStep';
@@ -22,10 +23,11 @@ interface UnifiedBookingFormProps {
 }
 
 const steps = [
-  { id: 1, title: 'Vehicle Info', description: 'Tell us about your vehicle' },
-  { id: 2, title: 'Personal Details', description: 'Your contact information' },
-  { id: 3, title: 'Date & Time', description: 'Choose your appointment' },
-  { id: 4, title: 'Summary', description: 'Review and confirm' },
+  { id: 1, title: 'Service', description: 'Choose your detailing service' },
+  { id: 2, title: 'Vehicle Info', description: 'Tell us about your vehicle' },
+  { id: 3, title: 'Personal Details', description: 'Your contact information' },
+  { id: 4, title: 'Date & Time', description: 'Choose your appointment' },
+  { id: 5, title: 'Summary', description: 'Review and confirm' },
 ];
 
 export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) {
@@ -37,6 +39,10 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
     resolver: zodResolver(unifiedBookingSchema),
     defaultValues: {
       currentStep: 1,
+      service: {
+        serviceId: '',
+        serviceName: '',
+      },
       vehicle: {
         make: '',
         model: '',
@@ -110,26 +116,33 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
     switch (currentStep) {
       case 1:
         return (
-          <VehicleInfoStep 
+          <ServiceSelectionStep 
             onNext={nextStep}
-            vehicleSizes={vehicleSizes}
           />
         );
       case 2:
+        return (
+          <VehicleInfoStep 
+            onNext={nextStep}
+            onBack={prevStep}
+            vehicleSizes={vehicleSizes}
+          />
+        );
+      case 3:
         return (
           <PersonalDetailsStep 
             onNext={nextStep}
             onBack={prevStep}
           />
         );
-      case 3:
+      case 4:
         return (
           <DateTimeStep 
             onNext={nextStep}
             onBack={prevStep}
           />
         );
-      case 4:
+      case 5:
         return (
           <SummaryStep 
             onBack={prevStep}
@@ -166,9 +179,9 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
                   disabled={step.id > currentStep}
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                     step.id === currentStep
-                      ? 'bg-primary-600 text-white'
+                      ? 'bg-[#9146FF] text-white'
                       : step.id < currentStep
-                      ? 'bg-primary-100 text-primary-600 hover:bg-primary-200'
+                      ? 'bg-[#9146FF]/20 text-[#9146FF] hover:bg-[#9146FF]/30'
                       : 'bg-gray-100 text-gray-400'
                   }`}
                 >
@@ -178,7 +191,7 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
                   <div
                     className={`text-sm font-medium ${
                       step.id === currentStep
-                        ? 'text-primary-600'
+                        ? 'text-[#9146FF]'
                         : step.id < currentStep
                         ? 'text-gray-900'
                         : 'text-gray-400'
@@ -194,7 +207,7 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
               {index !== steps.length - 1 && (
                 <div
                   className={`mt-5 h-0.5 ${
-                    step.id < currentStep ? 'bg-primary-600' : 'bg-gray-200'
+                    step.id < currentStep ? 'bg-[#9146FF]' : 'bg-gray-200'
                   }`}
                 />
               )}
@@ -205,7 +218,9 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
 
       {/* Form Content */}
       <FormProvider {...methods}>
-        <form className="bg-white shadow-lg rounded-lg p-6 md:p-8">
+        <form className={`shadow-lg rounded-lg p-6 md:p-8 ${
+          currentStep === 1 ? 'bg-[#141414]' : 'bg-white'
+        }`}>
           {renderStep()}
         </form>
       </FormProvider>
