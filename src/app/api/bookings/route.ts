@@ -94,16 +94,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // Log incoming data for debugging
+    console.log('Incoming booking data:', JSON.stringify(body, null, 2));
+    
     // Validate the request data
     const validationResult = unifiedBookingSchema.safeParse(body);
     if (!validationResult.success) {
+      console.error('Validation failed:', validationResult.error.errors);
       return NextResponse.json(
         { error: 'Invalid booking data', details: validationResult.error.errors },
         { status: 400 }
       );
     }
 
-    const { vehicle, personalDetails, dateTime, vehicleSizeId, totalPrice } = validationResult.data;
+    const { service, vehicle, personalDetails, dateTime, vehicleSizeId, totalPrice } = validationResult.data;
 
     // Since we're having database migration issues, let's temporarily disable the reward trigger
     // and use a simple approach that works
@@ -241,6 +245,7 @@ export async function POST(request: NextRequest) {
         payment_status: 'pending',
         payment_method: 'cash',
         booking_reference: bookingRef,
+        service_type: service?.serviceName || 'full-valet',
       })
       .select()
       .single();

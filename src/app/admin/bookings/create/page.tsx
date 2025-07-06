@@ -22,13 +22,13 @@ interface Vehicle {
   registration: string;
   make: string;
   model: string;
-  size: string;
+  size_id: string;
 }
 
 interface VehicleSize {
   id: string;
-  name: string;
-  base_price_pence: number;
+  label: string;
+  price_pence: number;
 }
 
 interface TimeSlot {
@@ -68,39 +68,68 @@ export default function CreateManualBooking() {
 
   const loadData = async () => {
     try {
-      const [usersRes, vehiclesRes, vehicleSizesRes, timeSlotsRes] = await Promise.all([
-        supabase
-          .from('users')
-          .select('id, email, full_name')
-          .neq('role', 'admin')
-          .order('full_name'),
-        supabase
-          .from('vehicles')
-          .select('id, registration, make, model, size')
-          .order('registration'),
-        supabase
-          .from('vehicle_sizes')
-          .select('id, name, base_price_pence')
-          .order('name'),
-        supabase
-          .from('time_slots')
-          .select('id, slot_date, slot_time, is_available')
-          .eq('is_available', true)
-          .gte('slot_date', new Date().toISOString().split('T')[0])
-          .order('slot_date')
-          .order('slot_time')
-          .limit(50)
+      setError(null);
+      
+      // Load data using API endpoints for better error handling and admin access
+      const [usersRes, vehicleSizesRes] = await Promise.all([
+        fetch('/api/admin/customers').catch(e => ({ ok: false, error: e.message })),
+        fetch('/api/vehicle-sizes').catch(e => ({ ok: false, error: e.message }))
       ]);
 
-      if (usersRes.error) throw usersRes.error;
-      if (vehiclesRes.error) throw vehiclesRes.error;
-      if (vehicleSizesRes.error) throw vehicleSizesRes.error;
-      if (timeSlotsRes.error) throw timeSlotsRes.error;
+      // Handle users data
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData.customers || []);
+      } else {
+        console.error('Failed to load users:', usersRes);
+        setError('Failed to load customers');
+      }
 
-      setUsers(usersRes.data || []);
-      setVehicles(vehiclesRes.data || []);
-      setVehicleSizes(vehicleSizesRes.data || []);
-      setTimeSlots(timeSlotsRes.data || []);
+      // Handle vehicle sizes data
+      if (vehicleSizesRes.ok) {
+        const sizesData = await vehicleSizesRes.json();
+        setVehicleSizes(sizesData || []);
+      } else {
+        console.error('Failed to load vehicle sizes:', vehicleSizesRes);
+        setError(prev => prev ? `${prev}. Failed to load vehicle sizes` : 'Failed to load vehicle sizes');
+      }
+
+      // Load vehicles and time slots using direct Supabase queries
+      try {
+        const [vehiclesQuery, timeSlotsQuery] = await Promise.all([
+          supabase
+            .from('vehicles')
+            .select('id, registration, make, model, size_id')
+            .order('registration'),
+          supabase
+            .from('time_slots')
+            .select('id, slot_date, slot_time, is_available')
+            .eq('is_available', true)
+            .gte('slot_date', new Date().toISOString().split('T')[0])
+            .order('slot_date')
+            .order('slot_time')
+            .limit(100)
+        ]);
+        
+        if (vehiclesQuery.error) {
+          console.error('Failed to load vehicles:', vehiclesQuery.error);
+          setError(prev => prev ? `${prev}. Failed to load vehicles` : 'Failed to load vehicles');
+        } else {
+          setVehicles(vehiclesQuery.data || []);
+        }
+
+        if (timeSlotsQuery.error) {
+          console.error('Failed to load time slots:', timeSlotsQuery.error);
+          setError(prev => prev ? `${prev}. Failed to load time slots` : 'Failed to load time slots');
+        } else {
+          setTimeSlots(timeSlotsQuery.data || []);
+        }
+
+      } catch (dbError) {
+        console.error('Database query error:', dbError);
+        setError(prev => prev ? `${prev}. Database access failed` : 'Database access failed');
+      }
+
     } catch (error) {
       console.error('Error loading data:', error);
       setError('Failed to load data for booking creation');
@@ -142,7 +171,7 @@ export default function CreateManualBooking() {
 
       // Get the selected vehicle and vehicle size for pricing
       const selectedVehicle = vehicles.find(v => v.id === formData.vehicle_id);
-      const selectedVehicleSize = vehicleSizes.find(vs => vs.name === selectedVehicle?.size);
+      const selectedVehicleSize = vehicleSizes.find(vs => vs.id === selectedVehicle?.size_id);
       
       if (!selectedVehicleSize) {
         throw new Error('Unable to determine vehicle pricing');
@@ -157,8 +186,12 @@ export default function CreateManualBooking() {
         phone: formData.phone,
         special_requests: formData.special_requests || null,
         admin_notes: formData.admin_notes || null,
-        total_price_pence: selectedVehicleSize.base_price_pence,
+        total_price_pence: selectedVehicleSize.price_pence,
         status: 'confirmed',
+        service_type: 'full-valet',
+        payment_status: 'pending',
+        payment_method: 'cash',
+        booking_reference: `BK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`,
         created_by_admin: true
       };
 
@@ -275,11 +308,14 @@ export default function CreateManualBooking() {
                 required
               >
                 <option value="">Select a vehicle...</option>
-                {vehicles.map(vehicle => (
-                  <option key={vehicle.id} value={vehicle.id}>
-                    {vehicle.registration} - {vehicle.make} {vehicle.model} ({vehicle.size})
-                  </option>
-                ))}
+                {vehicles.map(vehicle => {
+                  const vehicleSize = vehicleSizes.find(vs => vs.id === vehicle.size_id);
+                  return (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.registration} - {vehicle.make} {vehicle.model} ({vehicleSize?.label || 'Unknown size'})
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

@@ -110,6 +110,22 @@ export default function AdminSettings() {
 
   const loadSettings = async () => {
     try {
+      // Load admin user data to pre-populate business information
+      const { data: { user } } = await supabase.auth.getUser();
+      let adminUser = null;
+      
+      if (user) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (userData && userData.role === 'admin') {
+          adminUser = userData;
+        }
+      }
+
       const response = await fetch('/api/admin/settings');
       if (!response.ok) {
         throw new Error('Failed to load settings');
@@ -127,6 +143,17 @@ export default function AdminSettings() {
           booking_settings: data.business.booking_settings,
           pricing_settings: data.business.pricing_settings,
         });
+      } else if (adminUser) {
+        // Pre-populate with admin user data if no business settings exist
+        setBusinessSettings(prev => ({
+          ...prev,
+          company_name: adminUser.full_name || prev.company_name,
+          email: adminUser.email || prev.email,
+          phone: adminUser.phone || prev.phone,
+          address: adminUser.address_line1 
+            ? `${adminUser.address_line1}${adminUser.address_line2 ? ', ' + adminUser.address_line2 : ''}${adminUser.city ? ', ' + adminUser.city : ''}${adminUser.postcode ? ', ' + adminUser.postcode : ''}` 
+            : prev.address
+        }));
       }
       
       if (data.system) {
