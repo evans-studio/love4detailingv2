@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Switch } from '@/components/ui/Switch';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
 import { Loader2, Clock, Calendar, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -132,10 +132,7 @@ export default function WeeklyScheduleConfig() {
       const response = await fetch('/api/admin/weekly-schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          day_of_week: dayOfWeek,
-          ...updatedConfig
-        })
+        body: JSON.stringify(updatedConfig)
       });
       
       if (!response.ok) {

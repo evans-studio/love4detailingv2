@@ -297,6 +297,11 @@ export interface WeeklyScheduleTemplate {
   working_day: boolean;
   start_time: string;
   end_time: string;
+  slot_1_time?: string;
+  slot_2_time?: string;
+  slot_3_time?: string;
+  slot_4_time?: string;
+  slot_5_time?: string;
   created_at: string;
 }
 
