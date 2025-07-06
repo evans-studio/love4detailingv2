@@ -7,6 +7,11 @@ interface AlertProps {
   className?: string;
 }
 
+interface AlertDescriptionProps {
+  children: ReactNode;
+  className?: string;
+}
+
 export function Alert({ 
   children, 
   variant = 'default',
@@ -25,6 +30,17 @@ export function Alert({
       variantStyles[variant],
       className
     )}>
+      {children}
+    </div>
+  );
+}
+
+export function AlertDescription({ 
+  children, 
+  className 
+}: AlertDescriptionProps) {
+  return (
+    <div className={cn('text-sm', className)}>
       {children}
     </div>
   );

@@ -17,7 +17,14 @@ export class AvailabilityService {
     
     const { data, error } = await supabase
       .from('weekly_schedule_template')
-      .select('*')
+      .select(`
+        *,
+        slot_1_time,
+        slot_2_time, 
+        slot_3_time,
+        slot_4_time,
+        slot_5_time
+      `)
       .order('day_of_week');
     
     if (error) throw error;
@@ -56,7 +63,6 @@ export class AvailabilityService {
     );
 
     const result = [];
-    const slotTimes = ['10:00:00', '11:30:00', '13:00:00', '14:30:00', '16:00:00'];
     
     // Get weekly template
     const template = await this.getWeeklyTemplate(supabase);
@@ -71,6 +77,15 @@ export class AvailabilityService {
       const dayTemplate = template.find((t: any) => t.day_of_week === dayOfWeek);
       
       if (dayTemplate?.working_day && dayTemplate.max_slots > 0) {
+        // Generate time slots using custom times from template
+        const customTimes = [
+          dayTemplate.slot_1_time || '08:00:00',
+          dayTemplate.slot_2_time || '10:00:00', 
+          dayTemplate.slot_3_time || '12:00:00',
+          dayTemplate.slot_4_time || '14:00:00',
+          dayTemplate.slot_5_time || '16:00:00'
+        ];
+        
         // Create daily availability record
         await supabase
           .from('daily_availability')
@@ -87,7 +102,7 @@ export class AvailabilityService {
             .from('time_slots')
             .upsert({
               slot_date: dateStr,          // ✅ Correct column name
-              slot_time: slotTimes[slotNum - 1], // ✅ Correct column name
+              slot_time: customTimes[slotNum - 1], // ✅ Using custom times
               slot_number: slotNum,
               is_available: true,
               buffer_minutes: 30
@@ -298,5 +313,19 @@ export class AvailabilityService {
       const activeBookings = slot.bookings?.filter((b: any) => b.status !== 'cancelled') || [];
       return activeBookings.length === 0;
     });
+  }
+
+  // Validation helpers
+  static validateTimeInRange(time: string): boolean {
+    if (!time) return false;
+    const [hours, minutes] = time.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    return totalMinutes >= 480 && totalMinutes <= 1200; // 8AM-8PM
+  }
+
+  static validateTimeIn15MinIncrements(time: string): boolean {
+    if (!time) return false;
+    const [, minutes] = time.split(':').map(Number);
+    return minutes % 15 === 0; // Must be 0, 15, 30, or 45 minutes
   }
 }

@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 // Using alert() for notifications to match existing codebase pattern
-import { WeeklyScheduleConfig } from '@/components/admin/WeeklyScheduleConfig';
+import WeeklyScheduleConfig from '@/components/admin/WeeklyScheduleConfig';
 import { AvailabilityCalendar } from '@/components/admin/AvailabilityCalendar';
 import { EditBookingModal } from '@/components/admin/EditBookingModal';
 import { 
@@ -238,7 +238,7 @@ export default function AvailabilityManagement() {
       </div>
 
       {/* Weekly Schedule Configuration */}
-      <WeeklyScheduleConfig onScheduleUpdate={handleScheduleUpdate} />
+      <WeeklyScheduleConfig />
 
       {/* Availability Calendar */}
       <AvailabilityCalendar 
