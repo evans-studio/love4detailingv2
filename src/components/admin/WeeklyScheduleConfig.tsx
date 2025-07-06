@@ -133,10 +133,24 @@ export default function WeeklyScheduleConfig() {
         updatedConfig.max_slots = 0;
       }
       
+      // Extract only the fields needed for the API
+      const apiData = {
+        day_of_week: updatedConfig.day_of_week,
+        working_day: updatedConfig.working_day,
+        max_slots: updatedConfig.max_slots,
+        slot_1_time: updatedConfig.slot_1_time || null,
+        slot_2_time: updatedConfig.slot_2_time || null,
+        slot_3_time: updatedConfig.slot_3_time || null,
+        slot_4_time: updatedConfig.slot_4_time || null,
+        slot_5_time: updatedConfig.slot_5_time || null
+      };
+      
+      console.log('Sending API data:', apiData);
+      
       const response = await fetch('/api/admin/weekly-schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedConfig)
+        body: JSON.stringify(apiData)
       });
       
       if (!response.ok) {
