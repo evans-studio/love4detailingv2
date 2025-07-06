@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Love4Detailing Browser Test Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .summary { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .test { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .pass { border-color: #4CAF50; }
+        .fail { border-color: #f44336; }
+        .step { margin: 5px 0; padding: 5px; }
+        .step.PASS { background: #e8f5e8; }
+        .step.FAIL { background: #ffebee; }
+        .issue { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 5px 0; border-radius: 3px; }
+        .issue.High { border-color: #e17055; background: #ffeaa7; }
+        .issue.Medium { border-color: #fdcb6e; }
+        .issue.Low { border-color: #74b9ff; background: #e3f2fd; }
+        .screenshot { margin: 10px 0; }
+        .screenshot img { max-width: 300px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Love4Detailing v2 - Browser Test Report</h1>
+    
+    <div class="summary">
+        <h2>Test Summary</h2>
+        <p><strong>Total Tests:</strong> 5</p>
+        <p><strong>Passed:</strong> 3</p>
+        <p><strong>Failed:</strong> 2</p>
+        <p><strong>Total Issues:</strong> 7</p>
+        <p><strong>Generated:</strong> 7/6/2025, 12:04:38 PM</p>
+    </div>
+
+    
+    <div class="test fail">
+        <h3>Page Navigation Test ❌</h3>
+        <p><strong>Duration:</strong> 11s</p>
+        
+        <h4>Steps:</h4>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Homepage
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Homepage loads correctly: Page shows error
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Booking page
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Booking page loads correctly: Page shows error
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Sign in page
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Sign in page loads correctly: Page shows error
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Sign up page
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Sign up page loads correctly: Page shows error
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Dashboard
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Dashboard loads correctly: Page shows error
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to Admin
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Admin loads correctly: Page shows error
+            </div>
+        
+        
+        
+        <h4>Issues Found:</h4>
+        
+            <div class="issue High">
+                <strong>[High] Homepage shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+            <div class="issue High">
+                <strong>[High] Booking page shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/book<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+            <div class="issue High">
+                <strong>[High] Sign in page shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/auth/sign-in<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+            <div class="issue High">
+                <strong>[High] Sign up page shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/auth/sign-up<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+            <div class="issue High">
+                <strong>[High] Dashboard shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/auth/sign-in?redirect=%2Fdashboard<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+            <div class="issue High">
+                <strong>[High] Admin shows error</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/auth/sign-in?redirect=%2Fadmin<br>
+                <strong>Expected:</strong> Valid page content<br>
+                <strong>Actual:</strong> Error or not found message
+            </div>
+        
+        
+        
+        
+        <h4>Screenshots:</h4>
+        
+            <div class="screenshot">
+                <p><strong>Homepage loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799860268.png" alt="Homepage loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Booking page loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799861932.png" alt="Booking page loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Sign in page loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799864061.png" alt="Sign in page loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Sign up page loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799865287.png" alt="Sign up page loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Dashboard loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799866634.png" alt="Dashboard loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Admin loaded</strong></p>
+                <img src="Page_Navigation_Test_1751799868146.png" alt="Admin loaded">
+            </div>
+        
+        
+    </div>
+    
+    <div class="test fail">
+        <h3>Anonymous Customer Booking Flow ❌</h3>
+        <p><strong>Duration:</strong> 1s</p>
+        
+        <h4>Steps:</h4>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to homepage
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Homepage loads correctly: Title: Love4Detailing - Professional Car Detailing Services
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Click Book Now button
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Navigate to booking page
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Enter vehicle registration
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Enter vehicle registration: Input not found
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Continue booking flow
+            </div>
+        
+            <div class="step FAIL">
+                [FAIL] Continue booking flow: Next button not found
+            </div>
+        
+        
+        
+        <h4>Issues Found:</h4>
+        
+            <div class="issue High">
+                <strong>[High] Vehicle registration input not found</strong><br>
+                <strong>Location:</strong> https://love4detailingv2.vercel.app/<br>
+                <strong>Expected:</strong> Registration input visible<br>
+                <strong>Actual:</strong> Input not found
+            </div>
+        
+        
+        
+        
+        <h4>Screenshots:</h4>
+        
+            <div class="screenshot">
+                <p><strong>Homepage loaded</strong></p>
+                <img src="Anonymous_Customer_Booking_Flow_1751799869152.png" alt="Homepage loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Booking page loaded</strong></p>
+                <img src="Anonymous_Customer_Booking_Flow_1751799869259.png" alt="Booking page loaded">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Final booking form state</strong></p>
+                <img src="Anonymous_Customer_Booking_Flow_1751799869311.png" alt="Final booking form state">
+            </div>
+        
+        
+    </div>
+    
+    <div class="test pass">
+        <h3>User Authentication Flow ✅</h3>
+        <p><strong>Duration:</strong> 4s</p>
+        
+        <h4>Steps:</h4>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to sign up
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Sign up page loads
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Navigate to login
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Login page loads
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Magic link option available
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Test admin login page
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Admin login page loads
+            </div>
+        
+        
+        
+        
+        
+        <h4>Screenshots:</h4>
+        
+            <div class="screenshot">
+                <p><strong>Sign up page</strong></p>
+                <img src="User_Authentication_Flow_1751799870230.png" alt="Sign up page">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Login page</strong></p>
+                <img src="User_Authentication_Flow_1751799871595.png" alt="Login page">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Admin login page</strong></p>
+                <img src="User_Authentication_Flow_1751799872869.png" alt="Admin login page">
+            </div>
+        
+        
+    </div>
+    
+    <div class="test pass">
+        <h3>Dashboard Access Test ✅</h3>
+        <p><strong>Duration:</strong> 2s</p>
+        
+        <h4>Steps:</h4>
+        
+            <div class="step RUNNING">
+                [RUNNING] Access customer dashboard
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Dashboard redirects to auth (expected)
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Access admin dashboard
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Admin dashboard redirects to auth (expected)
+            </div>
+        
+        
+        
+        
+        
+        <h4>Screenshots:</h4>
+        
+            <div class="screenshot">
+                <p><strong>Dashboard page</strong></p>
+                <img src="Dashboard_Access_Test_1751799873982.png" alt="Dashboard page">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Admin dashboard attempt</strong></p>
+                <img src="Dashboard_Access_Test_1751799875062.png" alt="Admin dashboard attempt">
+            </div>
+        
+        
+    </div>
+    
+    <div class="test pass">
+        <h3>Responsive Design Test ✅</h3>
+        <p><strong>Duration:</strong> 3s</p>
+        
+        <h4>Steps:</h4>
+        
+            <div class="step RUNNING">
+                [RUNNING] Test Mobile (iPhone) viewport
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Mobile (iPhone) renders correctly
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Test Tablet (iPad) viewport
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Tablet (iPad) renders correctly
+            </div>
+        
+            <div class="step RUNNING">
+                [RUNNING] Test Desktop viewport
+            </div>
+        
+            <div class="step PASS">
+                [PASS] Desktop renders correctly
+            </div>
+        
+        
+        
+        
+        
+        <h4>Screenshots:</h4>
+        
+            <div class="screenshot">
+                <p><strong>Mobile (iPhone) view</strong></p>
+                <img src="Responsive_Design_Test_1751799876071.png" alt="Mobile (iPhone) view">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Tablet (iPad) view</strong></p>
+                <img src="Responsive_Design_Test_1751799877127.png" alt="Tablet (iPad) view">
+            </div>
+        
+            <div class="screenshot">
+                <p><strong>Desktop view</strong></p>
+                <img src="Responsive_Design_Test_1751799878074.png" alt="Desktop view">
+            </div>
+        
+        
+    </div>
+    
+</body>
+</html>
