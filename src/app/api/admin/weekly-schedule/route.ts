@@ -7,7 +7,7 @@ import { checkServerAdminAccess } from '@/lib/auth/admin';
 
 // Validation schema for weekly schedule updates
 const timeFieldSchema = z.union([
-  z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/), // Accept HH:MM or HH:MM:SS
   z.string().length(0), // Allow empty strings
   z.null(),
   z.undefined()
@@ -36,6 +36,22 @@ function validateTimeIn15MinIncrements(time: string): boolean {
   if (!time) return true; // Optional fields can be empty
   const [, minutes] = time.split(':').map(Number);
   return minutes % 15 === 0; // Must be 0, 15, 30, or 45 minutes
+}
+
+function normalizeTimeFormat(time: string | null | undefined): string {
+  if (!time) return '';
+  
+  // If already in HH:MM:SS format, return as-is
+  if (time.match(/^\d{1,2}:\d{2}:\d{2}$/)) {
+    return time;
+  }
+  
+  // If in HH:MM format, add seconds
+  if (time.match(/^\d{1,2}:\d{2}$/)) {
+    return time + ':00';
+  }
+  
+  return time;
 }
 
 // Configure route as dynamic
@@ -148,6 +164,7 @@ export async function POST(request: NextRequest) {
     }
 
     const scheduleData = validationResult.data;
+    console.log('Validated schedule data:', JSON.stringify(scheduleData, null, 2));
 
     // Additional business logic validation
     const timeFields = ['slot_1_time', 'slot_2_time', 'slot_3_time', 'slot_4_time', 'slot_5_time'];
@@ -182,11 +199,11 @@ export async function POST(request: NextRequest) {
       day_of_week: scheduleData.day_of_week,
       working_day: scheduleData.working_day,
       max_slots: scheduleData.working_day ? scheduleData.max_slots : 0,
-      slot_1_time: scheduleData.slot_1_time || '10:00',
-      slot_2_time: scheduleData.slot_2_time || '12:00', 
-      slot_3_time: scheduleData.slot_3_time || '14:00',
-      slot_4_time: scheduleData.slot_4_time || '16:00',
-      slot_5_time: scheduleData.slot_5_time || '18:00',
+      slot_1_time: normalizeTimeFormat(scheduleData.slot_1_time) || '10:00:00',
+      slot_2_time: normalizeTimeFormat(scheduleData.slot_2_time) || '12:00:00', 
+      slot_3_time: normalizeTimeFormat(scheduleData.slot_3_time) || '14:00:00',
+      slot_4_time: normalizeTimeFormat(scheduleData.slot_4_time) || '16:00:00',
+      slot_5_time: normalizeTimeFormat(scheduleData.slot_5_time) || '18:00:00',
       updated_at: new Date().toISOString()
     };
 
