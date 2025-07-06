@@ -59,8 +59,9 @@ export async function validateConnection() {
 export async function clearLocalSession() {
   try {
     await supabase.auth.signOut();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('supabase.auth.token');
+    // Only access localStorage in browser environment
+    if (typeof globalThis !== 'undefined' && 'window' in globalThis && 'localStorage' in globalThis) {
+      (globalThis as any).localStorage.removeItem('supabase.auth.token');
     }
     return true;
   } catch (error) {
