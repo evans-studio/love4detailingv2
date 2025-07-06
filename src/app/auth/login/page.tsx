@@ -45,7 +45,7 @@ export default function LoginPage() {
           .single();
 
         const redirectTo = profile?.role === 'admin' ? '/admin' : '/dashboard';
-        window.location.href = redirectTo;
+        router.push(redirectTo);
       }
     } catch (error) {
       setError('An unexpected error occurred');

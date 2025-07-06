@@ -100,7 +100,7 @@ export default function LandingPage() {
               </div>
 
               {/* Pricing */}
-              <div className="bg-[#141414] rounded-xl p-6 mb-8">
+              <div id="pricing" className="bg-[#141414] rounded-xl p-6 mb-8">
                 <h3 className="text-xl font-semibold text-[#F2F2F2] mb-4 text-center">
                   Transparent Pricing
                 </h3>

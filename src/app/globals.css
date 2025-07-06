@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Enable smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Import react-day-picker styles */
 .rdp {
   --rdp-cell-size: 40px;
