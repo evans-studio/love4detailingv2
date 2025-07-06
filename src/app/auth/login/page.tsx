@@ -37,7 +37,7 @@ export default function LoginPage() {
       }
 
       if (data.user) {
-        // Check user role and redirect accordingly
+        // Check user role and redirect
         const { data: profile } = await supabase
           .from('users')
           .select('role')
@@ -45,8 +45,7 @@ export default function LoginPage() {
           .single();
 
         const redirectTo = profile?.role === 'admin' ? '/admin' : '/dashboard';
-        router.push(redirectTo);
-        router.refresh();
+        window.location.href = redirectTo;
       }
     } catch (error) {
       setError('An unexpected error occurred');
