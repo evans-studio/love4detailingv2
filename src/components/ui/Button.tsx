@@ -6,22 +6,22 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-[#141414] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9146FF] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-[#262626] text-[#F2F2F2] hover:bg-[#363636] active:bg-[#404040]',
-        destructive: 'bg-[#BA0C2F] text-[#F2F2F2] hover:bg-[#A00B29]',
-        outline: 'border border-gray-700 bg-transparent hover:bg-[#262626] text-[#F2F2F2]',
-        secondary: 'bg-[#1E1E1E] text-[#F2F2F2] hover:bg-[#262626] active:bg-[#363636]',
-        ghost: 'hover:bg-[#262626] text-[#F2F2F2]',
-        link: 'text-[#9146FF] underline-offset-4 hover:underline',
+        default: 'bg-[#9747FF] text-white shadow hover:bg-[#8442E6]',
+        destructive: 'bg-red-500 text-white shadow-sm hover:bg-red-600',
+        outline: 'border border-[#9747FF] bg-transparent text-[#9747FF] shadow-sm hover:bg-[#9747FF] hover:text-white',
+        secondary: 'bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200',
+        ghost: 'hover:bg-gray-100 hover:text-gray-900',
+        link: 'text-[#9747FF] underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
+        default: 'h-9 px-4 py-2',
+        sm: 'h-8 rounded-md px-3 text-xs',
+        lg: 'h-10 rounded-md px-8',
+        icon: 'h-9 w-9',
       },
     },
     defaultVariants: {
@@ -49,7 +49,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-
 Button.displayName = 'Button';
 
-export { Button, buttonVariants }; 
+export { Button, buttonVariants };

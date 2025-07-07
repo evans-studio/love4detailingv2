@@ -1,47 +1,52 @@
+'use client';
+
+import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
 
-interface AlertProps {
-  children: ReactNode;
-  variant?: 'default' | 'destructive' | 'warning' | 'success';
-  className?: string;
-}
+const alertVariants = cva(
+  'relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7',
+  {
+    variants: {
+      variant: {
+        default: 'bg-gray-800 text-white border-gray-600',
+        destructive:
+          'border-red-500/50 text-red-500 dark:border-red-500 [&>svg]:text-red-500',
+        warning:
+          'border-yellow-500/50 text-yellow-600 dark:border-yellow-500 [&>svg]:text-yellow-600',
+        success:
+          'border-green-500/50 text-green-600 dark:border-green-500 [&>svg]:text-green-600',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
 
-interface AlertDescriptionProps {
-  children: ReactNode;
-  className?: string;
-}
+const Alert = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
+>(({ className, variant, ...props }, ref) => (
+  <div
+    ref={ref}
+    role="alert"
+    className={cn(alertVariants({ variant }), className)}
+    {...props}
+  />
+));
+Alert.displayName = 'Alert';
 
-export function Alert({ 
-  children, 
-  variant = 'default',
-  className 
-}: AlertProps) {
-  const variantStyles = {
-    default: 'bg-[#262626] text-[#F2F2F2] border border-gray-700',
-    destructive: 'bg-[#BA0C2F]/10 text-[#F2F2F2] border border-[#BA0C2F]/30',
-    warning: 'bg-yellow-500/10 text-[#F2F2F2] border border-yellow-500/30',
-    success: 'bg-[#28C76F]/10 text-[#F2F2F2] border border-[#28C76F]/30'
-  };
+const AlertDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn('text-sm [&_p]:leading-relaxed', className)}
+    {...props}
+  />
+));
+AlertDescription.displayName = 'AlertDescription';
 
-  return (
-    <div className={cn(
-      'rounded-lg p-4',
-      variantStyles[variant],
-      className
-    )}>
-      {children}
-    </div>
-  );
-}
-
-export function AlertDescription({ 
-  children, 
-  className 
-}: AlertDescriptionProps) {
-  return (
-    <div className={cn('text-sm', className)}>
-      {children}
-    </div>
-  );
-} 
+export { Alert, AlertDescription };
