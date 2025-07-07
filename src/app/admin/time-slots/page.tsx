@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Alert } from '@/components/ui/alert';
 import { format, addDays, startOfDay, parseISO } from 'date-fns';
 import { Calendar, Clock, Plus, Settings, Trash2 } from 'lucide-react';
 

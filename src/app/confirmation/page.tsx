@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { ConfirmationDetails } from '@/components/booking/ConfirmationDetails';
 
 interface BookingConfirmationProps {

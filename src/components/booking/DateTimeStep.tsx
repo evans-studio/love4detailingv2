@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useBooking, BookingStep } from '@/lib/context/BookingContext';
 import { getAvailableTimeSlots } from '@/lib/api/time-slots';
 import { addDays, format, startOfDay } from 'date-fns';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 function isValidDateString(date: string | null | undefined): date is string {
   return typeof date === 'string' && date.length > 0;

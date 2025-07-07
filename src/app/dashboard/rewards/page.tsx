@@ -1,8 +1,8 @@
 'use client';
 
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { ProgressRing } from '@/components/ui/ProgressRing';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ProgressRing } from '@/components/ui/progressRing';
 import { RewardsHistory } from '@/components/rewards/RewardsHistory';
 import { RewardsService } from '@/lib/services/rewards';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';

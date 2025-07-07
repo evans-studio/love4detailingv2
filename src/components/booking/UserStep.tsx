@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useBooking, BookingStep } from '@/lib/context/BookingContext';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

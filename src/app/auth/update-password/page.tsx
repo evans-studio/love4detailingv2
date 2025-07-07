@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Alert } from '@/components/ui/Alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Alert } from '@/components/ui/alert';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function UpdatePasswordPage() {

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
   UserCircleIcon,

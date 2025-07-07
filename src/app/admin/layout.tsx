@@ -7,8 +7,8 @@ import { ROUTES } from '@/lib/constants/routes';
 import { cn } from '@/lib/utils';
 import { BookOpen, Settings, Users, Clock, BarChart3, TrendingUp, LogOut } from 'lucide-react';
 import { checkAdminAccess } from '@/lib/auth/admin';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Button } from '@/components/ui/Button';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Button } from '@/components/ui/button';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const navigation = [

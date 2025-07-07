@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Progress } from '@/components/ui/Progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { CheckCircle, Circle } from 'lucide-react'
 import { BookingStep, BookingDraft } from '@/types/database.types'
 import { useBookingStore } from '@/stores/bookingStore'

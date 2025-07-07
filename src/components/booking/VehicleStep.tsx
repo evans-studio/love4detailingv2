@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useBooking, BookingStep } from '@/lib/context/BookingContext';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { ComboBox } from '@/components/ui/ComboBox';
-import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ComboBox } from '@/components/ui/comboBox';
+import { AutocompleteInput } from '@/components/ui/autocompleteInput';
 import { formatCurrency } from '@/lib/utils';
 import type { VehicleSize } from '@/types/database.types';
 import { calculateVehicleSize } from '@/lib/utils/vehicle-size';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/Select';
+} from '@/components/ui/select';
 import { getUniqueMakes, getModelsForMake } from '@/lib/utils/vehicle-data';
 import type { Database } from '@/types/supabase';
 

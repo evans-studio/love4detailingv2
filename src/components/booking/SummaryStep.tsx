@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBooking } from '@/lib/context/BookingContext';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { formatDate, formatTime, formatCurrency } from '@/lib/utils';
 import { BookingService } from '@/lib/services/booking.service';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 
 export function SummaryStep() {
   const router = useRouter();

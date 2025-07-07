@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { LoadingState } from '@/components/ui/loadingState';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -215,7 +215,7 @@ TIME LIMITS:
                 {...form.register('cancellation_window_hours', {
                   setValueAs: (value) => parseInt(value) || 0,
                 })}
-                error={!!form.formState.errors.cancellation_window_hours}
+                className={form.formState.errors.cancellation_window_hours ? 'border-red-500' : ''}
               />
               {form.formState.errors.cancellation_window_hours && (
                 <p className="text-red-600 text-sm mt-1">
@@ -238,7 +238,7 @@ TIME LIMITS:
                 {...form.register('reschedule_window_hours', {
                   setValueAs: (value) => parseInt(value) || 0,
                 })}
-                error={!!form.formState.errors.reschedule_window_hours}
+                className={form.formState.errors.reschedule_window_hours ? 'border-red-500' : ''}
               />
               {form.formState.errors.reschedule_window_hours && (
                 <p className="text-red-600 text-sm mt-1">
@@ -273,11 +273,10 @@ TIME LIMITS:
                   type="number"
                   step="0.01"
                   min="0"
-                  className="pl-10"
+                  className={`pl-10 ${form.formState.errors.reschedule_fee_pence ? 'border-red-500' : ''}`}
                   {...form.register('reschedule_fee_pence', {
                     setValueAs: (value) => Math.round(parseFloat(value || '0') * 100),
                   })}
-                  error={!!form.formState.errors.reschedule_fee_pence}
                   defaultValue={(form.watch('reschedule_fee_pence') || 0) / 100}
                 />
               </div>
@@ -301,11 +300,10 @@ TIME LIMITS:
                   type="number"
                   step="0.01"
                   min="0"
-                  className="pl-10"
+                  className={`pl-10 ${form.formState.errors.late_cancellation_fee_pence ? 'border-red-500' : ''}`}
                   {...form.register('late_cancellation_fee_pence', {
                     setValueAs: (value) => Math.round(parseFloat(value || '0') * 100),
                   })}
-                  error={!!form.formState.errors.late_cancellation_fee_pence}
                   defaultValue={(form.watch('late_cancellation_fee_pence') || 0) / 100}
                 />
               </div>

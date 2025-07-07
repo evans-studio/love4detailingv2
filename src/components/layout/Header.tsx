@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/context/AuthContext';
 import { ROUTES } from '@/lib/constants/routes';
 import { Menu, X } from 'lucide-react';

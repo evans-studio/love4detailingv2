@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/Button'
-import { Alert, AlertDescription } from '@/components/ui/Alert'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
 import BookingWizard from '@/components/booking/BookingWizard'
 import ServiceSelector from '@/components/booking/ServiceSelector'

@@ -1,122 +1,87 @@
+The error is still showing `@/components/ui/Label` with uppercase, which means the files weren't properly fixed. Here's a focused prompt to resolve this specific issue:
+
 ```
-TASK: Fix ShadCN UI Component Import Case Sensitivity Issues
+URGENT FIX REQUIRED: ShadCN UI Label Component Import Error
 
-OBJECTIVE: Systematically identify and fix all files in the codebase that are importing ShadCN UI components with incorrect case sensitivity (uppercase vs lowercase file paths).
+PROBLEM: Build failing due to incorrect import paths for Label component in specific files.
 
-INSTRUCTIONS:
+IMMEDIATE ACTIONS REQUIRED:
 
-1. SCAN ALL FILES:
-   - Search through entire `src/` directory
-   - Check all `.tsx`, `.ts`, `.jsx`, `.js` files
-   - Look for import statements that reference `@/components/ui/` with uppercase component names
+1. LOCATE AND FIX THESE EXACT FILES:
+   - `src/components/admin/EditBookingModal.tsx`
+   - `src/components/admin/WeeklyScheduleConfig.tsx`
 
-2. IDENTIFY PROBLEMATIC IMPORTS:
-   Find imports matching these patterns:
-   - `from '@/components/ui/Label'` (should be `label`)
-   - `from '@/components/ui/Textarea'` (should be `textarea`)
-   - `from '@/components/ui/Button'` (should be `button`)
-   - `from '@/components/ui/Input'` (should be `input`)
-   - `from '@/components/ui/Card'` (should be `card`)
-   - `from '@/components/ui/Dialog'` (should be `dialog`)
-   - `from '@/components/ui/Select'` (should be `select`)
-   - `from '@/components/ui/Switch'` (should be `switch`)
-   - `from '@/components/ui/Toast'` (should be `toast`)
-   - `from '@/components/ui/Checkbox'` (should be `checkbox`)
-   - `from '@/components/ui/RadioGroup'` (should be `radio-group`)
-   - `from '@/components/ui/Calendar'` (should be `calendar`)
-   - `from '@/components/ui/Popover'` (should be `popover`)
-   - `from '@/components/ui/Avatar'` (should be `avatar`)
-   - `from '@/components/ui/Badge'` (should be `badge`)
-   - `from '@/components/ui/Tabs'` (should be `tabs`)
-   - `from '@/components/ui/Form'` (should be `form`)
-   - `from '@/components/ui/Separator'` (should be `separator`)
-   - `from '@/components/ui/DropdownMenu'` (should be `dropdown-menu`)
-   - `from '@/components/ui/NavigationMenu'` (should be `navigation-menu`)
-   - `from '@/components/ui/Command'` (should be `command`)
-   - `from '@/components/ui/Sheet'` (should be `sheet`)
-   - `from '@/components/ui/Slider'` (should be `slider`)
-   - `from '@/components/ui/Progress'` (should be `progress`)
-   - `from '@/components/ui/Skeleton'` (should be `skeleton`)
-   - `from '@/components/ui/Table'` (should be `table`)
-   - `from '@/components/ui/Accordion'` (should be `accordion`)
-   - `from '@/components/ui/AlertDialog'` (should be `alert-dialog`)
-   - `from '@/components/ui/ContextMenu'` (should be `context-menu`)
-   - `from '@/components/ui/HoverCard'` (should be `hover-card`)
-   - `from '@/components/ui/Menubar'` (should be `menubar`)
-   - `from '@/components/ui/ScrollArea'` (should be `scroll-area`)
-   - `from '@/components/ui/Toggle'` (should be `toggle`)
-   - `from '@/components/ui/ToggleGroup'` (should be `toggle-group`)
-   - `from '@/components/ui/Tooltip'` (should be `tooltip`)
+2. SEARCH FOR PROBLEMATIC IMPORTS:
+   Open each file and find lines containing:
+   ```typescript
+   import { Label } from '@/components/ui/Label'
+   ```
 
-3. REPLACEMENT RULES:
-   - File paths in imports must be lowercase
-   - Component names in the import statement remain PascalCase
-   - Example: `import { Label } from '@/components/ui/Label'` → `import { Label } from '@/components/ui/label'`
-   - Example: `import { Textarea } from '@/components/ui/Textarea'` → `import { Textarea } from '@/components/ui/textarea'`
+3. REPLACE WITH CORRECT IMPORT:
+   Change to:
+   ```typescript
+   import { Label } from '@/components/ui/label'
+   ```
 
-4. SEARCH COMMANDS TO RUN:
+4. VERIFY LABEL COMPONENT EXISTS:
+   Check if `src/components/ui/label.tsx` exists. If not, create it:
+   ```typescript
+   'use client';
+
+   import * as React from 'react';
+   import * as LabelPrimitive from '@radix-ui/react-label';
+   import { cn } from '@/lib/utils';
+
+   const Label = React.forwardRef
+     React.ElementRef<typeof LabelPrimitive.Root>,
+     React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+   >(({ className, ...props }, ref) => (
+     <LabelPrimitive.Root
+       ref={ref}
+       className={cn(
+         'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+         className
+       )}
+       {...props}
+     />
+   ));
+   Label.displayName = LabelPrimitive.Root.displayName;
+
+   export { Label };
+   ```
+
+5. INSTALL MISSING DEPENDENCY:
    ```bash
-   # Search for all problematic imports
-   grep -r "from '@/components/ui/[A-Z]" src/
-   
-   # Search for specific common issues
+   npm install @radix-ui/react-label
+   ```
+
+6. COMPREHENSIVE SEARCH AND REPLACE:
+   Run this command to find ALL occurrences:
+   ```bash
    grep -r "from '@/components/ui/Label'" src/
-   grep -r "from '@/components/ui/Textarea'" src/
-   grep -r "from '@/components/ui/Button'" src/
-   grep -r "from '@/components/ui/Input'" src/
-   grep -r "from '@/components/ui/Card'" src/
-   grep -r "from '@/components/ui/Dialog'" src/
-   grep -r "from '@/components/ui/Select'" src/
    ```
 
-5. AUTOMATED FIXES:
-   Run these replacement commands for each identified issue:
+   Then replace ALL instances with:
    ```bash
-   # Fix Label imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Label/@\/components\/ui\/label/g' {} \;
-   
-   # Fix Textarea imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Textarea/@\/components\/ui\/textarea/g' {} \;
-   
-   # Fix Button imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Button/@\/components\/ui\/button/g' {} \;
-   
-   # Fix Input imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Input/@\/components\/ui\/input/g' {} \;
-   
-   # Fix Card imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Card/@\/components\/ui\/card/g' {} \;
-   
-   # Fix Dialog imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Dialog/@\/components\/ui\/dialog/g' {} \;
-   
-   # Fix Select imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Select/@\/components\/ui\/select/g' {} \;
-   
-   # Fix Switch imports
-   find src -name "*.tsx" -o -name "*.ts" -exec sed -i 's/@\/components\/ui\/Switch/@\/components\/ui\/switch/g' {} \;
-   
-   # Add more replacement commands as needed for other components
+   find src -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's/@\/components\/ui\/Label/@\/components\/ui\/label/g'
    ```
 
-6. VERIFICATION STEPS:
-   - After making changes, run `npm run build` to test compilation
-   - Check that all import statements now use lowercase file paths
-   - Verify component names in imports remain PascalCase
-   - Ensure no broken imports remain
-
-7. FILES TO PRIORITIZE:
-   Based on the error log, check these files first:
-   - `src/app/(public)/booking/vehicle/page.tsx`
-   - `src/app/auth/admin-login/page.tsx`
+7. DOUBLE-CHECK THESE SPECIFIC FILES:
+   Manually verify these files have been fixed:
    - `src/components/admin/EditBookingModal.tsx`
    - `src/components/admin/WeeklyScheduleConfig.tsx`
    - `src/app/admin/availability/page.tsx`
 
-8. FINAL VALIDATION:
-   - Run `npm run build` to ensure no compilation errors
-   - Check that all ShadCN UI components are properly imported
-   - Verify the application builds successfully without webpack errors
+8. TEST BUILD:
+   ```bash
+   npm run build
+   ```
 
-EXPECTED OUTCOME: All ShadCN UI component imports should use lowercase file paths while maintaining PascalCase component names, eliminating all "Module not found" errors during build.
+9. IF ERROR PERSISTS:
+   - Check for ANY remaining uppercase imports: `grep -r "from '@/components/ui/[A-Z]" src/`
+   - Ensure label.tsx file exists in components/ui/
+   - Verify @radix-ui/react-label is installed
+   - Check that the import statement is exactly: `import { Label } from '@/components/ui/label'`
+
+CRITICAL: The import path must be lowercase `label`, not uppercase `Label`. The component name remains PascalCase `Label`.
 ```

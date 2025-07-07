@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Select } from '@/components/ui/Select';
-import { Alert } from '@/components/ui/Alert';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Select } from '@/components/ui/select';
+import { Alert } from '@/components/ui/alert';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { getAvailableServices, calculateServicePrice } from '@/lib/config/services';
 import { 

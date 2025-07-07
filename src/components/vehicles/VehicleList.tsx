@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Alert } from '@/components/ui/alert';
 import type { Database } from '@/types/supabase';
 
 interface VehicleListProps {

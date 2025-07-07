@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { AuthProvider } from '@/lib/context/AuthContext';
 import { BookingProvider } from '@/lib/context/BookingContext';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ErrorBoundary } from '@/components/ui/errorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ROUTES } from '@/lib/constants/routes';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 import { UnifiedBookingForm } from '@/components/booking/UnifiedBookingForm';
 
 export default function BookingPage() {

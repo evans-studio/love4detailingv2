@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Alert } from '@/components/ui/Alert';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Alert } from '@/components/ui/alert';
 import type { UnifiedBookingForm } from '@/lib/validation/booking';
 import { format } from 'date-fns';
 import { CheckCircle, Car, User, Calendar, MapPin, Image } from 'lucide-react';
