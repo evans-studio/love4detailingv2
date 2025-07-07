@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Button } from '@/components/ui';
 import Link from 'next/link';
 import { UnmatchedVehiclesCard } from '@/components/admin/UnmatchedVehiclesCard';
 import { QuickBook } from '@/components/dashboard/QuickBook';
