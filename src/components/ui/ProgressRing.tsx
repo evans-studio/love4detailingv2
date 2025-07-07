@@ -1,27 +1,36 @@
-import { useEffect, useRef } from 'react';
+'use client';
 
-interface ProgressRingProps {
-  progress: number; // 0-100
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+
+interface ProgressRingProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: number;
+  max?: number;
   size?: number;
   strokeWidth?: number;
-  className?: string;
   children?: React.ReactNode;
 }
 
 export function ProgressRing({
-  progress,
+  value,
+  max = 100,
   size = 120,
   strokeWidth = 8,
-  className = '',
+  className,
   children,
+  ...props
 }: ProgressRingProps) {
-  const normalizedProgress = Math.min(100, Math.max(0, progress));
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (normalizedProgress / 100) * circumference;
+  const percentage = (value / max) * 100;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className={`relative inline-flex items-center justify-center ${className}`}>
+    <div
+      className={cn('relative inline-flex items-center justify-center', className)}
+      style={{ width: size, height: size }}
+      {...props}
+    >
       <svg
         className="transform -rotate-90"
         width={size}
@@ -29,31 +38,33 @@ export function ProgressRing({
       >
         {/* Background circle */}
         <circle
-          className="text-[#262626]"
-          strokeWidth={strokeWidth}
-          stroke="currentColor"
-          fill="transparent"
-          r={radius}
           cx={size / 2}
           cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="none"
+          className="text-gray-700"
         />
         {/* Progress circle */}
         <circle
-          className="text-[#9146FF] transition-all duration-1000 ease-out"
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          stroke="currentColor"
-          fill="transparent"
-          r={radius}
           cx={size / 2}
           cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          className="text-[#9747FF] transition-all duration-300 ease-in-out"
         />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        {children}
-      </div>
+      {children && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      )}
     </div>
   );
-} 
+}

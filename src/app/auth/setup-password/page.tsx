@@ -167,7 +167,7 @@ export default function SetupPasswordPage() {
                 placeholder="Enter your password"
                 required
                 minLength={8}
-                error={!!error}
+                className={error ? 'border-red-500' : ''}
               />
               <button
                 type="button"
@@ -193,7 +193,7 @@ export default function SetupPasswordPage() {
                 onChange={handleInputChange('confirmPassword')}
                 placeholder="Confirm your password"
                 required
-                error={!!error}
+                className={error ? 'border-red-500' : ''}
               />
               <button
                 type="button"

@@ -109,7 +109,7 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
           <Input
             {...register('personalDetails.firstName')}
             placeholder="Your first name"
-            error={!!errors.personalDetails?.firstName}
+            className={errors.personalDetails?.firstName ? 'border-red-500' : ''}
           />
           {errors.personalDetails?.firstName && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.firstName.message}</p>
@@ -124,7 +124,7 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
           <Input
             {...register('personalDetails.lastName')}
             placeholder="Your last name"
-            error={!!errors.personalDetails?.lastName}
+            className={errors.personalDetails?.lastName ? 'border-red-500' : ''}
           />
           {errors.personalDetails?.lastName && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.lastName.message}</p>
@@ -140,7 +140,7 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             {...register('personalDetails.email')}
             type="email"
             placeholder="your@email.com"
-            error={!!errors.personalDetails?.email}
+            className={errors.personalDetails?.email ? 'border-red-500' : ''}
           />
           {errors.personalDetails?.email && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.email.message}</p>
@@ -156,7 +156,7 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
             {...register('personalDetails.phone')}
             type="tel"
             placeholder="07123 456789"
-            error={!!errors.personalDetails?.phone}
+            className={errors.personalDetails?.phone ? 'border-red-500' : ''}
           />
           {errors.personalDetails?.phone && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.phone.message}</p>
@@ -171,8 +171,7 @@ export function PersonalDetailsStep({ onNext, onBack }: PersonalDetailsStepProps
           <Input
             {...register('personalDetails.postcode')}
             placeholder="e.g. SW1A 1AA"
-            error={!!errors.personalDetails?.postcode}
-            className="uppercase"
+            className={`uppercase ${errors.personalDetails?.postcode ? 'border-red-500' : ''}`}
           />
           {errors.personalDetails?.postcode && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.personalDetails.postcode.message}</p>

@@ -160,7 +160,7 @@ export default function RewardsPage() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-6">
             <ProgressRing
-              progress={progressToNextTier}
+              value={progressToNextTier}
               size={100}
               className={currentTier.color}
             >
