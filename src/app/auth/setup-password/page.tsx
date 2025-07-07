@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
-import { Alert } from '@/components/ui/Alert';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Alert } from '@/components/ui/alert';
+import { LoadingState } from '@/components/ui/loadingState';
 import { CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { ROUTES } from '@/lib/constants/routes';
 

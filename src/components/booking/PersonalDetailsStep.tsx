@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useBooking, BookingStep } from '@/lib/context/BookingContext';
 import { personalDetailsSchema, type PersonalDetails } from '@/lib/validation/booking';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { useEffect } from 'react';
 
 export default function PersonalDetailsStep() {

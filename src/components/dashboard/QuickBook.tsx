@@ -3,18 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, isBefore, startOfToday } from 'date-fns';
-import { Calendar } from '@/components/ui/Calendar';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Calendar } from '@/components/ui/calendar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/Select';
-import { LoadingState } from '@/components/ui/LoadingState';
-import { Alert } from '@/components/ui/Alert';
+} from '@/components/ui/select';
+import { LoadingState } from '@/components/ui/loadingState';
+import { Alert } from '@/components/ui/alert';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { calculateVehicleSize } from '@/lib/utils/vehicle-size';
 import { getAvailableTimeSlots, getAvailableDates, createBooking } from '@/lib/api/time-slots';

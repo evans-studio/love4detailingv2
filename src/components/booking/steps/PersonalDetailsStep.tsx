@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Input } from '@/components/ui/Input';
-import { Alert } from '@/components/ui/Alert';
+import { Input } from '@/components/ui/input';
+import { Alert } from '@/components/ui/alert';
 import type { UnifiedBookingForm, PostcodeDistanceResponse } from '@/lib/validation/booking';
 import { X, Upload, Image } from 'lucide-react';
 

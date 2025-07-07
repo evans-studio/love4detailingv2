@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { formatDate, formatTime, formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 
 interface ConfirmationDetailsProps {
   booking: {

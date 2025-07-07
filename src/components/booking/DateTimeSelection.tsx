@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Label } from '@/components/ui/Label'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { BookingService } from '@/lib/services/booking.service'
 import { VehicleSize } from '@/types/database.types'
-import { LoadingState } from '@/components/ui/LoadingState'
+import { LoadingState } from '@/components/ui/loadingState'
 
 interface TimeSlot {
   slot_id: string

@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/Button'
-import { Label } from '@/components/ui/Label'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { PaymentMethod as PaymentMethodType } from '@/types/database.types'
-import { LoadingState } from '@/components/ui/LoadingState'
+import { LoadingState } from '@/components/ui/loadingState'
 
 interface BookingSummary {
   service: string

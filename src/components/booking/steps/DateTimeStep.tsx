@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Calendar } from '@/components/ui/Calendar';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { Calendar } from '@/components/ui/calendar';
+import { LoadingState } from '@/components/ui/loadingState';
 import type { UnifiedBookingForm } from '@/lib/validation/booking';
 import { format } from 'date-fns';
 

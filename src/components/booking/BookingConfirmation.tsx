@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { BookingSummaryRow } from '@/types/database.types'
 import Link from 'next/link'
 

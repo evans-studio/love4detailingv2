@@ -6,7 +6,7 @@ import { DateTimeSelection } from '@/components/booking/DateTimeSelection'
 import { ContactDetails } from '@/components/booking/ContactDetails'
 import { PaymentMethod } from '@/components/booking/PaymentMethod'
 import { BookingProgress } from '@/components/booking/BookingProgress'
-import { LoadingState } from '@/components/ui/LoadingState'
+import { LoadingState } from '@/components/ui/loadingState'
 
 export default function BookingPage() {
   const {

@@ -9,7 +9,7 @@ import { VehicleInfoStep } from './steps/VehicleInfoStep';
 import { PersonalDetailsStep } from './steps/PersonalDetailsStep';
 import { DateTimeStep } from './steps/DateTimeStep';
 import { SummaryStep } from './steps/SummaryStep';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 
 interface VehicleSize {
   id: string;

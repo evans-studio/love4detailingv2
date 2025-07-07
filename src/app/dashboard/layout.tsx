@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { LoadingState } from '@/components/ui/loadingState';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ROUTES } from '@/lib/constants/routes';
 
