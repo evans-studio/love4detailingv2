@@ -46,10 +46,9 @@ export function UnifiedBookingForm({ className = '' }: UnifiedBookingFormProps) 
         make: '',
         model: '',
         registration: '',
-        year: '',
+        year: undefined,
         color: '',
-        sizeId: '',
-        size: '',
+        size: 'medium',
       },
       personalDetails: {
         firstName: '',

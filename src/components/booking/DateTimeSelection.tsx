@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/ui/Label'
 import { BookingService } from '@/lib/services/booking.service'
 import { VehicleSize } from '@/types/database.types'
 import { LoadingState } from '@/components/ui/LoadingState'

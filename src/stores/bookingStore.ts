@@ -287,7 +287,7 @@ export const useBookingStore = create<BookingState>()(
     }),
     {
       name: 'booking-store',
-      partialize: (state) => ({ 
+      partialize: (state: BookingState) => ({ 
         booking: state.booking 
       })
     }

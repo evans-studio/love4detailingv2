@@ -18,6 +18,7 @@ import {
   sizeMap 
 } from '@/lib/utils/vehicle-data';
 import type { UnifiedBookingForm } from '@/lib/validation/booking';
+import type { VehicleSize } from '@/types/database.types';
 
 interface VehicleInfoStepProps {
   onNext: () => void;
@@ -65,8 +66,7 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
       
       // Clear model and size when make changes
       setValue('vehicle.model', '');
-      setValue('vehicle.sizeId', '');
-      setValue('vehicle.size', '');
+      setValue('vehicle.size', 'medium');
       setSelectedModel('');
       setDetectedSize(null);
       setSelectedSizeId('');
@@ -90,8 +90,7 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
         );
         
         if (matchingSize) {
-          setValue('vehicle.sizeId', matchingSize.id);
-          setValue('vehicle.size', matchingSize.label);
+          setValue('vehicle.size', matchingSize.id as VehicleSize);
           setSelectedSizeId(matchingSize.id);
         }
       }
@@ -103,14 +102,13 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
     setSelectedSizeId(sizeId);
     const selectedSize = vehicleSizes.find(vs => vs.id === sizeId);
     if (selectedSize) {
-      setValue('vehicle.sizeId', sizeId);
-      setValue('vehicle.size', selectedSize.label);
+      setValue('vehicle.size', sizeId as VehicleSize);
     }
   };
 
   // Handle form submission
   const handleNext = async () => {
-    const isValid = await trigger(['vehicle.make', 'vehicle.model', 'vehicle.registration', 'vehicle.sizeId']);
+    const isValid = await trigger(['vehicle.make', 'vehicle.model', 'vehicle.registration', 'vehicle.size']);
     if (isValid) {
       onNext();
     }
@@ -261,8 +259,8 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
               </button>
             ))}
           </div>
-          {errors.vehicle?.sizeId && (
-            <p className="mt-2 text-sm text-[#BA0C2F]">{errors.vehicle.sizeId.message}</p>
+          {errors.vehicle?.size && (
+            <p className="mt-2 text-sm text-[#BA0C2F]">{errors.vehicle.size.message}</p>
           )}
         </div>
       )}

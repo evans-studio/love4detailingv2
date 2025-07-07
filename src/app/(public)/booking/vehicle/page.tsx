@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Label } from '@/components/ui/Label'
+import { Textarea } from '@/components/ui/Textarea'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Alert, AlertDescription } from '@/components/ui/Alert'
+import { Badge } from '@/components/ui/Badge'
 import { Loader2, Upload, X, Car, Search, AlertCircle } from 'lucide-react'
 import BookingWizard from '@/components/booking/BookingWizard'
 import { useBookingStore } from '@/stores/bookingStore'
@@ -66,7 +66,10 @@ export default function BookingVehiclePage() {
     if (booking?.serviceId && formData.size) {
       const updatePrice = async () => {
         try {
-          updateVehicleData({ ...formData })
+          updateVehicleData({ 
+            ...formData,
+            year: formData.year === '' ? undefined : formData.year
+          })
           const price = await calculatePrice()
           setEstimatedPrice(price / 100) // Convert from pence to pounds
         } catch (error) {
@@ -174,7 +177,10 @@ export default function BookingVehiclePage() {
     }
 
     // Update booking store with vehicle data
-    updateVehicleData(formData)
+    updateVehicleData({
+      ...formData,
+      year: formData.year === '' ? undefined : formData.year
+    })
     
     router.push('/booking/schedule')
   }

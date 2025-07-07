@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Badge } from '@/components/ui/Badge';
 // Using alert() for notifications to match existing codebase pattern
 import { Card, CardContent } from '@/components/ui/Card';

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input';
 import { ComboBox } from '@/components/ui/ComboBox';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { formatCurrency } from '@/lib/utils';
+import type { VehicleSize } from '@/types/database.types';
 import { calculateVehicleSize } from '@/lib/utils/vehicle-size';
 import { LoadingState } from '@/components/ui/LoadingState';
 import {
@@ -80,9 +81,9 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
           dispatch({
             type: 'SET_VEHICLE_SIZE',
             payload: {
-              id: sizeResult.id,
+              id: sizeResult.size,
               label: sizeResult.label,
-              description: sizeResult.description || '',
+              description: `${sizeResult.size} sized vehicle`,
               price_pence: sizeResult.price_pence
             }
           });
@@ -116,7 +117,7 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
           registration: vehicle.registration,
           make: vehicle.make || '',
           model: vehicle.model || '',
-          year: vehicle.year?.toString() || '',
+          year: vehicle.year || undefined,
           color: vehicle.color || '',
         }
       });
@@ -125,7 +126,7 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
       dispatch({
         type: 'SET_VEHICLE_SIZE',
         payload: {
-          id: vehicle.vehicle_sizes.id,
+          id: vehicle.vehicle_sizes.id as VehicleSize,
           label: vehicle.vehicle_sizes.label,
           description: vehicle.vehicle_sizes.description || '',
           price_pence: vehicle.vehicle_sizes.price_pence
@@ -142,7 +143,7 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
         make: value,
         model: '',
         registration: state.data.vehicle?.registration || '',
-        year: '',
+        year: undefined,
         color: ''
       }
     });

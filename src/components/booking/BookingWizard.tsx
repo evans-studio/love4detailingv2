@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Progress } from '@/components/ui/Progress'
 import { CheckCircle, Circle } from 'lucide-react'
 import { BookingStep, BookingDraft } from '@/types/database.types'
 import { useBookingStore } from '@/stores/bookingStore'
@@ -161,7 +161,7 @@ export function BookingWizard({ children, currentStep, className }: BookingWizar
                 <Button variant="outline" onClick={() => router.back()}>
                   Back
                 </Button>
-                {currentStep !== 'confirmation' && (
+                {currentStepIndex < STEPS.length - 1 && (
                   <Button onClick={() => {
                     const nextStepIndex = currentStepIndex + 1
                     if (nextStepIndex < STEPS.length) {
