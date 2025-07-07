@@ -23,14 +23,7 @@ import { useBooking } from '@/lib/context/BookingContext';
 import type { Database } from '@/types/supabase';
 import type { DbAvailableSlot } from '@/types';
 
-type Vehicle = Database['public']['Tables']['vehicles']['Row'] & {
-  vehicle_sizes: {
-    id: string;
-    label: string;
-    description: string | null;
-    price_pence: number;
-  } | null;
-};
+type Vehicle = Database['public']['Tables']['vehicles']['Row'];
 
 interface QuickBookProps {
   userVehicles: Vehicle[];
@@ -123,26 +116,38 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
       const vehicle = userVehicles.find(v => v.id === selectedVehicle);
       if (!vehicle) throw new Error('Selected vehicle not found');
 
-      // Calculate vehicle size if not already set
-      let vehicleSize = vehicle.vehicle_sizes;
-      if (!vehicleSize && vehicle.make && vehicle.model) {
+      // Get vehicle size pricing
+      let vehicleSize = vehicle.size || 'medium';
+      
+      // If vehicle doesn't have a size, try to determine it
+      if (!vehicle.size && vehicle.make && vehicle.model) {
         const sizeResult = await calculateVehicleSize(
           vehicle.make,
           vehicle.model,
           vehicle.registration
         );
-        if (!sizeResult) throw new Error('Could not determine vehicle size');
-        vehicleSize = sizeResult;
+        if (sizeResult) {
+          vehicleSize = sizeResult.size;
+        }
       }
 
-      if (!vehicleSize) throw new Error('Vehicle size not available');
+      // Get pricing for the vehicle size
+      const { data: pricing, error: pricingError } = await supabase
+        .from('service_pricing')
+        .select('price_pence')
+        .eq('vehicle_size', vehicleSize)
+        .single();
+
+      if (pricingError || !pricing) {
+        throw new Error('Could not determine pricing for vehicle size');
+      }
 
       // Create booking
       const booking = await createBooking({
         userId: user.id,
         vehicleId: vehicle.id,
         timeSlotId: selectedTimeSlot.id,
-        totalPricePence: vehicleSize.price_pence,
+        totalPricePence: pricing.price_pence,
       });
 
       // Reset form

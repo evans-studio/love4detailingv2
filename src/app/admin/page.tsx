@@ -32,9 +32,9 @@ interface UpcomingBooking {
   full_name: string;
   email: string;
   vehicles: {
-    make: string;
-    model: string;
-    registration: string;
+    make: string | null;
+    model: string | null;
+    registration: string | null;
   };
   time_slots: {
     slot_date: string;
@@ -84,37 +84,45 @@ export default function AdminDashboard() {
           monthlyRevenue: monthlyRevenue,
         });
 
-        // Fetch upcoming bookings
+        // Fetch upcoming bookings using booking_summaries view
         const { data: bookings } = await supabase
-          .from('bookings')
+          .from('booking_summaries')
           .select(`
             id,
             booking_reference,
-            full_name,
-            email,
+            customer_name,
+            customer_email,
             total_price_pence,
             status,
-            vehicles!inner (
-              make,
-              model,
-              registration
-            ),
-            time_slots!inner (
-              slot_date,
-              slot_time
-            )
+            vehicle_make,
+            vehicle_model,
+            vehicle_registration,
+            slot_date,
+            start_time
           `)
           .eq('status', 'pending')
-          .gte('time_slots.slot_date', now.toISOString().split('T')[0])
-          .order('time_slots.slot_date', { ascending: true })
-          .order('time_slots.slot_time', { ascending: true })
+          .gte('slot_date', now.toISOString().split('T')[0])
+          .order('slot_date', { ascending: true })
+          .order('start_time', { ascending: true })
           .limit(5);
 
         // Transform the data to match our interface
         const transformedBookings = (bookings || []).map(booking => ({
-          ...booking,
-          vehicles: Array.isArray(booking.vehicles) ? booking.vehicles[0] : booking.vehicles,
-          time_slots: Array.isArray(booking.time_slots) ? booking.time_slots[0] : booking.time_slots,
+          id: booking.id,
+          booking_reference: booking.booking_reference,
+          full_name: booking.customer_name,
+          email: booking.customer_email,
+          total_price_pence: booking.total_price_pence,
+          status: booking.status,
+          vehicles: {
+            make: booking.vehicle_make,
+            model: booking.vehicle_model,
+            registration: booking.vehicle_registration
+          },
+          time_slots: {
+            slot_date: booking.slot_date,
+            slot_time: booking.start_time
+          }
         }));
 
         setUpcomingBookings(transformedBookings);

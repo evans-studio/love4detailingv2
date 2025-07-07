@@ -125,6 +125,8 @@ export type Database = {
           year: number | null
           color: string | null
           size: 'small' | 'medium' | 'large' | 'extra_large'
+          vehicle_type: string | null
+          special_requirements: string | null
           is_active: boolean
           created_at: string
           updated_at: string
@@ -138,6 +140,8 @@ export type Database = {
           year?: number | null
           color?: string | null
           size?: 'small' | 'medium' | 'large' | 'extra_large'
+          vehicle_type?: string | null
+          special_requirements?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
@@ -151,6 +155,8 @@ export type Database = {
           year?: number | null
           color?: string | null
           size?: 'small' | 'medium' | 'large' | 'extra_large'
+          vehicle_type?: string | null
+          special_requirements?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
@@ -218,6 +224,8 @@ export type Database = {
           current_bookings: number
           is_blocked: boolean
           block_reason: string | null
+          template_id: string | null
+          day_of_week: number | null
           created_at: string
           updated_at: string
         }
@@ -230,6 +238,8 @@ export type Database = {
           current_bookings?: number
           is_blocked?: boolean
           block_reason?: string | null
+          template_id?: string | null
+          day_of_week?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -242,6 +252,8 @@ export type Database = {
           current_bookings?: number
           is_blocked?: boolean
           block_reason?: string | null
+          template_id?: string | null
+          day_of_week?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -269,6 +281,11 @@ export type Database = {
           cancelled_at: string | null
           cancellation_reason: string | null
           notes: string | null
+          internal_notes: string | null
+          customer_instructions: string | null
+          estimated_duration_minutes: number | null
+          actual_duration_minutes: number | null
+          service_location: string | null
           created_at: string
           updated_at: string
         }
@@ -294,6 +311,11 @@ export type Database = {
           cancelled_at?: string | null
           cancellation_reason?: string | null
           notes?: string | null
+          internal_notes?: string | null
+          customer_instructions?: string | null
+          estimated_duration_minutes?: number | null
+          actual_duration_minutes?: number | null
+          service_location?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -319,6 +341,11 @@ export type Database = {
           cancelled_at?: string | null
           cancellation_reason?: string | null
           notes?: string | null
+          internal_notes?: string | null
+          customer_instructions?: string | null
+          estimated_duration_minutes?: number | null
+          actual_duration_minutes?: number | null
+          service_location?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -595,6 +622,11 @@ export type Database = {
           cancelled_at: string | null
           cancellation_reason: string | null
           notes: string | null
+          internal_notes: string | null
+          customer_instructions: string | null
+          estimated_duration_minutes: number | null
+          actual_duration_minutes: number | null
+          service_location: string | null
           created_at: string
           updated_at: string
           service_name: string
@@ -603,11 +635,15 @@ export type Database = {
           vehicle_make: string | null
           vehicle_model: string | null
           vehicle_size: string | null
+          vehicle_type: string | null
           slot_date: string
           start_time: string
           end_time: string
+          template_id: string | null
+          template_name: string | null
           user_full_name: string | null
           user_role: string | null
+          note_count: number
         }
       }
       user_statistics: {
@@ -703,6 +739,37 @@ export type Database = {
           p_points: number
         }
         Returns: string
+      }
+      generate_slots_from_template: {
+        Args: {
+          template_id: string
+          start_date: string
+          end_date: string
+        }
+        Returns: number
+      }
+      add_booking_note: {
+        Args: {
+          p_booking_id: string
+          p_author_id: string
+          p_note_type: string
+          p_content: string
+          p_visible_to_customer?: boolean
+        }
+        Returns: string
+      }
+      check_rate_limit: {
+        Args: {
+          p_identifier: string
+          p_endpoint: string
+          p_limit: number
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
+      cleanup_expired_rate_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
     }
     Enums: {

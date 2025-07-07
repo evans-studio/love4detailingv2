@@ -18,8 +18,11 @@ export const vehicleDetailsSchema = z.object({
   registration: z.string().min(1, 'Registration is required'),
   make: z.string().min(1, 'Make is required'),
   model: z.string().min(1, 'Model is required'),
-  year: z.string().min(1, 'Year is required'),
-  color: z.string().min(1, 'Color is required'),
+  year: z.number().min(1950).max(new Date().getFullYear() + 1).optional(),
+  color: z.string().optional(),
+  size: z.enum(['small', 'medium', 'large', 'extra_large']).optional(),
+  vehicle_type: z.string().optional(),
+  special_requirements: z.string().optional(),
 });
 
 // Personal details
@@ -34,10 +37,10 @@ export const personalDetailsSchema = z.object({
   postcode: z.string().min(1, 'Postcode is required'),
 });
 
-// Vehicle size
+// Vehicle size (now simplified as enum)
 export const vehicleSizeSchema = z.object({
-  id: z.string().uuid(),
-  label: z.enum(Object.values(sizeMap) as [string, ...string[]]),
+  id: z.enum(['small', 'medium', 'large', 'extra_large']),
+  label: z.string(),
   price_pence: z.number().int().positive(),
   description: z.string().optional(),
 });
@@ -52,11 +55,16 @@ export const timeSlotSchema = z.object({
 
 // Complete booking data
 export const bookingSchema = z.object({
-  vehicle: vehicleDetailsSchema,
-  customer: personalDetailsSchema,
-  vehicle_size_id: z.string().uuid(),
-  time_slot_id: z.string().uuid(),
-  price_snapshot_pence: z.number(),
+  serviceId: z.string().uuid(),
+  slotId: z.string().uuid(),
+  vehicleData: vehicleDetailsSchema,
+  customerDetails: z.object({
+    fullName: z.string().min(2, 'Full name is required'),
+    email: z.string().email('Invalid email address'),
+    phone: z.string().min(10, 'Phone number is required'),
+    serviceAddress: z.string().min(10, 'Service address is required'),
+  }),
+  totalPricePence: z.number().positive(),
   isAuthenticated: z.boolean().optional(),
 });
 
@@ -68,35 +76,38 @@ export type VehicleSize = z.infer<typeof vehicleSizeSchema>;
 export type TimeSlot = z.infer<typeof timeSlotSchema>;
 export type BookingData = z.infer<typeof bookingSchema>;
 
-// Extended booking type with relations
-export interface BookingWithRelations extends Booking {
-  users?: {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    email: string;
-    address_line1?: string;
-    address_line2?: string;
-    postcode?: string;
-  };
-  vehicles?: {
-    registration: string;
-    make: string;
-    model: string;
-    year: string;
-    color: string;
-    size: 'small' | 'medium' | 'large' | 'xl';
-  };
-  time_slots?: {
-    slot_date: string;
-    slot_time: string;
-  };
-  vehicle_sizes?: {
-    label: string;
-    price_pence: number;
-    description: string;
-  };
-}
+// Enhanced booking schemas for new database structure
+export const bookingNoteSchema = z.object({
+  booking_id: z.string().uuid(),
+  author_id: z.string().uuid().optional(),
+  note_type: z.enum(['internal', 'customer', 'system']),
+  content: z.string().min(1, 'Note content is required'),
+  is_visible_to_customer: z.boolean().default(false),
+});
+
+export const scheduleTemplateSchema = z.object({
+  name: z.string().min(1, 'Template name is required'),
+  description: z.string().optional(),
+  is_active: z.boolean().default(true),
+});
+
+export const scheduleSlotSchema = z.object({
+  template_id: z.string().uuid(),
+  day_of_week: z.number().min(0).max(6), // 0=Sunday, 6=Saturday
+  start_time: z.string(), // HH:MM format
+  end_time: z.string(), // HH:MM format
+  max_bookings: z.number().min(1).default(1),
+  is_active: z.boolean().default(true),
+});
+
+// Enhanced booking with new fields
+export const enhancedBookingSchema = bookingSchema.extend({
+  internal_notes: z.string().optional(),
+  customer_instructions: z.string().optional(),
+  estimated_duration_minutes: z.number().optional(),
+  actual_duration_minutes: z.number().optional(),
+  service_location: z.string().optional(),
+});
 
 // Unified booking form schema for single-form flow
 export const unifiedBookingSchema = z.object({
@@ -114,10 +125,11 @@ export const unifiedBookingSchema = z.object({
       .min(2, 'Registration is required')
       .max(10, 'Registration is too long')
       .regex(VEHICLE_REG_REGEX, 'Registration must contain only letters, numbers, and spaces'),
-    year: z.string().optional(),
+    year: z.number().min(1950).max(new Date().getFullYear() + 1).optional(),
     color: z.string().optional(),
-    sizeId: z.string().min(1, 'Vehicle size is required'),
-    size: z.string().min(1, 'Vehicle size is required'),
+    size: z.enum(['small', 'medium', 'large', 'extra_large']),
+    vehicle_type: z.string().optional(),
+    special_requirements: z.string().optional(),
   }),
   
   // Step 3: Personal Details
@@ -150,18 +162,26 @@ export const unifiedBookingSchema = z.object({
 
 export type UnifiedBookingForm = z.infer<typeof unifiedBookingSchema>;
 
+// New types for enhanced schemas
+export type BookingNoteData = z.infer<typeof bookingNoteSchema>;
+export type ScheduleTemplateData = z.infer<typeof scheduleTemplateSchema>;
+export type ScheduleSlotData = z.infer<typeof scheduleSlotSchema>;
+export type EnhancedBookingData = z.infer<typeof enhancedBookingSchema>;
+
 // Individual step schemas for validation
 export const serviceStepSchema = unifiedBookingSchema.pick({ service: true });
 export const vehicleStepSchema = unifiedBookingSchema.pick({ vehicle: true });
 export const personalDetailsStepSchema = unifiedBookingSchema.pick({ personalDetails: true });
 export const dateTimeStepSchema = unifiedBookingSchema.pick({ dateTime: true });
 
-// Vehicle data types from JSON
+// Vehicle data types aligned with new database structure
 export interface VehicleData {
   make: string;
   model: string;
-  trim: string;
-  size: 'S' | 'M' | 'L' | 'XL';
+  trim?: string;
+  size: 'small' | 'medium' | 'large' | 'extra_large';
+  vehicle_type?: string;
+  special_requirements?: string;
 }
 
 // Photo upload type

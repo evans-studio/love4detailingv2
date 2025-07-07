@@ -8,813 +8,410 @@ import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { format } from 'date-fns';
+import { Alert } from '@/components/ui/Alert';
 import { 
   Search, 
   Filter, 
   Edit, 
-  Trash2, 
   Calendar, 
   Clock,
   User,
   Car,
   Plus,
   Download,
-  Save,
-  X
+  Eye,
+  CheckCircle,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { formatCurrency, formatDate, formatTime } from '@/lib/utils';
-
-interface Booking {
-  id: string;
-  booking_reference: string;
-  user_id: string;
-  vehicle_id: string;
-  time_slot_id: string;
-  status: string;
-  payment_status: string;
-  total_price_pence: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  notes?: string;
-  created_at: string;
-  vehicle?: {
-    registration: string;
-    make: string;
-    model: string;
-    year: string;
-    color: string;
-    vehicle_size?: {
-      label: string;
-      price_pence: number;
-    };
-  } | null;
-  time_slot?: {
-    slot_date: string;
-    slot_time: string;
-  } | null;
-}
+import { format } from 'date-fns';
+import { BookingSummaryRow } from '@/types/database.types';
 
 interface BookingFilters {
-  search: string;
   status: string;
-  dateFrom: string;
-  dateTo: string;
-  vehicleSize: string;
+  dateRange: string;
+  search: string;
 }
 
-const editBookingSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
-  payment_status: z.enum(['pending', 'paid', 'failed']),
-  notes: z.string().optional(),
-  slot_date: z.string(),
-  slot_time: z.string(),
-});
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'All Statuses' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'no_show', label: 'No Show' }
+];
 
-type EditBookingFormData = z.infer<typeof editBookingSchema>;
+const DATE_RANGE_OPTIONS = [
+  { value: 'all', label: 'All Time' },
+  { value: 'today', label: 'Today' },
+  { value: 'week', label: 'This Week' },
+  { value: 'month', label: 'This Month' },
+  { value: 'upcoming', label: 'Upcoming' }
+];
 
-export default function AdminBookings() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
+export default function AdminBookingsPage() {
+  const [bookings, setBookings] = useState<BookingSummaryRow[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<BookingSummaryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [vehicleSizes, setVehicleSizes] = useState<{ id: string; label: string }[]>([]);
-  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [updating, setUpdating] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<BookingFilters>({
-    search: '',
-    status: '',
-    dateFrom: '',
-    dateTo: '',
-    vehicleSize: ''
+    status: 'all',
+    dateRange: 'all',
+    search: ''
   });
+
   const supabase = createClientComponentClient();
 
-  const editForm = useForm<EditBookingFormData>({
-    resolver: zodResolver(editBookingSchema),
-  });
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
   useEffect(() => {
-    const loadData = async () => {
+    applyFilters();
+  }, [bookings, filters]);
+
+  const fetchBookings = async () => {
+    try {
       setLoading(true);
-      await fetchData();
+      const { data, error: fetchError } = await supabase
+        .from('booking_summaries')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+      
+      setBookings(data || []);
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError('Failed to load bookings');
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    loadData();
-  }, [supabase]);
-
-  // Apply filters
-  useEffect(() => {
+  const applyFilters = () => {
     let filtered = [...bookings];
 
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(booking => 
-        booking.booking_reference.toLowerCase().includes(searchLower) ||
-        booking.full_name.toLowerCase().includes(searchLower) ||
-        booking.email.toLowerCase().includes(searchLower) ||
-        (booking.vehicle?.registration && booking.vehicle.registration.toLowerCase().includes(searchLower))
-      );
-    }
-
     // Status filter
-    if (filters.status) {
+    if (filters.status !== 'all') {
       filtered = filtered.filter(booking => booking.status === filters.status);
     }
 
     // Date range filter
-    if (filters.dateFrom) {
-      filtered = filtered.filter(booking => 
-        booking.time_slot?.slot_date && new Date(booking.time_slot.slot_date) >= new Date(filters.dateFrom)
-      );
-    }
-    if (filters.dateTo) {
-      filtered = filtered.filter(booking => 
-        booking.time_slot?.slot_date && new Date(booking.time_slot.slot_date) <= new Date(filters.dateTo)
-      );
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    switch (filters.dateRange) {
+      case 'today':
+        filtered = filtered.filter(booking => 
+          new Date(booking.slot_date) >= today &&
+          new Date(booking.slot_date) < new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        );
+        break;
+      case 'week':
+        const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
+        const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+        filtered = filtered.filter(booking => {
+          const bookingDate = new Date(booking.slot_date);
+          return bookingDate >= weekStart && bookingDate < weekEnd;
+        });
+        break;
+      case 'month':
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        filtered = filtered.filter(booking => {
+          const bookingDate = new Date(booking.slot_date);
+          return bookingDate >= monthStart && bookingDate < monthEnd;
+        });
+        break;
+      case 'upcoming':
+        filtered = filtered.filter(booking => 
+          new Date(booking.slot_date) >= today
+        );
+        break;
     }
 
-    // Vehicle size filter
-    if (filters.vehicleSize) {
-      filtered = filtered.filter(booking => 
-        booking.vehicle?.vehicle_size?.label === filters.vehicleSize
+    // Search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(booking =>
+        booking.customer_name?.toLowerCase().includes(searchLower) ||
+        booking.customer_email?.toLowerCase().includes(searchLower) ||
+        booking.booking_reference?.toLowerCase().includes(searchLower) ||
+        booking.vehicle_registration?.toLowerCase().includes(searchLower)
       );
     }
 
     setFilteredBookings(filtered);
-  }, [bookings, filters]);
-
-  const handleFilterChange = (key: keyof BookingFilters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const clearFilters = () => {
-    setFilters({
-      search: '',
-      status: '',
-      dateFrom: '',
-      dateTo: '',
-      vehicleSize: ''
-    });
-  };
-
-  const handleEditBooking = (booking: Booking) => {
-    setEditingBooking(booking);
-    editForm.reset({
-      status: booking.status as 'pending' | 'confirmed' | 'completed' | 'cancelled',
-      payment_status: booking.payment_status as 'pending' | 'paid' | 'failed',
-      notes: booking.notes || '',
-      slot_date: booking.time_slot?.slot_date || '',
-      slot_time: booking.time_slot?.slot_time || '',
-    });
-    setIsEditModalOpen(true);
-  };
-
-  const handleUpdateBooking = async (formData: EditBookingFormData) => {
-    if (!editingBooking) return;
-
+  const updateBookingStatus = async (bookingId: string, newStatus: string) => {
     try {
-      setIsUpdating(true);
+      setUpdating(bookingId);
+      
+      const { error: updateError } = await supabase
+        .rpc('update_booking_status', {
+          p_booking_id: bookingId,
+          p_new_status: newStatus
+        });
 
-      // Update booking status and payment status
-      const { error: bookingError } = await supabase
-        .from('bookings')
-        .update({
-          status: formData.status,
-          payment_status: formData.payment_status,
-          notes: formData.notes,
-        })
-        .eq('id', editingBooking.id);
+      if (updateError) throw updateError;
 
-      if (bookingError) throw bookingError;
-
-      // If time slot changed, update the time slot
-      if (formData.slot_date !== editingBooking.time_slot?.slot_date || 
-          formData.slot_time !== editingBooking.time_slot?.slot_time) {
-        
-        // Find or create new time slot
-        const { data: existingSlot } = await supabase
-          .from('time_slots')
-          .select('id')
-          .eq('slot_date', formData.slot_date)
-          .eq('slot_time', formData.slot_time)
-          .single();
-
-        let timeSlotId = existingSlot?.id;
-
-        if (!timeSlotId) {
-          // Create new time slot
-          const { data: newSlot, error: slotError } = await supabase
-            .from('time_slots')
-            .insert({
-              slot_date: formData.slot_date,
-              slot_time: formData.slot_time,
-              is_available: false,
-              is_booked: true,
-            })
-            .select('id')
-            .single();
-
-          if (slotError) throw slotError;
-          timeSlotId = newSlot.id;
-        }
-
-        // Update booking with new time slot
-        const { error: updateError } = await supabase
-          .from('bookings')
-          .update({ time_slot_id: timeSlotId })
-          .eq('id', editingBooking.id);
-
-        if (updateError) throw updateError;
-
-        // Mark old time slot as available
-        await supabase
-          .from('time_slots')
-          .update({ is_booked: false, is_available: true })
-          .eq('id', editingBooking.time_slot_id);
-      }
-
-      // Refresh bookings data
-      await fetchData();
-      setIsEditModalOpen(false);
-      setEditingBooking(null);
-    } catch (error) {
-      console.error('Error updating booking:', error);
-      alert('Failed to update booking. Please try again.');
+      // Refresh bookings
+      await fetchBookings();
+    } catch (err) {
+      console.error('Error updating booking status:', err);
+      setError('Failed to update booking status');
     } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleDeleteBooking = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('id', bookingId);
-
-      if (error) throw error;
-
-      // Refresh bookings data
-      await fetchData();
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      alert('Failed to delete booking. Please try again.');
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      // Fetch bookings with full details
-      const { data: bookingsData, error: bookingsError } = await supabase
-        .from('bookings')
-        .select(`
-          *,
-          vehicles (
-            registration,
-            make,
-            model,
-            year,
-            color,
-            vehicle_sizes (
-              label,
-              price_pence
-            )
-          ),
-          time_slots (
-            slot_date,
-            slot_time
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (bookingsError) throw bookingsError;
-
-      // Fetch vehicle sizes for filter
-      const { data: sizesData, error: sizesError } = await supabase
-        .from('vehicle_sizes')
-        .select('id, label')
-        .order('label');
-
-      if (sizesError) throw sizesError;
-
-      setBookings(bookingsData || []);
-      setFilteredBookings(bookingsData || []);
-      setVehicleSizes(sizesData || []);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      setUpdating(null);
     }
   };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      confirmed: { color: 'bg-blue-100 text-blue-800', label: 'Confirmed' },
-      completed: { color: 'bg-green-100 text-green-800', label: 'Completed' },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
+      pending: { variant: 'warning' as const, icon: AlertCircle, label: 'Pending' },
+      confirmed: { variant: 'info' as const, icon: CheckCircle, label: 'Confirmed' },
+      in_progress: { variant: 'primary' as const, icon: Clock, label: 'In Progress' },
+      completed: { variant: 'success' as const, icon: CheckCircle, label: 'Completed' },
+      cancelled: { variant: 'destructive' as const, icon: XCircle, label: 'Cancelled' },
+      no_show: { variant: 'secondary' as const, icon: XCircle, label: 'No Show' }
     };
-    const config = statusConfig[status as keyof typeof statusConfig] || { color: 'bg-gray-100 text-gray-800', label: status };
-    return <Badge className={config.color}>{config.label}</Badge>;
+
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const Icon = config.icon;
+
+    return (
+      <Badge variant={config.variant} className="flex items-center gap-1">
+        <Icon className="h-3 w-3" />
+        {config.label}
+      </Badge>
+    );
   };
 
-  const getPaymentBadge = (paymentStatus: string) => {
-    const paymentConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      paid: { color: 'bg-green-100 text-green-800', label: 'Paid' },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
-    };
-    const config = paymentConfig[paymentStatus as keyof typeof paymentConfig] || { color: 'bg-gray-100 text-gray-800', label: paymentStatus };
-    return <Badge className={config.color}>{config.label}</Badge>;
-  };
+  const formatPrice = (pricePence: number) => `£${(pricePence / 100).toFixed(2)}`;
+  const formatDate = (dateString: string) => format(new Date(dateString), 'dd/MM/yyyy');
+  const formatTime = (timeString: string) => format(new Date(`2000-01-01T${timeString}`), 'HH:mm');
 
   if (loading) {
     return <LoadingState>Loading bookings...</LoadingState>;
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#F2F2F2]">Booking Management</h1>
-          <p className="text-sm sm:text-base text-[#C7C7C7] mt-1">
-            Showing {filteredBookings.length} of {bookings.length} bookings
-          </p>
+          <h1 className="text-3xl font-bold text-[#F2F2F2]">Bookings Management</h1>
+          <p className="text-[#C7C7C7] mt-1">Manage and track all customer bookings</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3">
-          <Button variant="outline" className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
             Export
           </Button>
           <Link href="/admin/bookings/create">
-            <Button className="w-full sm:w-auto">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Booking
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              New Booking
             </Button>
           </Link>
         </div>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
+          <div className="text-2xl font-bold text-[#F2F2F2]">{bookings.length}</div>
+          <div className="text-sm text-[#C7C7C7]">Total Bookings</div>
+        </Card>
+        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
+          <div className="text-2xl font-bold text-[#F2F2F2]">
+            {bookings.filter(b => b.status === 'pending').length}
+          </div>
+          <div className="text-sm text-[#C7C7C7]">Pending</div>
+        </Card>
+        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
+          <div className="text-2xl font-bold text-[#F2F2F2]">
+            {bookings.filter(b => b.status === 'confirmed').length}
+          </div>
+          <div className="text-sm text-[#C7C7C7]">Confirmed</div>
+        </Card>
+        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
+          <div className="text-2xl font-bold text-[#F2F2F2]">
+            {bookings.filter(b => b.status === 'completed').length}
+          </div>
+          <div className="text-sm text-[#C7C7C7]">Completed</div>
+        </Card>
+      </div>
+
       {/* Filters */}
-      <Card className="p-4 sm:p-6 bg-[#1E1E1E] border-gray-800">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          <div className="sm:col-span-2 lg:col-span-1">
-            <label className="block text-xs sm:text-sm font-medium text-[#C7C7C7] mb-1">
-              Search
-            </label>
+      <Card className="p-6 bg-[#1E1E1E] border-gray-800">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8B8B8B]" />
               <Input
-                type="text"
-                placeholder="Reference, name, email..."
+                placeholder="Search by name, email, reference, or registration..."
                 value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="pl-10 h-10 sm:h-12 text-sm sm:text-base"
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                className="pl-10 bg-[#262626] border-gray-700 text-[#F2F2F2]"
               />
             </div>
           </div>
-
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-[#C7C7C7] mb-1">
-              Status
-            </label>
-            <Select
-              value={filters.status}
-              onValueChange={(value) => handleFilterChange('status', value)}
-            >
-              <SelectTrigger className="h-10 sm:h-12 text-sm sm:text-base">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-[#C7C7C7] mb-1">
-              From Date
-            </label>
-            <Input
-              type="date"
-              value={filters.dateFrom}
-              onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-              className="h-10 sm:h-12 text-sm sm:text-base"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-[#C7C7C7] mb-1">
-              To Date
-            </label>
-            <Input
-              type="date"
-              value={filters.dateTo}
-              onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-              className="h-10 sm:h-12 text-sm sm:text-base"
-            />
-          </div>
-
-          <div className="sm:col-span-2 lg:col-span-1 flex items-end">
-            <Button variant="outline" onClick={clearFilters} className="w-full h-10 sm:h-12">
-              <Filter className="h-4 w-4 mr-2" />
-              Clear Filters
-            </Button>
-          </div>
+          <Select
+            value={filters.status}
+            onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
+          >
+            <SelectTrigger className="w-40 bg-[#262626] border-gray-700 text-[#F2F2F2]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_OPTIONS.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={filters.dateRange}
+            onValueChange={(value) => setFilters(prev => ({ ...prev, dateRange: value }))}
+          >
+            <SelectTrigger className="w-40 bg-[#262626] border-gray-700 text-[#F2F2F2]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {DATE_RANGE_OPTIONS.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
-      {/* Bookings Table - Desktop */}
-      <Card className="hidden sm:block bg-[#1E1E1E] border-gray-800">
-        <div className="overflow-x-auto -mx-4 sm:mx-0">
-          <div className="inline-block min-w-full align-middle">
-            <table className="min-w-full divide-y divide-gray-800">
-              <thead className="bg-[#262626]">
-                <tr>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Reference
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Customer
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Vehicle
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Date & Time
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-[#F2F2F2] uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-[#1E1E1E] divide-y divide-gray-800">
-                {filteredBookings.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center">
-                        <Calendar className="h-12 w-12 text-gray-400 mb-3" />
-                        <p className="text-gray-500">
-                          {bookings.length === 0 ? 'No bookings found' : 'No bookings match your filters'}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredBookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-[#262626]">
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-[#F2F2F2]">
-                          {booking.booking_reference}
-                        </div>
-                        <div className="text-xs text-[#8B8B8B]">
-                          {formatDate(booking.created_at)}
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0">
-                            <div className="h-8 w-8 rounded-full bg-[#262626] flex items-center justify-center">
-                              <User className="h-4 w-4 text-[#C7C7C7]" />
-                            </div>
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-[#F2F2F2]">
-                              {booking.full_name}
-                            </div>
-                            <div className="text-sm text-[#C7C7C7]">{booking.email}</div>
-                            {booking.phone && (
-                              <div className="text-xs text-[#8B8B8B]">{booking.phone}</div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Car className="h-4 w-4 text-gray-400 mr-2" />
-                          <div>
-                            {booking.vehicle ? (
-                              <>
-                                <div className="text-sm font-medium text-[#F2F2F2]">
-                                  {booking.vehicle.registration}
-                                </div>
-                                <div className="text-sm text-[#C7C7C7]">
-                                  {booking.vehicle.make} {booking.vehicle.model} ({booking.vehicle.year})
-                                </div>
-                                <div className="text-xs text-[#8B8B8B]">
-                                  {booking.vehicle.vehicle_size?.label || 'Unknown size'} • {booking.vehicle.color}
-                                </div>
-                              </>
-                            ) : (
-                              <div className="text-sm text-[#8B8B8B] italic">
-                                Vehicle information unavailable
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 text-gray-400 mr-2" />
-                          <div>
-                            {booking.time_slot ? (
-                              <>
-                                <div className="text-sm font-medium text-[#F2F2F2]">
-                                  {booking.time_slot?.slot_date ? formatDate(booking.time_slot.slot_date) : 'No date'}
-                                </div>
-                                <div className="text-sm text-[#C7C7C7]">
-                                  {booking.time_slot?.slot_time ? formatTime(booking.time_slot.slot_time) : 'No time'}
-                                </div>
-                              </>
-                            ) : (
-                              <div className="text-sm text-[#8B8B8B] italic">
-                                Time slot unavailable
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="space-y-1">
-                          {getStatusBadge(booking.status)}
-                          {getPaymentBadge(booking.payment_status)}
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-[#F2F2F2]">
-                          {formatCurrency(booking.total_price_pence / 100)}
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => handleEditBooking(booking)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDeleteBooking(booking.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Card>
+      {/* Error Alert */}
+      {error && (
+        <Alert variant="destructive">
+          {error}
+        </Alert>
+      )}
 
-      {/* Bookings Cards - Mobile */}
-      <div className="block sm:hidden space-y-3">
-        {filteredBookings.length === 0 ? (
-          <Card className="p-6 bg-[#1E1E1E] border-gray-800 text-center">
-            <Calendar className="h-12 w-12 text-gray-400 mb-3 mx-auto" />
-            <p className="text-gray-500 text-sm">
-              {bookings.length === 0 ? 'No bookings found' : 'No bookings match your filters'}
-            </p>
-          </Card>
-        ) : (
-          filteredBookings.map((booking) => (
-            <Card key={booking.id} className="p-4 bg-[#1E1E1E] border-gray-800">
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="text-sm font-medium text-[#F2F2F2]">
-                      {booking.booking_reference}
-                    </div>
-                    <div className="text-xs text-[#8B8B8B]">
+      {/* Bookings Table */}
+      <Card className="bg-[#1E1E1E] border-gray-800">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="border-b border-gray-800">
+              <tr>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Reference</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Customer</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Vehicle</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Date & Time</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Status</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Price</th>
+                <th className="text-left p-4 text-[#C7C7C7] font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBookings.map((booking) => (
+                <tr key={booking.id} className="border-b border-gray-800 hover:bg-[#262626]">
+                  <td className="p-4">
+                    <div className="font-medium text-[#F2F2F2]">{booking.booking_reference}</div>
+                    <div className="text-sm text-[#8B8B8B]">
                       {formatDate(booking.created_at)}
                     </div>
-                  </div>
-                  <div className="text-sm font-medium text-[#F2F2F2]">
-                    {formatCurrency(booking.total_price_pence / 100)}
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-[#C7C7C7]" />
-                    <div>
-                      <div className="text-sm font-medium text-[#F2F2F2]">
-                        {booking.full_name}
-                      </div>
-                      <div className="text-xs text-[#C7C7C7]">{booking.email}</div>
-                    </div>
-                  </div>
-                  
-                  {booking.vehicle && (
+                  </td>
+                  <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <Car className="h-4 w-4 text-gray-400" />
+                      <User className="h-4 w-4 text-[#8B8B8B]" />
                       <div>
-                        <div className="text-sm font-medium text-[#F2F2F2]">
-                          {booking.vehicle.registration}
-                        </div>
-                        <div className="text-xs text-[#C7C7C7]">
-                          {booking.vehicle.make} {booking.vehicle.model} • {booking.vehicle.vehicle_size?.label}
-                        </div>
+                        <div className="font-medium text-[#F2F2F2]">{booking.customer_name}</div>
+                        <div className="text-sm text-[#8B8B8B]">{booking.customer_email}</div>
                       </div>
                     </div>
-                  )}
-                  
-                  {booking.time_slot && (
+                  </td>
+                  <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-400" />
-                      <div className="text-sm text-[#F2F2F2]">
-                        {booking.time_slot?.slot_date ? formatDate(booking.time_slot.slot_date) : 'No date'} at {booking.time_slot?.slot_time ? formatTime(booking.time_slot.slot_time) : 'No time'}
+                      <Car className="h-4 w-4 text-[#8B8B8B]" />
+                      <div>
+                        {booking.vehicle_make && booking.vehicle_model ? (
+                          <>
+                            <div className="font-medium text-[#F2F2F2]">
+                              {booking.vehicle_make} {booking.vehicle_model}
+                            </div>
+                            <div className="text-sm text-[#8B8B8B]">{booking.vehicle_registration}</div>
+                          </>
+                        ) : (
+                          <div className="text-sm text-[#8B8B8B]">No vehicle info</div>
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2">
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-[#8B8B8B]" />
+                      <div>
+                        <div className="font-medium text-[#F2F2F2]">
+                          {formatDate(booking.slot_date)}
+                        </div>
+                        <div className="text-sm text-[#8B8B8B] flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatTime(booking.start_time)}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
                     {getStatusBadge(booking.status)}
-                    {getPaymentBadge(booking.payment_status)}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleEditBooking(booking)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDeleteBooking(booking.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="font-medium text-[#F2F2F2]">
+                      {formatPrice(booking.total_price_pence)}
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/bookings/${booking.id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      {booking.status === 'pending' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => updateBookingStatus(booking.id, 'confirmed')}
+                          disabled={updating === booking.id}
+                        >
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {/* Edit Booking Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-2xl bg-[#1E1E1E] border-gray-800">
-          <DialogHeader>
-            <DialogTitle>Edit Booking</DialogTitle>
-          </DialogHeader>
-          
-          {editingBooking && (
-            <form onSubmit={editForm.handleSubmit(handleUpdateBooking)} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
-                    Booking Status
-                  </label>
-                  <Select
-                    value={editForm.watch('status')}
-                    onValueChange={(value) => editForm.setValue('status', value as any)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {editForm.formState.errors.status && (
-                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.status.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
-                    Payment Status
-                  </label>
-                  <Select
-                    value={editForm.watch('payment_status')}
-                    onValueChange={(value) => editForm.setValue('payment_status', value as any)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="failed">Failed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {editForm.formState.errors.payment_status && (
-                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.payment_status.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
-                    Date
-                  </label>
-                  <Input
-                    type="date"
-                    {...editForm.register('slot_date')}
-                    error={!!editForm.formState.errors.slot_date}
-                  />
-                  {editForm.formState.errors.slot_date && (
-                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.slot_date.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
-                    Time
-                  </label>
-                  <Input
-                    type="time"
-                    {...editForm.register('slot_time')}
-                    error={!!editForm.formState.errors.slot_time}
-                  />
-                  {editForm.formState.errors.slot_time && (
-                    <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.slot_time.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#C7C7C7] mb-2">
-                  Notes
-                </label>
-                <textarea
-                  {...editForm.register('notes')}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-800 bg-[#262626] text-[#F2F2F2] rounded-md focus:outline-none focus:ring-2 focus:ring-[#9146FF]"
-                  placeholder="Add any notes about this booking..."
-                />
-                {editForm.formState.errors.notes && (
-                  <p className="text-red-500 text-xs mt-1">{editForm.formState.errors.notes.message}</p>
-                )}
-              </div>
-
-              <div className="flex justify-end space-x-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsEditModalOpen(false)}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? (
-                    <>
-                      <LoadingState className="h-4 w-4 mr-2" />
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Update Booking
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
+          {filteredBookings.length === 0 && (
+            <div className="text-center py-12">
+              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-[#F2F2F2] mb-2">No bookings found</h3>
+              <p className="text-[#8B8B8B]">
+                {filters.search || filters.status !== 'all' || filters.dateRange !== 'all'
+                  ? 'Try adjusting your filters'
+                  : 'No bookings have been created yet'
+                }
+              </p>
+            </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </div>
+      </Card>
     </div>
   );
-} 
+}
