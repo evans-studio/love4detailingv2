@@ -3,12 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { LoadingState } from '@/components/ui/loadingState';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert } from '@/components/ui/alert';
+import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Card, Badge, Alert } from '@/components/ui';
 import { 
   Search, 
   Filter, 

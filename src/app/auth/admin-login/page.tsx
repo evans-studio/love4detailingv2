@@ -2,11 +2,7 @@
 
 import React, { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label, Alert, AlertDescription } from '@/components/ui';
 import { Loader2, Mail, Shield } from 'lucide-react';
 
 export default function AdminLoginPage() {
