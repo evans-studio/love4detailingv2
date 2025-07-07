@@ -28,39 +28,30 @@ export default async function DashboardPage() {
   const isAdmin = profile?.role === 'admin';
 
   const { data: recentBookings } = await supabase
-    .from('bookings')
+    .from('booking_summaries')
     .select(`
-      *,
-      vehicles (
-        make,
-        model,
-        registration,
-        vehicle_sizes (
-          label,
-          price_pence
-        )
-      ),
-      time_slots (
-        slot_date,
-        slot_time
-      )
+      id,
+      booking_reference,
+      customer_name,
+      vehicle_make,
+      vehicle_model,
+      vehicle_registration,
+      vehicle_size,
+      slot_date,
+      start_time,
+      total_price_pence,
+      status,
+      created_at
     `)
-    .eq('user_id', user?.id)
+    .eq('user_full_name', user?.email) // Filter by user email since that's available
     .order('created_at', { ascending: false })
     .limit(2);
 
-  // Get user's vehicles with their sizes
+  // Get user's vehicles 
   const { data: vehicles } = await supabase
     .from('vehicles')
-    .select(`
-      *,
-      vehicle_sizes (
-        id,
-        label,
-        description,
-        price_pence
-      )
-    `);
+    .select('*')
+    .eq('user_id', user?.id);
 
   return (
     <DashboardLayout>
@@ -99,10 +90,20 @@ export default async function DashboardPage() {
                 {recentBookings?.map((booking) => (
                   <div key={booking.id} className="flex justify-between items-center">
                     <div>
-                      <p className="font-medium text-[#F2F2F2]">{booking.vehicles.vehicle_sizes.label} Vehicle</p>
-                      <p className="text-sm text-[#C7C7C7]">
-                        {new Date(booking.time_slots.slot_date).toLocaleDateString()}
+                      <p className="font-medium text-[#F2F2F2]">
+                        {booking.vehicle_size ? 
+                          `${booking.vehicle_size.charAt(0).toUpperCase() + booking.vehicle_size.slice(1)} Vehicle` :
+                          'Vehicle Service'
+                        }
                       </p>
+                      <p className="text-sm text-[#C7C7C7]">
+                        {new Date(booking.slot_date).toLocaleDateString()}
+                      </p>
+                      {booking.vehicle_make && booking.vehicle_model && (
+                        <p className="text-xs text-[#8B8B8B]">
+                          {booking.vehicle_make} {booking.vehicle_model}
+                        </p>
+                      )}
                     </div>
                     <Button
                       variant="ghost"

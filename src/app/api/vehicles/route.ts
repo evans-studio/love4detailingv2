@@ -28,9 +28,11 @@ const vehicleSchema = z.object({
   registration: z.string().min(2, 'Registration is required').max(10, 'Registration too long'),
   make: z.string().min(1, 'Make is required'),
   model: z.string().min(1, 'Model is required'),
-  year: z.string().optional(),
+  year: z.number().optional(),
   color: z.string().optional(),
-  size_id: z.string().uuid().optional(),
+  size: z.enum(['small', 'medium', 'large', 'extra_large']).optional(),
+  vehicle_type: z.string().optional(),
+  special_requirements: z.string().optional(),
   photos: z.array(z.string()).optional()
 });
 
@@ -63,11 +65,11 @@ export async function GET(request: NextRequest) {
     // Add vehicle size information dynamically
     const vehiclesWithSizes = (vehicles || []).map(vehicle => ({
       ...vehicle,
-      vehicle_sizes: vehicle.size_id ? {
-        id: vehicle.size_id,
-        label: vehicle.size_id.charAt(0).toUpperCase() + vehicle.size_id.slice(1),
-        description: `${vehicle.size_id} sized vehicle`,
-        price_pence: getVehicleSizePrice(vehicle.size_id)
+      size_info: vehicle.size ? {
+        id: vehicle.size,
+        label: vehicle.size.charAt(0).toUpperCase() + vehicle.size.slice(1),
+        description: `${vehicle.size} sized vehicle`,
+        price_pence: getVehicleSizePrice(vehicle.size)
       } : null
     }));
 
@@ -108,7 +110,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { registration, make, model, year, color, size_id, photos } = validationResult.data;
+    const { registration, make, model, year, color, size, vehicle_type, special_requirements, photos } = validationResult.data;
 
     // Check if vehicle already exists for this user
     const { data: existingVehicle } = await supabaseServiceRole
@@ -126,16 +128,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Auto-detect vehicle size if not provided
-    let finalSizeId = size_id;
+    let finalSize = size;
     let sizeDetectionResult = null;
 
-    if (!size_id) {
+    if (!size) {
       try {
         sizeDetectionResult = await determineVehicleSize(make, model, registration);
-        finalSizeId = sizeDetectionResult.id || undefined;
+        finalSize = sizeDetectionResult.size || 'medium';
       } catch (error) {
         console.error('Vehicle size detection failed:', error);
-        // Continue without size - will be flagged for admin review
+        // Continue with default size
+        finalSize = 'medium';
       }
     }
 
@@ -147,20 +150,13 @@ export async function POST(request: NextRequest) {
         registration: registration.toUpperCase(),
         make,
         model,
-        year: year || '',
-        color: color || '',
-        size_id: finalSizeId,
-        photos: photos || []
+        year: year || null,
+        color: color || null,
+        size: finalSize,
+        vehicle_type: vehicle_type || null,
+        special_requirements: special_requirements || null
       })
-      .select(`
-        *,
-        vehicle_sizes (
-          id,
-          label,
-          description,
-          price_pence
-        )
-      `)
+      .select('*')
       .single();
 
     if (vehicleError) {
@@ -171,14 +167,18 @@ export async function POST(request: NextRequest) {
     }
 
     // If vehicle size couldn't be determined, log it for admin review
-    if (!finalSizeId) {
+    if (!size && !sizeDetectionResult?.wasFound) {
       try {
-        await supabaseServiceRole.rpc('log_unmatched_vehicle', {
-          vehicle_id_param: vehicle.id,
-          make_param: make,
-          model_param: model,
-          registration_param: registration.toUpperCase()
-        });
+        await supabaseServiceRole
+          .from('vehicle_model_registry')
+          .insert({
+            make,
+            model,
+            default_size: finalSize,
+            verified: false
+          })
+          .onConflict('make,model')
+          .ignoreDuplicates();
       } catch (error) {
         console.error('Failed to log unmatched vehicle:', error);
       }
@@ -186,11 +186,19 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      vehicle,
+      vehicle: {
+        ...vehicle,
+        size_info: {
+          id: finalSize,
+          label: finalSize.charAt(0).toUpperCase() + finalSize.slice(1),
+          description: `${finalSize} sized vehicle`,
+          price_pence: getVehicleSizePrice(finalSize)
+        }
+      },
       size_detection: sizeDetectionResult ? {
-        auto_detected: !size_id,
+        auto_detected: !size,
         confidence: sizeDetectionResult.wasFound ? 'high' : 'low',
-        requires_review: !finalSizeId
+        requires_review: !size && !sizeDetectionResult?.wasFound
       } : null
     });
 
@@ -262,15 +270,7 @@ export async function PUT(request: NextRequest) {
       .from('vehicles')
       .update(updateData)
       .eq('id', vehicle_id)
-      .select(`
-        *,
-        vehicle_sizes (
-          id,
-          label,
-          description,
-          price_pence
-        )
-      `)
+      .select('*')
       .single();
 
     if (updateError) {
@@ -282,7 +282,15 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      vehicle: updatedVehicle
+      vehicle: {
+        ...updatedVehicle,
+        size_info: updatedVehicle.size ? {
+          id: updatedVehicle.size,
+          label: updatedVehicle.size.charAt(0).toUpperCase() + updatedVehicle.size.slice(1),
+          description: `${updatedVehicle.size} sized vehicle`,
+          price_pence: getVehicleSizePrice(updatedVehicle.size)
+        } : null
+      }
     });
 
   } catch (error) {
