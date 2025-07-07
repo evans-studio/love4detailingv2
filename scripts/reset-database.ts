@@ -21,21 +21,41 @@ async function resetDatabase() {
     // Delete data from tables in correct order
     console.log('Deleting existing data...')
     
-    // Delete reward transactions first (they depend on bookings)
+    // Delete reward transactions first (they depend on customer_rewards)
     const { error: rewardTxError } = await supabase.from('reward_transactions').delete().gt('created_at', '1900-01-01')
     if (rewardTxError) throw rewardTxError
     
-    // Delete rewards (they depend on users)
-    const { error: rewardsError } = await supabase.from('rewards').delete().gt('created_at', '1900-01-01')
+    // Delete customer rewards (they depend on users)
+    const { error: rewardsError } = await supabase.from('customer_rewards').delete().gt('created_at', '1900-01-01')
     if (rewardsError) throw rewardsError
     
-    // Delete bookings (they depend on time_slots)
+    // Delete booking notes
+    const { error: notesError } = await supabase.from('booking_notes').delete().gt('created_at', '1900-01-01')
+    if (notesError) throw notesError
+    
+    // Delete bookings (they depend on available_slots)
     const { error: bookingsError } = await supabase.from('bookings').delete().gt('created_at', '1900-01-01')
     if (bookingsError) throw bookingsError
 
-    // Delete time slots
-    const { error: timeSlotsError } = await supabase.from('time_slots').delete().gt('created_at', '1900-01-01')
-    if (timeSlotsError) throw timeSlotsError
+    // Delete booking locks
+    const { error: locksError } = await supabase.from('booking_locks').delete().gt('created_at', '1900-01-01')
+    if (locksError) throw locksError
+
+    // Delete available slots
+    const { error: availableSlotsError } = await supabase.from('available_slots').delete().gt('created_at', '1900-01-01')
+    if (availableSlotsError) throw availableSlotsError
+
+    // Delete schedule slots
+    const { error: scheduleSlotsError } = await supabase.from('schedule_slots').delete().gt('created_at', '1900-01-01')
+    if (scheduleSlotsError) throw scheduleSlotsError
+
+    // Delete schedule templates
+    const { error: templatesError } = await supabase.from('schedule_templates').delete().gt('created_at', '1900-01-01')
+    if (templatesError) throw templatesError
+
+    // Delete vehicle photos
+    const { error: photosError } = await supabase.from('vehicle_photos').delete().gt('created_at', '1900-01-01')
+    if (photosError) throw photosError
 
     // Delete vehicles
     const { error: vehiclesError } = await supabase.from('vehicles').delete().gt('created_at', '1900-01-01')
@@ -55,49 +75,36 @@ async function resetDatabase() {
       if (deleteError) throw deleteError
     }
 
-    // Generate time slots for next 14 days
-    console.log('Generating new time slots...')
-    const startDate = new Date()
-    startDate.setDate(startDate.getDate() + 1)
+    // Generate available slots using the new template system
+    console.log('Generating new available slots...')
     
-    const timeSlots = []
-    const times = ['10:00:00', '11:30:00', '13:00:00', '14:30:00', '16:00:00']
-    
-    for (let i = 0; i < 14; i++) {
-      const currentDate = new Date(startDate)
-      currentDate.setDate(currentDate.getDate() + i)
-      
-      // Skip Sundays
-      if (currentDate.getDay() === 0) continue
-      
-      for (const time of times) {
-        timeSlots.push({
-          slot_date: currentDate.toISOString().split('T')[0],
-          slot_time: time,
-          is_booked: false
-        })
-      }
-    }
+    // First, ensure we have a default template (should be created by migration)
+    const { data: defaultTemplate } = await supabase
+      .from('schedule_templates')
+      .select('id')
+      .eq('name', 'Default Weekly Schedule')
+      .single()
 
-    // Use upsert to handle existing time slots
-    const { error: upsertError } = await supabase
-      .from('time_slots')
-      .upsert(timeSlots, {
-        onConflict: 'slot_date,slot_time',
-        ignoreDuplicates: false
+    if (defaultTemplate) {
+      // Generate slots for the next 30 days using the template
+      const { error: generateError } = await supabase.rpc('generate_slots_from_template', {
+        template_id: defaultTemplate.id,
+        start_date: new Date().toISOString().split('T')[0],
+        end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
       })
 
-    if (upsertError) throw upsertError
+      if (generateError) throw generateError
+    }
 
     // Verify results
     console.log('Database reset successful!')
     
-    // Check time slots
-    const { data: timeSlotsCount, error: timeSlotsCountError } = await supabase
-      .from('time_slots')
+    // Check available slots
+    const { data: availableSlotsCount, error: availableSlotsCountError } = await supabase
+      .from('available_slots')
       .select('*', { count: 'exact' })
-    if (timeSlotsCountError) throw timeSlotsCountError
-    console.log('Time slots created:', timeSlotsCount.length)
+    if (availableSlotsCountError) throw availableSlotsCountError
+    console.log('Available slots created:', availableSlotsCount.length)
     
     // Check reward transactions
     const { count: rewardTxCount, error: rewardTxCountError } = await supabase
@@ -106,21 +113,21 @@ async function resetDatabase() {
     if (rewardTxCountError) throw rewardTxCountError
     console.log('Reward transactions remaining:', rewardTxCount)
     
-    // Check rewards
+    // Check customer rewards
     const { count: rewardsCount, error: rewardsCountError } = await supabase
-      .from('rewards')
+      .from('customer_rewards')
       .select('*', { count: 'exact', head: true })
     if (rewardsCountError) throw rewardsCountError
-    console.log('Rewards records remaining:', rewardsCount)
+    console.log('Customer rewards records remaining:', rewardsCount)
     
     // Check auth users
     const { data: remainingUsers, error: remainingUsersError } = await supabase.auth.admin.listUsers()
     if (remainingUsersError) throw remainingUsersError
     console.log('Auth users remaining:', remainingUsers.users.length)
     
-    // Show sample time slots
-    console.log('Sample time slots:')
-    console.log(JSON.stringify(timeSlotsCount.slice(0, 5), null, 2))
+    // Show sample available slots
+    console.log('Sample available slots:')
+    console.log(JSON.stringify(availableSlotsCount.slice(0, 5), null, 2))
 
     console.log('\nIMPORTANT: Please clear your browser local storage and refresh the page to complete the reset.')
 
