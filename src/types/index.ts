@@ -212,12 +212,7 @@ export interface VehicleDetails {
   size_id: string;
 }
 
-export interface VehicleSize {
-  id: string;
-  label: string;
-  description: string;
-  price_pence: number;
-}
+// VehicleSize interface removed - replaced by service_pricing table
 
 // Booking Types
 export interface Booking {

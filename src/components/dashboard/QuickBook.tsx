@@ -16,8 +16,8 @@ import {
 import { LoadingState } from '@/components/ui/loadingState';
 import { Alert } from '@/components/ui/alert';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { calculateVehicleSize } from '@/lib/utils/vehicle-size';
-import { getAvailableTimeSlots, getAvailableDates, createBooking } from '@/lib/api/time-slots';
+// Vehicle size calculation removed - now handled by service pricing
+import { createBooking } from '@/lib/api/bookings';
 import { ROUTES } from '@/lib/constants/routes';
 import { useBooking } from '@/lib/context/BookingContext';
 import type { Database } from '@/types/supabase';
@@ -53,7 +53,17 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
   useEffect(() => {
     const loadAvailableDates = async () => {
       try {
-        const dates = await getAvailableDates();
+        // Get available dates from available_slots table
+        const { data: slotsData, error: slotsError } = await supabase
+          .from('available_slots')
+          .select('slot_date')
+          .eq('is_blocked', false)
+          .gte('slot_date', format(startOfToday(), 'yyyy-MM-dd'));
+        
+        if (slotsError) throw slotsError;
+        
+        const uniqueDates = new Set(slotsData?.map(slot => slot.slot_date) || []);
+        const dates = Array.from(uniqueDates);
         setAvailableDates(dates);
       } catch (err) {
         console.error('Error loading available dates:', err);
@@ -73,7 +83,15 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
     setError(null);
 
     try {
-      const slots = await getAvailableTimeSlots(format(date, 'yyyy-MM-dd'));
+      // Get available time slots for the selected date
+      const { data: slots, error: slotsError } = await supabase
+        .from('available_slots')
+        .select('*')
+        .eq('slot_date', format(date, 'yyyy-MM-dd'))
+        .eq('is_blocked', false)
+        .order('start_time');
+      
+      if (slotsError) throw slotsError;
       setAvailableTimeSlots(slots);
     } catch (err) {
       console.error('Error fetching time slots:', err);
@@ -117,19 +135,8 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
       if (!vehicle) throw new Error('Selected vehicle not found');
 
       // Get vehicle size pricing
+      // Use stored vehicle size or default to medium
       let vehicleSize = vehicle.size || 'medium';
-      
-      // If vehicle doesn't have a size, try to determine it
-      if (!vehicle.size && vehicle.make && vehicle.model) {
-        const sizeResult = await calculateVehicleSize(
-          vehicle.make,
-          vehicle.model,
-          vehicle.registration
-        );
-        if (sizeResult) {
-          vehicleSize = sizeResult.size;
-        }
-      }
 
       // Get pricing for the vehicle size
       const { data: pricing, error: pricingError } = await supabase
@@ -144,10 +151,9 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
 
       // Create booking
       const booking = await createBooking({
-        userId: user.id,
-        vehicleId: vehicle.id,
-        timeSlotId: selectedTimeSlot.id,
-        totalPricePence: pricing.price_pence,
+        vehicle_id: vehicle.id,
+        time_slot_id: selectedTimeSlot.id,
+        total_price_pence: pricing.price_pence,
       });
 
       // Reset form
