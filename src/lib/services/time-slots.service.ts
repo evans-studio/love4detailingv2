@@ -35,33 +35,85 @@ export class TimeSlotsService {
         return;
       }
 
-      const timeSlots = [
-        { start: '10:00:00', end: '11:00:00' },
-        { start: '11:30:00', end: '12:30:00' },
-        { start: '13:00:00', end: '14:00:00' },
-        { start: '14:30:00', end: '15:30:00' },
-        { start: '16:00:00', end: '17:00:00' },
-      ];
+      // Get admin's configurable schedule from weekly_schedule_template
+      const { data: scheduleTemplates, error: scheduleError } = await supabaseAdmin
+        .from('weekly_schedule_template')
+        .select('day_of_week, working_day, max_slots, slot_1_time, slot_2_time, slot_3_time, slot_4_time, slot_5_time')
+        .order('day_of_week');
 
-      const slots = [];
-      let currentDate = startDate;
+      let slots = [];
+      let timeSlots = [];
 
-      while (currentDate <= endDate) {
-        // Skip Sundays
-        if (currentDate.getDay() !== 0) {
-          const dateStr = format(currentDate, 'yyyy-MM-dd');
-          for (const timeSlot of timeSlots) {
-            slots.push({
-              slot_date: dateStr,
-              start_time: timeSlot.start,
-              end_time: timeSlot.end,
-              is_blocked: false,
-              max_bookings: 1,
-              current_bookings: 0
-            });
+      if (scheduleError) {
+        console.error('Failed to load schedule template:', scheduleError);
+        // Fall back to default schedule if template is not available
+        timeSlots = [
+          { start: '10:00:00', end: '11:00:00' },
+          { start: '11:30:00', end: '12:30:00' },
+          { start: '13:00:00', end: '14:00:00' },
+          { start: '14:30:00', end: '15:30:00' },
+          { start: '16:00:00', end: '17:00:00' },
+        ];
+
+        let currentDate = startDate;
+        while (currentDate <= endDate) {
+          // Skip Sundays (day 0) by default
+          if (currentDate.getDay() !== 0) {
+            const dateStr = format(currentDate, 'yyyy-MM-dd');
+            for (const timeSlot of timeSlots) {
+              slots.push({
+                slot_date: dateStr,
+                start_time: timeSlot.start,
+                end_time: timeSlot.end,
+                is_blocked: false,
+                max_bookings: 1,
+                current_bookings: 0
+              });
+            }
           }
+          currentDate = addDays(currentDate, 1);
         }
-        currentDate = addDays(currentDate, 1);
+      } else {
+        // Use admin's configurable schedule
+        let currentDate = startDate;
+
+        while (currentDate <= endDate) {
+          const dayOfWeek = currentDate.getDay();
+          const dayTemplate = scheduleTemplates.find(t => t.day_of_week === dayOfWeek);
+          
+          // Only generate slots for working days
+          if (dayTemplate && dayTemplate.working_day && dayTemplate.max_slots > 0) {
+            const dateStr = format(currentDate, 'yyyy-MM-dd');
+            
+            // Get all configured time slots for this day
+            const daySlots = [
+              dayTemplate.slot_1_time,
+              dayTemplate.slot_2_time, 
+              dayTemplate.slot_3_time,
+              dayTemplate.slot_4_time,
+              dayTemplate.slot_5_time
+            ].filter(Boolean).slice(0, dayTemplate.max_slots);
+            
+            for (const slotTime of daySlots) {
+              if (slotTime) {
+                // Calculate end time (1 hour later)
+                const [hours, minutes] = slotTime.split(':').map(Number);
+                const endHours = hours + 1;
+                const endTime = `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+                
+                slots.push({
+                  slot_date: dateStr,
+                  start_time: slotTime,
+                  end_time: endTime,
+                  is_blocked: false,
+                  max_bookings: 1,
+                  current_bookings: 0
+                });
+              }
+            }
+          }
+          currentDate = addDays(currentDate, 1);
+        }
       }
 
       console.log(`Attempting to generate ${slots.length} time slots from ${format(startDate, 'yyyy-MM-dd')} to ${format(endDate, 'yyyy-MM-dd')}`);

@@ -54,8 +54,9 @@ function normalizeTimeFormat(time: string | null | undefined): string {
   return time;
 }
 
-// Configure route as dynamic
+// Configure route as dynamic for production
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 // Create service role client for admin operations
 const supabaseServiceRole = createClient(

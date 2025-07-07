@@ -3,6 +3,10 @@ import { AvailabilityService } from '@/lib/services/availability';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
+// Configure route as dynamic for production
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // POST /api/admin/availability/generate-week
 export async function POST(request: Request) {
   try {

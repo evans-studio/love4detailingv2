@@ -3,8 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 import { format, parseISO, addDays, startOfDay } from 'date-fns';
 import { TimeSlotsService } from '@/lib/services/time-slots.service';
 
-// Configure route as dynamic
+// Configure route as dynamic for production
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
