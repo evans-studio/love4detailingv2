@@ -9,7 +9,7 @@ import { ComboBox } from '@/components/ui/comboBox';
 import { AutocompleteInput } from '@/components/ui/autocompleteInput';
 import { formatCurrency } from '@/lib/utils';
 import type { VehicleSize } from '@/types/database.types';
-import { calculateVehicleSize } from '@/lib/utils/vehicle-size';
+// Vehicle size calculation removed - now handled by service pricing
 import { LoadingState } from '@/components/ui/loadingState';
 import {
   Select,
@@ -69,34 +69,17 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
         return;
       }
 
-      try {
-        setLoading(true);
-        const sizeResult = await calculateVehicleSize(
-          state.data.vehicle.make,
-          state.data.vehicle.model,
-          state.data.vehicle.registration
-        );
-
-        if (sizeResult) {
-          dispatch({
-            type: 'SET_VEHICLE_SIZE',
-            payload: {
-              id: sizeResult.size,
-              label: sizeResult.label,
-              description: `${sizeResult.size} sized vehicle`,
-              price_pence: sizeResult.price_pence
-            }
-          });
-          setError(null);
-        } else {
-          setError('Could not determine vehicle size');
+      // Auto-detection removed - defaulting to medium size
+      dispatch({
+        type: 'SET_VEHICLE_SIZE',
+        payload: {
+          id: 'medium',
+          label: 'Medium',
+          description: 'Medium sized vehicle',
+          price_pence: 4500 // Default medium price
         }
-      } catch (err) {
-        console.error('Error determining vehicle size:', err);
-        setError('Failed to determine vehicle size');
-      } finally {
-        setLoading(false);
-      }
+      });
+      setError(null);
     };
 
     // Only determine size if we have vehicle details and no size is set

@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
-import { determineVehicleSize } from '@/lib/utils/vehicle-size';
+// Vehicle size determination removed - now handled by service pricing system
 
 export const dynamic = 'force-dynamic';
 
@@ -127,20 +127,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Auto-detect vehicle size if not provided
-    let finalSize = size;
-    let sizeDetectionResult = null;
-
-    if (!size) {
-      try {
-        sizeDetectionResult = await determineVehicleSize(make, model, registration);
-        finalSize = sizeDetectionResult.size || 'medium';
-      } catch (error) {
-        console.error('Vehicle size detection failed:', error);
-        // Continue with default size
-        finalSize = 'medium';
-      }
-    }
+    // Use provided size or default to medium
+    let finalSize = size || 'medium';
 
     // Create the vehicle record
     const { data: vehicle, error: vehicleError } = await supabaseServiceRole
@@ -166,8 +154,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If vehicle size couldn't be determined, log it for admin review
-    if (!size && !sizeDetectionResult?.wasFound) {
+    // Log vehicle for admin review if size wasn't provided
+    if (!size) {
       try {
         await supabaseServiceRole
           .from('vehicle_model_registry')
@@ -181,7 +169,7 @@ export async function POST(request: NextRequest) {
             ignoreDuplicates: true
           });
       } catch (error) {
-        console.error('Failed to log unmatched vehicle:', error);
+        console.error('Failed to log vehicle for review:', error);
       }
     }
 
@@ -199,11 +187,11 @@ export async function POST(request: NextRequest) {
           price_pence: getVehicleSizePrice(safeSize)
         }
       },
-      size_detection: sizeDetectionResult ? {
+      size_detection: {
         auto_detected: !size,
-        confidence: sizeDetectionResult.wasFound ? 'high' : 'low',
-        requires_review: !size && !sizeDetectionResult?.wasFound
-      } : null
+        confidence: size ? 'high' : 'low',
+        requires_review: !size
+      }
     });
 
   } catch (error) {
