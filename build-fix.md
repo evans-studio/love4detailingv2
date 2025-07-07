@@ -1,87 +1,129 @@
-The error is still showing `@/components/ui/Label` with uppercase, which means the files weren't properly fixed. Here's a focused prompt to resolve this specific issue:
+TASK: Complete Legacy Database Code Cleanup
 
-```
-URGENT FIX REQUIRED: ShadCN UI Label Component Import Error
+OBJECTIVE: Systematically scan and remove all references to old database tables, schemas, and components that are incompatible with the new 15-table database structure.
 
-PROBLEM: Build failing due to incorrect import paths for Label component in specific files.
 
-IMMEDIATE ACTIONS REQUIRED:
+Latest Vercel Build Log:
+https://nextjs.org/docs/messages/module-not-found
+./src/app/admin/analytics/page.tsx
+Module not found: Can't resolve '@/components/ui/card'
+https://nextjs.org/docs/messages/module-not-found
+./src/app/admin/analytics/page.tsx
+Module not found: Can't resolve '@/components/ui/select'
+https://nextjs.org/docs/messages/module-not-found
+./src/app/admin/analytics/page.tsx
+Module not found: Can't resolve '@/components/ui/alert'
+https://nextjs.org/docs/messages/module-not-found
+> Build failed because of webpack errors
+Error: Command "npm run build" exited with 1
 
-1. LOCATE AND FIX THESE EXACT FILES:
-   - `src/components/admin/EditBookingModal.tsx`
-   - `src/components/admin/WeeklyScheduleConfig.tsx`
 
-2. SEARCH FOR PROBLEMATIC IMPORTS:
-   Open each file and find lines containing:
-   ```typescript
-   import { Label } from '@/components/ui/Label'
-   ```
+LEGACY ELEMENTS TO REMOVE:
 
-3. REPLACE WITH CORRECT IMPORT:
-   Change to:
-   ```typescript
-   import { Label } from '@/components/ui/label'
-   ```
+OLD TABLE REFERENCES:
+- time_slots (replaced by available_slots + schedule_slots)
+- vehicle_sizes (replaced by service_pricing)
+- daily_availability (replaced by schedule_templates)
+- weekly_schedule_template (replaced by schedule_templates)
+- rewards (replaced by customer_rewards)
+- admin_notes (replaced by booking_notes)
+- missing_vehicle_models (replaced by vehicle_model_registry)
 
-4. VERIFY LABEL COMPONENT EXISTS:
-   Check if `src/components/ui/label.tsx` exists. If not, create it:
-   ```typescript
-   'use client';
+OLD COLUMN REFERENCES:
+- is_booked (replaced by is_available)
+- dvla_data (deprecated feature)
+- price_pence (replaced by base_price)
+- total_price_pence (replaced by base_amount + additional_fees)
 
-   import * as React from 'react';
-   import * as LabelPrimitive from '@radix-ui/react-label';
-   import { cn } from '@/lib/utils';
+OLD COMPONENT PATTERNS:
+- EditBookingModal (incompatible with new schema)
+- WeeklyScheduleConfig (uses old scheduling system)
+- PersonalDetailsStep (old booking flow)
+- Any files in /booking/steps/ directory (old multi-step pattern)
 
-   const Label = React.forwardRef
-     React.ElementRef<typeof LabelPrimitive.Root>,
-     React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
-   >(({ className, ...props }, ref) => (
-     <LabelPrimitive.Root
-       ref={ref}
-       className={cn(
-         'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-         className
-       )}
-       {...props}
-     />
-   ));
-   Label.displayName = LabelPrimitive.Root.displayName;
+CLEANUP INSTRUCTIONS:
 
-   export { Label };
-   ```
+1. SCAN FOR LEGACY REFERENCES:
+```bash
+# Find all files with old table references
+grep -r "time_slots\|vehicle_sizes\|daily_availability\|weekly_schedule_template\|is_booked\|dvla_data\|price_pence" src/ --include="*.tsx" --include="*.ts" -l
 
-5. INSTALL MISSING DEPENDENCY:
-   ```bash
-   npm install @radix-ui/react-label
-   ```
+# Find old component imports
+grep -r "EditBookingModal\|WeeklyScheduleConfig\|PersonalDetailsStep" src/ --include="*.tsx" -l
 
-6. COMPREHENSIVE SEARCH AND REPLACE:
-   Run this command to find ALL occurrences:
-   ```bash
-   grep -r "from '@/components/ui/Label'" src/
-   ```
+# Find old API endpoints
+find src/app/api -name "*.ts" | xargs grep -l "time_slots\|vehicle_sizes\|is_booked"
 
-   Then replace ALL instances with:
-   ```bash
-   find src -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's/@\/components\/ui\/Label/@\/components\/ui\/label/g'
-   ```
+BACKUP BEFORE CLEANUP:
 
-7. DOUBLE-CHECK THESE SPECIFIC FILES:
-   Manually verify these files have been fixed:
-   - `src/components/admin/EditBookingModal.tsx`
-   - `src/components/admin/WeeklyScheduleConfig.tsx`
-   - `src/app/admin/availability/page.tsx`
+bashgit checkout -b cleanup-legacy-$(date +%Y%m%d)
+git add . && git commit -m "Backup before legacy cleanup"
 
-8. TEST BUILD:
-   ```bash
-   npm run build
-   ```
+REMOVE LEGACY FILES:
 
-9. IF ERROR PERSISTS:
-   - Check for ANY remaining uppercase imports: `grep -r "from '@/components/ui/[A-Z]" src/`
-   - Ensure label.tsx file exists in components/ui/
-   - Verify @radix-ui/react-label is installed
-   - Check that the import statement is exactly: `import { Label } from '@/components/ui/label'`
 
-CRITICAL: The import path must be lowercase `label`, not uppercase `Label`. The component name remains PascalCase `Label`.
-```
+Delete any files in src/components/booking/steps/ directory
+Remove components that reference old schema extensively
+Delete API routes that use deprecated table names
+Remove any migration files or scripts referencing old structure
+
+
+UPDATE IMPORTS AND REFERENCES:
+
+
+Remove imports of deleted components
+Update any remaining references to use new table names
+Fix any broken import paths after file deletions
+
+
+CLEAN UP TYPE DEFINITIONS:
+
+
+Remove old interface definitions for deprecated tables
+Update type imports to match new schema
+Remove unused type definitions
+
+
+VALIDATE CLEANUP:
+
+bash# Ensure no legacy references remain
+grep -r "time_slots\|vehicle_sizes\|is_booked\|dvla_data" src/ --include="*.tsx" --include="*.ts"
+
+# Check build passes
+npm run build
+
+# Verify no module resolution errors
+npm run lint
+SPECIFIC FILES TO REVIEW/REMOVE:
+
+src/components/admin/EditBookingModal.tsx (if heavily references old schema)
+src/components/admin/WeeklyScheduleConfig.tsx (if uses old scheduling)
+src/app/(public)/booking/vehicle/page.tsx (if references old structure)
+Any files in src/components/booking/steps/ (old booking flow)
+Old API routes in src/app/api/ that reference deprecated tables
+
+PRESERVATION RULES:
+
+Keep files that can be easily updated to new schema
+Preserve core business logic that's still valid
+Keep UI components that don't depend on database structure
+Maintain authentication and layout components
+
+SUCCESS CRITERIA:
+
+No grep results for old table names in active code
+npm run build completes without module errors
+No references to is_booked, dvla_data, or price_pence
+All imports resolve correctly
+Codebase only references the new 15-table structure
+
+FINAL VALIDATION:
+Run these commands to confirm cleanup is complete:
+bashgrep -r "time_slots\|vehicle_sizes\|daily_availability\|weekly_schedule_template\|is_booked\|dvla_data" src/
+# Should return no results
+
+npm run build
+# Should complete successfully
+
+git status
+# Review deleted files to ensure nothing important was removed
