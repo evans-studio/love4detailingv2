@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+// Configure route as dynamic for production
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Vehicle sizes are now determined dynamically from JSON detection
 // Return the standard size categories with pricing
 const VEHICLE_SIZES = [
