@@ -1,7 +1,5 @@
 'use client';
 
-// Label component for form labels
-
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
