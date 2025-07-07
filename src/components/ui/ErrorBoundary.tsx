@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from './Button';
+import { Button } from './button';
 
 interface Props {
   children: React.ReactNode;
@@ -88,4 +88,4 @@ export function withErrorBoundary<P extends object>(
       </ErrorBoundary>
     );
   };
-} 
+}
