@@ -98,14 +98,15 @@ export async function determineVehicleSize(
       try {
         await supabase
           .from('vehicle_model_registry')
-          .insert({
+          .upsert({
             make,
             model,
             default_size: vehicleSize,
             verified: false
-          })
-          .onConflict('make,model')
-          .ignoreDuplicates();
+          }, {
+            onConflict: 'make,model',
+            ignoreDuplicates: true
+          });
       } catch (logError) {
         console.error('Failed to log unmatched vehicle:', logError);
       }

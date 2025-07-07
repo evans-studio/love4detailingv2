@@ -34,7 +34,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
   const formData = watch();
 
   // Get vehicle size details
-  const vehicleSize = vehicleSizes.find(size => size.id === formData.vehicle?.sizeId);
+  const vehicleSize = vehicleSizes.find(size => size.id === formData.vehicle?.size);
   const totalPrice = vehicleSize?.price_pence || 0;
 
   const onSubmit = async (data: UnifiedBookingForm) => {
@@ -74,7 +74,7 @@ export function SummaryStep({ onBack, vehicleSizes }: SummaryStepProps) {
           photos: undefined, // Remove file objects
         },
         dateTime: data.dateTime,
-        vehicleSizeId: data.vehicle.sizeId,
+        vehicleSizeId: data.vehicle.size,
         totalPrice: totalPrice,
         distanceWarning: data.distanceWarning,
       };

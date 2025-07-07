@@ -171,28 +171,32 @@ export async function POST(request: NextRequest) {
       try {
         await supabaseServiceRole
           .from('vehicle_model_registry')
-          .insert({
+          .upsert({
             make,
             model,
             default_size: finalSize,
             verified: false
-          })
-          .onConflict('make,model')
-          .ignoreDuplicates();
+          }, {
+            onConflict: 'make,model',
+            ignoreDuplicates: true
+          });
       } catch (error) {
         console.error('Failed to log unmatched vehicle:', error);
       }
     }
+
+    // Ensure finalSize is not undefined (fallback to medium)
+    const safeSize = finalSize || 'medium';
 
     return NextResponse.json({
       success: true,
       vehicle: {
         ...vehicle,
         size_info: {
-          id: finalSize,
-          label: finalSize.charAt(0).toUpperCase() + finalSize.slice(1),
-          description: `${finalSize} sized vehicle`,
-          price_pence: getVehicleSizePrice(finalSize)
+          id: safeSize,
+          label: safeSize.charAt(0).toUpperCase() + safeSize.slice(1),
+          description: `${safeSize} sized vehicle`,
+          price_pence: getVehicleSizePrice(safeSize)
         }
       },
       size_detection: sizeDetectionResult ? {

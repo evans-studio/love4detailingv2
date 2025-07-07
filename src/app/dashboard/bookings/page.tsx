@@ -72,10 +72,10 @@ export default function BookingsPage() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { variant: 'warning' as const, icon: AlertCircle, label: 'Pending Confirmation' },
-      confirmed: { variant: 'info' as const, icon: CheckCircle, label: 'Confirmed' },
-      in_progress: { variant: 'primary' as const, icon: Clock, label: 'In Progress' },
-      completed: { variant: 'success' as const, icon: CheckCircle, label: 'Completed' },
+      pending: { variant: 'outline' as const, icon: AlertCircle, label: 'Pending Confirmation' },
+      confirmed: { variant: 'default' as const, icon: CheckCircle, label: 'Confirmed' },
+      in_progress: { variant: 'default' as const, icon: Clock, label: 'In Progress' },
+      completed: { variant: 'secondary' as const, icon: CheckCircle, label: 'Completed' },
       cancelled: { variant: 'destructive' as const, icon: XCircle, label: 'Cancelled' },
       no_show: { variant: 'secondary' as const, icon: XCircle, label: 'No Show' }
     };

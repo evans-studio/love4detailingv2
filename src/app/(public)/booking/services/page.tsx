@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/Button'
+import { Alert, AlertDescription } from '@/components/ui/Alert'
 import { Loader2 } from 'lucide-react'
 import BookingWizard from '@/components/booking/BookingWizard'
 import ServiceSelector from '@/components/booking/ServiceSelector'
@@ -13,13 +13,13 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function BookingServicesPage() {
   const router = useRouter()
-  const { booking, updateServiceSelection, initializeBooking, setError, setLoading } = useBookingStore()
+  const { booking, updateServiceSelection, initializeBooking, setError, setLoading, error } = useBookingStore()
   
   const [services, setServices] = useState<ServiceRow[]>([])
   const [pricing, setPricing] = useState<ServicePricingRow[]>([])
   const [selectedVehicleSize, setSelectedVehicleSize] = useState<VehicleSize>('medium')
   const [isLoadingData, setIsLoadingData] = useState(true)
-  const [error, setLocalError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   // Initialize booking on mount
   useEffect(() => {

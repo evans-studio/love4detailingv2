@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/ui/Label'
 import { VehicleService } from '@/lib/services/vehicle.service'
 import { BookingService } from '@/lib/services/booking.service'
 import { VehicleSize } from '@/types/database.types'
