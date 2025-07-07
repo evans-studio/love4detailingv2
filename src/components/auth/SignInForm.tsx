@@ -137,20 +137,26 @@ export function SignInForm() {
               type="email"
               placeholder="Email"
               {...register('email')}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base"
+              className={`w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base ${errors.email ? 'border-red-500' : ''}`}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Input
               type="password"
               placeholder="Password"
               {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base"
+              className={`w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base ${errors.password ? 'border-red-500' : ''}`}
             />
+            {errors.password && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
           {error && (
             <div className="text-sm text-[#BA0C2F]">
@@ -189,10 +195,13 @@ export function SignInForm() {
               type="email"
               placeholder="Email"
               {...register('email')}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              className="w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base"
+              className={`w-full h-10 sm:h-12 px-3 sm:px-4 text-sm sm:text-base ${errors.email ? 'border-red-500' : ''}`}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           
           {error && (

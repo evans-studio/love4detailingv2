@@ -356,7 +356,7 @@ export default function PricingManagement() {
                   <Input
                     placeholder="e.g., Pet Hair Removal"
                     {...addonForm.register('name')}
-                    error={!!addonForm.formState.errors.name}
+                    className={addonForm.formState.errors.name ? 'border-red-500' : ''}
                   />
                   {addonForm.formState.errors.name && (
                     <p className="text-red-600 text-sm mt-1">
@@ -372,7 +372,7 @@ export default function PricingManagement() {
                   <Input
                     placeholder="e.g., Deep cleaning for pet hair"
                     {...addonForm.register('description')}
-                    error={!!addonForm.formState.errors.description}
+                    className={addonForm.formState.errors.description ? 'border-red-500' : ''}
                   />
                   {addonForm.formState.errors.description && (
                     <p className="text-red-600 text-sm mt-1">
@@ -392,11 +392,10 @@ export default function PricingManagement() {
                       step="0.01"
                       min="0"
                       placeholder="0.00"
-                      className="pl-10"
+                      className={`pl-10 ${addonForm.formState.errors.price_pence ? 'border-red-500' : ''}`}
                       {...addonForm.register('price_pence', {
                         setValueAs: (value) => Math.round(parseFloat(value || '0') * 100),
                       })}
-                      error={!!addonForm.formState.errors.price_pence}
                     />
                   </div>
                   {addonForm.formState.errors.price_pence && (

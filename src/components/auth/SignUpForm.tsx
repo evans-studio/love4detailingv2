@@ -62,17 +62,25 @@ export function SignUpForm() {
           <Input
             placeholder="First Name"
             {...register('firstName')}
-            error={!!errors.firstName}
-            helperText={errors.firstName?.message}
+            className={errors.firstName ? 'border-red-500' : ''}
           />
+          {errors.firstName && (
+            <p className="text-red-600 text-sm mt-1">
+              {errors.firstName.message}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
           <Input
             placeholder="Last Name"
             {...register('lastName')}
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
+            className={errors.lastName ? 'border-red-500' : ''}
           />
+          {errors.lastName && (
+            <p className="text-red-600 text-sm mt-1">
+              {errors.lastName.message}
+            </p>
+          )}
         </div>
       </div>
       <div className="space-y-2">
@@ -80,27 +88,39 @@ export function SignUpForm() {
           type="email"
           placeholder="Email"
           {...register('email')}
-          error={!!errors.email}
-          helperText={errors.email?.message}
+          className={errors.email ? 'border-red-500' : ''}
         />
+        {errors.email && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.email.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Input
           type="password"
           placeholder="Password"
           {...register('password')}
-          error={!!errors.password}
-          helperText={errors.password?.message}
+          className={errors.password ? 'border-red-500' : ''}
         />
+        {errors.password && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.password.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Input
           type="password"
           placeholder="Confirm Password"
           {...register('confirmPassword')}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword?.message}
+          className={errors.confirmPassword ? 'border-red-500' : ''}
         />
+        {errors.confirmPassword && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.confirmPassword.message}
+          </p>
+        )}
       </div>
       {error && (
         <div className="text-sm text-[#BA0C2F]">

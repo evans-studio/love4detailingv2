@@ -105,10 +105,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
               <Input
                 {...register('cardNumber')}
                 placeholder="1234 5678 9012 3456"
-                error={!!errors.cardNumber}
-                helperText={errors.cardNumber?.message}
+                className={errors.cardNumber ? 'border-red-500' : ''}
                 disabled={isProcessing}
               />
+              {errors.cardNumber && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.cardNumber.message}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-3 gap-4">
@@ -119,10 +123,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
                 <Input
                   {...register('expiryMonth')}
                   placeholder="MM"
-                  error={!!errors.expiryMonth}
-                  helperText={errors.expiryMonth?.message}
+                  className={errors.expiryMonth ? 'border-red-500' : ''}
                   disabled={isProcessing}
                 />
+                {errors.expiryMonth && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.expiryMonth.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
@@ -131,10 +139,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
                 <Input
                   {...register('expiryYear')}
                   placeholder="YY"
-                  error={!!errors.expiryYear}
-                  helperText={errors.expiryYear?.message}
+                  className={errors.expiryYear ? 'border-red-500' : ''}
                   disabled={isProcessing}
                 />
+                {errors.expiryYear && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.expiryYear.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
@@ -143,10 +155,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
                 <Input
                   {...register('cvc')}
                   placeholder="123"
-                  error={!!errors.cvc}
-                  helperText={errors.cvc?.message}
+                  className={errors.cvc ? 'border-red-500' : ''}
                   disabled={isProcessing}
                 />
+                {errors.cvc && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.cvc.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -157,10 +173,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
               <Input
                 {...register('name')}
                 placeholder="John Smith"
-                error={!!errors.name}
-                helperText={errors.name?.message}
+                className={errors.name ? 'border-red-500' : ''}
                 disabled={isProcessing}
               />
+              {errors.name && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -170,10 +190,14 @@ export function PaymentStep({ amount, onPaymentComplete, onBack }: PaymentStepPr
               <Input
                 {...register('email')}
                 placeholder="john@example.com"
-                error={!!errors.email}
-                helperText={errors.email?.message}
+                className={errors.email ? 'border-red-500' : ''}
                 disabled={isProcessing}
               />
+              {errors.email && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
           </div>
 

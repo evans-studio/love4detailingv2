@@ -1,128 +1,68 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
-interface Suggestion {
-  model: string;
-  trim: string; // Keep for interface compatibility but won't use it
-}
-
-interface AutocompleteInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSelect: (model: string, trim: string) => void;
-  suggestions: Suggestion[];
-  placeholder?: string;
-  className?: string;
-  required?: boolean;
-  error?: boolean;
-  helperText?: string;
+interface AutocompleteInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  suggestions?: string[];
+  onSuggestionSelect?: (suggestion: string) => void;
 }
 
 export function AutocompleteInput({
-  value,
-  onChange,
-  onSelect,
-  suggestions,
-  placeholder,
+  suggestions = [],
+  onSuggestionSelect,
   className,
-  required = false,
-  error = false,
-  helperText,
+  ...props
 }: AutocompleteInputProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<Suggestion[]>([]);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = React.useState<string[]>([]);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // Filter suggestions based on input
-  useEffect(() => {
-    if (!value.trim()) {
-      setFilteredSuggestions([]);
-      return;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    props.onChange?.(e);
+
+    if (value.length > 0) {
+      const filtered = suggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSuggestions(filtered);
+      setIsOpen(filtered.length > 0);
+    } else {
+      setIsOpen(false);
     }
+  };
 
-    const query = value.toLowerCase();
-    const filtered = suggestions.filter(suggestion => 
-      suggestion.model.toLowerCase().includes(query)
-    );
-
-    // Sort by relevance
-    filtered.sort((a, b) => {
-      const aModel = a.model.toLowerCase();
-      const bModel = b.model.toLowerCase();
-      
-      // Exact matches first
-      if (aModel === query) return -1;
-      if (bModel === query) return 1;
-      
-      // Then starts with query
-      if (aModel.startsWith(query)) return -1;
-      if (bModel.startsWith(query)) return 1;
-      
-      return 0;
-    });
-
-    setFilteredSuggestions(filtered);
-  }, [value, suggestions]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+  const handleSuggestionClick = (suggestion: string) => {
+    onSuggestionSelect?.(suggestion);
+    setIsOpen(false);
+    if (inputRef.current) {
+      inputRef.current.value = suggestion;
     }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  };
 
   return (
-    <div ref={wrapperRef} className="relative">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setIsOpen(true);
-        }}
-        onFocus={() => setIsOpen(true)}
-        placeholder={placeholder}
-        required={required}
-        className={cn(
-          'flex h-10 w-full rounded-md border border-gray-700 bg-[#1A1A1A] px-3 py-2 text-sm text-[#F2F2F2] ring-offset-[#141414] placeholder:text-[#8B8B8B] focus:outline-none focus:ring-2 focus:ring-[#9146FF] focus:ring-offset-2',
-          error && 'border-[#BA0C2F] focus-visible:ring-[#BA0C2F]',
-          className
-        )}
+    <div className="relative">
+      <Input
+        ref={inputRef}
+        {...props}
+        onChange={handleInputChange}
+        className={className}
       />
-
       {isOpen && filteredSuggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto rounded-md border border-gray-700 bg-[#262626] text-[#F2F2F2] shadow-lg">
+        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-40 overflow-auto">
           {filteredSuggestions.map((suggestion, index) => (
-            <li
-              key={`${suggestion.model}-${index}`}
-              className="px-3 py-2 text-sm cursor-pointer hover:bg-[#363636] focus:bg-[#363636]"
-              onClick={() => {
-                onSelect(suggestion.model, ''); // Pass empty string for trim
-                setIsOpen(false);
-              }}
+            <div
+              key={index}
+              className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-white text-sm"
+              onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion.model}
-            </li>
+              {suggestion}
+            </div>
           ))}
-        </ul>
-      )}
-
-      {helperText && (
-        <p className={cn(
-          'mt-1 text-sm',
-          error ? 'text-[#BA0C2F]' : 'text-[#8B8B8B]'
-        )}>
-          {helperText}
-        </p>
+        </div>
       )}
     </div>
   );
-} 
+}

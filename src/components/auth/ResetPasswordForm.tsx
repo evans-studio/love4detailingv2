@@ -69,9 +69,13 @@ export function ResetPasswordForm() {
           type="email"
           placeholder="Email"
           {...register('email')}
-          error={!!errors.email}
-          helperText={errors.email?.message}
+          className={errors.email ? 'border-red-500' : ''}
         />
+        {errors.email && (
+          <p className="text-red-600 text-sm mt-1">
+            {errors.email.message}
+          </p>
+        )}
       </div>
       {error && (
         <div className="text-sm text-[#BA0C2F]">

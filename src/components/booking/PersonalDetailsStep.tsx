@@ -106,10 +106,14 @@ export default function PersonalDetailsStep() {
               {...register('firstName')}
               autoComplete="given-name"
               placeholder="Enter your first name"
-              error={shouldShowError('firstName')}
-              helperText={shouldShowError('firstName') ? errors.firstName?.message : undefined}
+              className={shouldShowError('firstName') ? 'border-red-500' : ''}
               required
             />
+            {shouldShowError('firstName') && errors.firstName && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.firstName.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -119,10 +123,14 @@ export default function PersonalDetailsStep() {
               {...register('lastName')}
               autoComplete="family-name"
               placeholder="Enter your last name"
-              error={shouldShowError('lastName')}
-              helperText={shouldShowError('lastName') ? errors.lastName?.message : undefined}
+              className={shouldShowError('lastName') ? 'border-red-500' : ''}
               required
             />
+            {shouldShowError('lastName') && errors.lastName && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.lastName.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -133,10 +141,14 @@ export default function PersonalDetailsStep() {
               {...register('email')}
               autoComplete="email"
               placeholder="Enter your email"
-              error={shouldShowError('email')}
-              helperText={shouldShowError('email') ? errors.email?.message : undefined}
+              className={shouldShowError('email') ? 'border-red-500' : ''}
               required
             />
+            {shouldShowError('email') && errors.email && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -147,8 +159,7 @@ export default function PersonalDetailsStep() {
               {...register('phone')}
               autoComplete="tel"
               placeholder="Enter your phone number"
-              error={shouldShowError('phone')}
-              helperText={shouldShowError('phone') ? errors.phone?.message : undefined}
+              className={shouldShowError('phone') ? "border-red-500" : ""}
               required
             />
           </div>
@@ -162,8 +173,7 @@ export default function PersonalDetailsStep() {
               {...register('address_line1')}
               autoComplete="street-address"
               placeholder="Enter your street address"
-              error={shouldShowError('address_line1')}
-              helperText={shouldShowError('address_line1') ? errors.address_line1?.message : undefined}
+              className={shouldShowError('address_line1') ? "border-red-500" : ""}
               required
             />
           </div>
@@ -175,8 +185,7 @@ export default function PersonalDetailsStep() {
               {...register('address_line2')}
               autoComplete="address-line2"
               placeholder="Apartment, suite, etc."
-              error={shouldShowError('address_line2')}
-              helperText={shouldShowError('address_line2') ? errors.address_line2?.message : undefined}
+              className={shouldShowError('address_line2') ? "border-red-500" : ""}
             />
           </div>
 
@@ -188,8 +197,7 @@ export default function PersonalDetailsStep() {
                 {...register('city')}
                 autoComplete="address-level2"
                 placeholder="Enter your city"
-                error={shouldShowError('city')}
-                helperText={shouldShowError('city') ? errors.city?.message : undefined}
+                className={shouldShowError('city') ? "border-red-500" : ""}
                 required
               />
             </div>
@@ -201,10 +209,8 @@ export default function PersonalDetailsStep() {
                 {...register('postcode')}
                 autoComplete="postal-code"
                 placeholder="Enter your postcode"
-                error={shouldShowError('postcode')}
-                helperText={shouldShowError('postcode') ? errors.postcode?.message : undefined}
+                className={`${shouldShowError('postcode') ? 'border-red-500' : ''} uppercase`}
                 required
-                className="uppercase"
               />
             </div>
           </div>

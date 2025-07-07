@@ -128,7 +128,7 @@ export function VehicleList({ onError, onDeleteSuccess }: VehicleListProps) {
   };
 
   if (loading) {
-    return <LoadingState text="Loading vehicles..." />;
+    return <LoadingState>Loading vehicles...</LoadingState>;
   }
 
   if (error) {

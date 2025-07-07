@@ -238,7 +238,7 @@ export function QuickBook({ userVehicles }: QuickBookProps) {
                   Select Time
                 </label>
                 {loading ? (
-                  <LoadingState text="Loading available slots..." />
+                  <LoadingState>Loading available slots...</LoadingState>
                 ) : availableTimeSlots.length > 0 ? (
                   <Select
                     value={selectedTimeSlot?.id || ''}

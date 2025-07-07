@@ -186,8 +186,7 @@ export function VehicleInfoStep({ onNext, onBack, vehicleSizes }: VehicleInfoSte
           <Input
             {...register('vehicle.registration')}
             placeholder="e.g. AB12 CDE"
-            error={!!errors.vehicle?.registration}
-            className="uppercase"
+            className={`uppercase ${errors.vehicle?.registration ? 'border-red-500' : ''}`}
           />
           {errors.vehicle?.registration && (
             <p className="mt-1 text-sm text-[#BA0C2F]">{errors.vehicle.registration.message}</p>

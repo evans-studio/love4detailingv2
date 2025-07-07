@@ -174,7 +174,7 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
   };
 
   if (loading) {
-    return <LoadingState text="Determining vehicle size..." />;
+    return <LoadingState>Determining vehicle size...</LoadingState>;
   }
 
   return (
@@ -243,9 +243,9 @@ export default function VehicleStep({ userVehicles = [] }: VehicleStepProps) {
                   </label>
                   <AutocompleteInput
                     value={modelInput}
-                    onChange={setModelInput}
-                    onSelect={handleModelSelect}
-                    suggestions={modelSuggestions}
+                    onChange={(e) => setModelInput(e.target.value)}
+                    onSuggestionSelect={handleModelSelect}
+                    suggestions={modelSuggestions.map(m => `${m.model} ${m.trim}`)}
                     placeholder="Start typing to find your model"
                     required={true}
                   />
