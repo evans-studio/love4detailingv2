@@ -17,7 +17,9 @@ import {
   ArrowRight,
   Shield,
   Award,
-  Zap
+  Zap,
+  Calendar,
+  Users
 } from 'lucide-react'
 import Image from 'next/image'
 
