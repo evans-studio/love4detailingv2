@@ -5,19 +5,11 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Alert, AlertDescription } from '@/components/ui/Alert'
-import { Badge } from '@/components/ui/Badge'
 import { 
   CheckCircle, 
   Mail, 
-  MapPin, 
-  Star, 
   Clock, 
-  Car, 
-  Sparkles,
-  ArrowRight,
-  Shield,
-  Award,
-  Zap
+  ArrowRight
 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -178,43 +170,46 @@ export default function ComingSoonPage() {
                 <span className="text-foreground text-sm font-medium">Coming Soon</span>
               </div>
               
-              <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+              <h2 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
                 Love 4 Detailing
-                <br />
-                <span className="text-primary">Booking App</span>
               </h2>
               
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-                We're launching our new booking app to make scheduling your car detailing even easier.
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed font-light">
+                Premium Mobile Car Detailing
               </p>
 
-              {/* Service Area Messaging */}
               <div className="text-center mb-8">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <p className="text-lg text-primary font-medium">
-                    Serving SW9 and surrounding areas within 17.5 mile radius.
-                  </p>
-                </div>
-                <p className="text-muted-foreground text-sm">
-                  Standard pricing within 10 miles • Extended areas available with travel supplement
+                <p className="text-lg text-foreground font-medium mb-2">
+                  Professional • Mobile • Convenient
+                </p>
+                <p className="text-muted-foreground text-base max-w-lg mx-auto">
+                  We bring premium car detailing to your location
                 </p>
               </div>
 
-              {/* Trust Badges */}
+              {/* Premium Credentials */}
               <div className="flex flex-wrap justify-center gap-4 mb-8">
-                <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Shield className="w-4 h-4 mr-2" />
-                  Fully Insured
-                </Badge>
-                <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Award className="w-4 h-4 mr-2" />
-                  Professional Grade
-                </Badge>
-                <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Same Day Service
-                </Badge>
+                <div className="flex items-center gap-2 px-3 py-1 bg-card/30 rounded-full border border-border/50">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Fully Licensed</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-card/30 rounded-full border border-border/50">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Insured</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-card/30 rounded-full border border-border/50">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Professional Grade</span>
+                </div>
+              </div>
+
+              <div className="text-center mb-12">
+                <p className="text-lg text-primary font-medium mb-2">
+                  South London & Surrounding Areas
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Premium service, at your location, on your schedule
+                </p>
               </div>
 
               <div className="text-muted-foreground text-lg mb-8">
@@ -223,9 +218,9 @@ export default function ComingSoonPage() {
             </div>
 
             {/* Countdown Timer */}
-            <div className={`mb-16 transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-8 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Launch Countdown
+            <div className={`mb-20 transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-12 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                Launching July 31st, 2025
               </h3>
               
               <div className="flex justify-center items-center space-x-4 md:space-x-8">
@@ -236,34 +231,6 @@ export default function ComingSoonPage() {
               </div>
             </div>
 
-            {/* Services Preview */}
-            <div className={`mb-16 transition-all duration-1000 delay-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <Card className="bg-card/40 backdrop-blur-sm border-border hover:bg-card/50 transition-all duration-300 hover:scale-105 hover:shadow-premium group">
-                  <CardContent className="p-6 text-center">
-                    <Car className="w-12 h-12 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" />
-                    <h4 className="text-xl font-semibold text-foreground mb-2">Mobile Service</h4>
-                    <p className="text-muted-foreground">We come to you - at home, work, or anywhere convenient</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card/40 backdrop-blur-sm border-border hover:bg-card/50 transition-all duration-300 hover:scale-105 hover:shadow-premium group">
-                  <CardContent className="p-6 text-center">
-                    <Star className="w-12 h-12 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" />
-                    <h4 className="text-xl font-semibold text-foreground mb-2">Premium Quality</h4>
-                    <p className="text-muted-foreground">Professional equipment and premium products for exceptional results</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card/40 backdrop-blur-sm border-border hover:bg-card/50 transition-all duration-300 hover:scale-105 hover:shadow-premium group">
-                  <CardContent className="p-6 text-center">
-                    <MapPin className="w-12 h-12 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" />
-                    <h4 className="text-xl font-semibold text-foreground mb-2">South London</h4>
-                    <p className="text-muted-foreground">Comprehensive coverage across South London boroughs</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
 
             {/* Email Signup */}
             <div className={`max-w-md mx-auto transition-all duration-1000 delay-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -271,9 +238,9 @@ export default function ComingSoonPage() {
                 <CardContent className="p-8">
                   <div className="text-center mb-6">
                     <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-foreground mb-2">Get Notified</h3>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">Be First to Experience Premium Care</h3>
                     <p className="text-muted-foreground">
-                      Be the first to know when we launch and get exclusive early access
+                      Get notified when we launch and secure priority booking
                     </p>
                   </div>
 
@@ -301,7 +268,7 @@ export default function ComingSoonPage() {
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2">
-                          <span>Notify Me</span>
+                          <span>Get Early Access</span>
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       )}
@@ -335,24 +302,11 @@ export default function ComingSoonPage() {
         </main>
 
         {/* Footer */}
-        <footer className="p-6 md:p-8 border-t border-border/30">
+        <footer className="p-6 md:p-8">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
-              <p className="text-muted-foreground text-sm">
-                © 2025 Love4Detailing. Premium mobile car detailing services launching soon in South London.
-              </p>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Shield className="h-4 w-4 text-l4d-success" />
-                  Fully Insured
-                </span>
-                <span className="flex items-center gap-1">
-                  <Award className="h-4 w-4 text-l4d-success" />
-                  Professional Grade
-                </span>
-              </div>
-            </div>
-            <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <p className="text-muted-foreground text-sm">
+              © 2025 Love4Detailing
+            </p>
           </div>
         </footer>
       </div>
