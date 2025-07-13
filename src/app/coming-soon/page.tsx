@@ -181,7 +181,7 @@ export default function ComingSoonPage() {
               <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
                 Love 4 Detailing
                 <br />
-                <span className="text-primary">Booking App Coming Soon</span>
+                <span className="text-primary">Booking App</span>
               </h2>
               
               <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
