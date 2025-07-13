@@ -174,16 +174,13 @@ export default function ComingSoonPage() {
                 <Image
                   src="/logo.png"
                   alt="Love4Detailing - Premium Mobile Car Detailing"
-                  width={400}
-                  height={120}
-                  className="h-20 md:h-24 w-auto mx-auto object-contain filter drop-shadow-lg"
+                  width={800}
+                  height={240}
+                  className="h-28 md:h-32 w-auto mx-auto object-contain filter drop-shadow-lg"
                   priority
                 />
               </div>
               
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-                Premium Mobile Car Detailing
-              </p>
 
               <div className="text-center mb-8">
                 <p className="text-lg text-foreground font-medium mb-2">
