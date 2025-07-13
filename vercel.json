@@ -1,0 +1,29 @@
+{
+  "functions": {
+    "middleware.ts": {
+      "runtime": "edge"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/coming-soon",
+      "has": [
+        {
+          "type": "host",
+          "value": "love4detailing.com"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "destination": "/coming-soon",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.love4detailing.com"
+        }
+      ]
+    }
+  ]
+}
