@@ -2,9 +2,9 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { CheckCircle, Clock, AlertTriangle, XCircle, Star, Loader2 } from 'lucide-react'
 
 export interface TimeSlot {

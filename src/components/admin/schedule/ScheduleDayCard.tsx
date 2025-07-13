@@ -7,10 +7,10 @@
  */
 
 import React, { useCallback, useMemo } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { Loader2, AlertCircle, CheckCircle, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useScheduleStore, scheduleSelectors, type DayOverview } from '@/lib/store/schedule-enhanced'

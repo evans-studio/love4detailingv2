@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
 import { MapPin, Clock, Car, Award } from 'lucide-react'
 import { getDefaultService } from '@/lib/config/services'
 import { calculateTotalWithTravelCharge } from '@/lib/utils/postcode-distance'

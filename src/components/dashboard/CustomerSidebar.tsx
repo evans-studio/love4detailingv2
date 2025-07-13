@@ -33,8 +33,8 @@ import {
   Star,
   ChevronRight
 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 
 // Navigation items with status and upcoming features
 const navigationItems = [

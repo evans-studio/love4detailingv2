@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/context'
 import { useNotifications } from '@/hooks/useNotifications'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import PortalDropdown from '@/components/ui/PortalDropdown'
 import { 
   Menu, 
