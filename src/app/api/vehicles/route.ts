@@ -1,367 +1,246 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
-// Vehicle size determination removed - now handled by service pricing system
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerSupabase } from '@/lib/supabase/server'
 
-export const dynamic = 'force-dynamic';
-
-// Helper function to get pricing for vehicle sizes
-function getVehicleSizePrice(sizeId: string): number {
-  const prices = {
-    small: 3500,
-    medium: 4500, 
-    large: 5500,
-    extra_large: 6500
-  };
-  return prices[sizeId as keyof typeof prices] || 4500;
+// Size mapping between frontend and database formats
+const dbToFrontendSizeMap = {
+  'small': 'S',
+  'medium': 'M',
+  'large': 'L',
+  'extra_large': 'XL'
 }
 
-const supabaseServiceRole = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const frontendToDbSizeMap = {
+  'S': 'small',
+  'M': 'medium',
+  'L': 'large',
+  'XL': 'extra_large'
+}
 
-// Validation schema for vehicle creation/update
-const vehicleSchema = z.object({
-  registration: z.string().min(2, 'Registration is required').max(10, 'Registration too long'),
-  make: z.string().min(1, 'Make is required'),
-  model: z.string().min(1, 'Model is required'),
-  year: z.number().optional(),
-  color: z.string().optional(),
-  size: z.enum(['small', 'medium', 'large', 'extra_large']).optional(),
-  vehicle_type: z.string().optional(),
-  special_requirements: z.string().optional(),
-  photos: z.array(z.string()).optional()
-});
-
-// Get user's vehicles
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = createServerSupabase()
     
-    if (authError || !user) {
+    // Get user from session
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: 'Unauthorized' },
         { status: 401 }
-      );
+      )
     }
 
-    const { data: vehicles, error: vehiclesError } = await supabaseServiceRole
-      .from('vehicles')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+    const { searchParams } = new URL(request.url)
+    const includeInactive = searchParams.get('include_inactive') === 'true'
 
-    if (vehiclesError) {
-      return NextResponse.json(
-        { error: 'Failed to fetch vehicles', details: vehiclesError.message },
-        { status: 500 }
-      );
-    }
-
-    // Add vehicle size information dynamically
-    const vehiclesWithSizes = (vehicles || []).map(vehicle => ({
-      ...vehicle,
-      size_info: vehicle.size ? {
-        id: vehicle.size,
-        label: vehicle.size.charAt(0).toUpperCase() + vehicle.size.slice(1),
-        description: `${vehicle.size} sized vehicle`,
-        price_pence: getVehicleSizePrice(vehicle.size)
-      } : null
-    }));
-
-    return NextResponse.json({
-      success: true,
-      vehicles: vehiclesWithSizes
-    });
-
-  } catch (error) {
-    console.error('Vehicles fetch error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-// Create or register a new vehicle
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get vehicles using service role to bypass RLS
+    const { createClient } = require('@supabase/supabase-js')
+    const serviceSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
     
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    const validationResult = vehicleSchema.safeParse(body);
-    
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: 'Invalid vehicle data', details: validationResult.error.errors },
-        { status: 400 }
-      );
-    }
-
-    const { registration, make, model, year, color, size, vehicle_type, special_requirements, photos } = validationResult.data;
-
-    // Check if vehicle already exists for this user
-    const { data: existingVehicle } = await supabaseServiceRole
+    let query = serviceSupabase
       .from('vehicles')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('registration', registration.toUpperCase())
-      .single();
-
-    if (existingVehicle) {
-      return NextResponse.json(
-        { error: 'Vehicle with this registration already exists for your account' },
-        { status: 409 }
-      );
-    }
-
-    // Use provided size or default to medium
-    let finalSize = size || 'medium';
-
-    // Create the vehicle record
-    const { data: vehicle, error: vehicleError } = await supabaseServiceRole
-      .from('vehicles')
-      .insert({
-        user_id: user.id,
-        registration: registration.toUpperCase(),
+      .select(`
+        id,
+        user_id,
+        registration,
         make,
         model,
-        year: year || null,
-        color: color || null,
-        size: finalSize,
-        vehicle_type: vehicle_type || null,
-        special_requirements: special_requirements || null
-      })
-      .select('*')
-      .single();
-
-    if (vehicleError) {
-      return NextResponse.json(
-        { error: 'Failed to create vehicle', details: vehicleError.message },
-        { status: 500 }
-      );
-    }
-
-    // Log vehicle for admin review if size wasn't provided
-    if (!size) {
-      try {
-        await supabaseServiceRole
-          .from('vehicle_model_registry')
-          .upsert({
-            make,
-            model,
-            default_size: finalSize,
-            verified: false
-          }, {
-            onConflict: 'make,model',
-            ignoreDuplicates: true
-          });
-      } catch (error) {
-        console.error('Failed to log vehicle for review:', error);
-      }
-    }
-
-    // Ensure finalSize is not undefined (fallback to medium)
-    const safeSize = finalSize || 'medium';
-
-    return NextResponse.json({
-      success: true,
-      vehicle: {
-        ...vehicle,
-        size_info: {
-          id: safeSize,
-          label: safeSize.charAt(0).toUpperCase() + safeSize.slice(1),
-          description: `${safeSize} sized vehicle`,
-          price_pence: getVehicleSizePrice(safeSize)
-        }
-      },
-      size_detection: {
-        auto_detected: !size,
-        confidence: size ? 'high' : 'low',
-        requires_review: !size
-      }
-    });
-
-  } catch (error) {
-    console.error('Vehicle creation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-// Update vehicle information
-export async function PUT(request: NextRequest) {
-  try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    const { vehicle_id, ...updates } = body;
-
-    if (!vehicle_id) {
-      return NextResponse.json(
-        { error: 'Vehicle ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate updates
-    const validationResult = vehicleSchema.partial().safeParse(updates);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: 'Invalid update data', details: validationResult.error.errors },
-        { status: 400 }
-      );
-    }
-
-    // Verify ownership
-    const { data: vehicle, error: ownershipError } = await supabaseServiceRole
-      .from('vehicles')
-      .select('id')
-      .eq('id', vehicle_id)
+        year,
+        color,
+        size,
+        size_confirmed,
+        is_active,
+        created_at,
+        updated_at
+      `)
       .eq('user_id', user.id)
-      .single();
+      .order('created_at', { ascending: false })
 
-    if (ownershipError || !vehicle) {
-      return NextResponse.json(
-        { error: 'Vehicle not found or access denied' },
-        { status: 404 }
-      );
+    if (!includeInactive) {
+      query = query.eq('is_active', true)
     }
 
-    // Apply updates
-    const updateData = { ...validationResult.data, updated_at: new Date().toISOString() };
+    const { data: vehicles, error } = await query
+
+    if (error) {
+      console.error('Error fetching vehicles:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // Get booking statistics for each vehicle
+    const vehicleStats = new Map()
     
-    // If registration is being updated, normalize it
-    if (updateData.registration) {
-      updateData.registration = updateData.registration.toUpperCase();
-    }
-
-    const { data: updatedVehicle, error: updateError } = await supabaseServiceRole
-      .from('vehicles')
-      .update(updateData)
-      .eq('id', vehicle_id)
-      .select('*')
-      .single();
-
-    if (updateError) {
-      return NextResponse.json(
-        { error: 'Failed to update vehicle', details: updateError.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      vehicle: {
-        ...updatedVehicle,
-        size_info: updatedVehicle.size ? {
-          id: updatedVehicle.size,
-          label: updatedVehicle.size.charAt(0).toUpperCase() + updatedVehicle.size.slice(1),
-          description: `${updatedVehicle.size} sized vehicle`,
-          price_pence: getVehicleSizePrice(updatedVehicle.size)
-        } : null
+    if (vehicles && vehicles.length > 0) {
+      const vehicleIds = vehicles.map((v: any) => v.id)
+      
+      const { data: bookingStats, error: statsError } = await serviceSupabase
+        .from('bookings')
+        .select(`
+          vehicle_id,
+          status,
+          total_price_pence,
+          service_price_pence,
+          created_at
+        `)
+        .in('vehicle_id', vehicleIds)
+      
+      if (!statsError && bookingStats) {
+        // Calculate stats for each vehicle
+        vehicleIds.forEach((vehicleId: any) => {
+          const vehicleBookings = bookingStats.filter((b: any) => b.vehicle_id === vehicleId)
+          const completedBookings = vehicleBookings.filter((b: any) => b.status === 'completed')
+          const totalSpent = completedBookings.reduce((sum: number, b: any) => 
+            sum + (b.total_price_pence || b.service_price_pence || 0), 0)
+          
+          const lastService = completedBookings.length > 0 
+            ? completedBookings
+                .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+                .created_at
+            : null
+          
+          vehicleStats.set(vehicleId, {
+            booking_count: vehicleBookings.length,
+            completed_bookings: completedBookings.length,
+            total_spent_pence: totalSpent,
+            last_service_date: lastService
+          })
+        })
       }
-    });
+    }
 
+    // Transform vehicles to match the API format expected by the frontend
+    const transformedVehicles = vehicles?.map((vehicle: any) => ({
+      id: vehicle.id,
+      user_id: vehicle.user_id,
+      registration: vehicle.registration,
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      color: vehicle.color,
+      size: dbToFrontendSizeMap[vehicle.size as keyof typeof dbToFrontendSizeMap] || 'M',
+      size_confirmed: vehicle.size_confirmed || false,
+      booking_count: vehicleStats.get(vehicle.id)?.booking_count || 0,
+      completed_bookings: vehicleStats.get(vehicle.id)?.completed_bookings || 0,
+      total_spent_pence: vehicleStats.get(vehicle.id)?.total_spent_pence || 0,
+      last_service_date: vehicleStats.get(vehicle.id)?.last_service_date || null,
+      is_active: vehicle.is_active,
+      created_at: vehicle.created_at,
+      updated_at: vehicle.updated_at
+    })) || []
+
+    return NextResponse.json({ data: transformedVehicles })
   } catch (error) {
-    console.error('Vehicle update error:', error);
+    console.error('Error in vehicles API:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    );
+    )
   }
 }
 
-// Delete vehicle
-export async function DELETE(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = createServerSupabase()
     
-    if (authError || !user) {
+    // Get user from session
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: 'Unauthorized' },
         { status: 401 }
-      );
+      )
     }
 
-    const { searchParams } = new URL(request.url);
-    const vehicleId = searchParams.get('id');
+    const body = await request.json()
+    const vehicleData = body.vehicleData || body
 
-    if (!vehicleId) {
+    if (!vehicleData) {
       return NextResponse.json(
-        { error: 'Vehicle ID is required' },
+        { error: 'Vehicle data is required' },
         { status: 400 }
-      );
+      )
     }
 
-    // Check if vehicle has any bookings
-    const { data: bookings, error: bookingsError } = await supabaseServiceRole
-      .from('bookings')
-      .select('id')
-      .eq('vehicle_id', vehicleId)
-      .limit(1);
-
-    if (bookingsError) {
+    // Validate required fields
+    const required = ['registration', 'make', 'model']
+    const missing = required.filter(field => !vehicleData[field])
+    
+    if (missing.length > 0) {
       return NextResponse.json(
-        { error: 'Failed to check vehicle bookings' },
-        { status: 500 }
-      );
+        { error: `Missing required fields: ${missing.join(', ')}` },
+        { status: 400 }
+      )
     }
 
-    if (bookings && bookings.length > 0) {
-      return NextResponse.json(
-        { error: 'Cannot delete vehicle with existing bookings' },
-        { status: 409 }
-      );
-    }
+    // Use service role to bypass RLS for vehicle operations
+    const { createClient } = require('@supabase/supabase-js')
+    const serviceSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    // Verify ownership and delete
-    const { error: deleteError } = await supabaseServiceRole
+    // Check for duplicate registration
+    const { data: existing, error: checkError } = await serviceSupabase
       .from('vehicles')
-      .delete()
-      .eq('id', vehicleId)
-      .eq('user_id', user.id);
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('registration', vehicleData.registration.toUpperCase())
+      .eq('is_active', true)
+      .single()
 
-    if (deleteError) {
-      return NextResponse.json(
-        { error: 'Failed to delete vehicle', details: deleteError.message },
-        { status: 500 }
-      );
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking for duplicate vehicle:', checkError)
+      return NextResponse.json({ error: 'Failed to check for duplicate vehicle' }, { status: 500 })
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Vehicle deleted successfully'
-    });
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Vehicle with this registration already exists' },
+        { status: 400 }
+      )
+    }
 
+    // Convert frontend size format to database format
+    const dbSize = frontendToDbSizeMap[vehicleData.size as keyof typeof frontendToDbSizeMap] || 'medium'
+
+    // Insert new vehicle (without size_confirmed for now)
+    const { data: newVehicle, error } = await serviceSupabase
+      .from('vehicles')
+      .insert([{
+        user_id: user.id,
+        registration: vehicleData.registration.toUpperCase(),
+        make: vehicleData.make,
+        model: vehicleData.model,
+        year: vehicleData.year || new Date().getFullYear(),
+        color: vehicleData.color || '',
+        size: dbSize,
+        size_confirmed: false,
+        is_active: true
+      }])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating vehicle:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // Transform the response back to frontend format
+    const transformedVehicle = {
+      ...newVehicle,
+      size: dbToFrontendSizeMap[newVehicle.size as keyof typeof dbToFrontendSizeMap] || 'M'
+    }
+
+    return NextResponse.json({ data: transformedVehicle }, { status: 201 })
   } catch (error) {
-    console.error('Vehicle deletion error:', error);
+    console.error('Error in vehicles POST API:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    );
+    )
   }
 }

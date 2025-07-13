@@ -67,7 +67,7 @@ ON CONFLICT (key) DO UPDATE SET
 -- This creates a basic schedule from 9 AM to 5 PM with 2-hour slots
 DO $$
 DECLARE
-    current_date DATE := CURRENT_DATE;
+    iter_date DATE := CURRENT_DATE;
     end_date DATE := CURRENT_DATE + INTERVAL '30 days';
     slot_start TIME;
     slot_end TIME;
@@ -77,9 +77,9 @@ BEGIN
     DELETE FROM available_slots WHERE slot_date >= CURRENT_DATE;
     
     -- Generate slots for each day
-    WHILE current_date <= end_date LOOP
+    WHILE iter_date <= end_date LOOP
         -- Skip Sundays (day of week 0)
-        IF EXTRACT(DOW FROM current_date) != 0 THEN
+        IF EXTRACT(DOW FROM iter_date) != 0 THEN
             slot_start := '09:00:00';
             
             -- Generate slots throughout the day
@@ -94,7 +94,7 @@ BEGIN
                     current_bookings,
                     is_blocked
                 ) VALUES (
-                    current_date,
+                    iter_date,
                     slot_start,
                     slot_end,
                     1,  -- One booking per slot
@@ -106,7 +106,7 @@ BEGIN
             END LOOP;
         END IF;
         
-        current_date := current_date + INTERVAL '1 day';
+        iter_date := iter_date + INTERVAL '1 day';
     END LOOP;
 END $$;
 
@@ -194,7 +194,7 @@ ON CONFLICT (make, model) DO UPDATE SET
 -- Note: This is just for development/testing purposes
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at, role)
 VALUES (
-    'admin-user-id-12345',
+    '12345678-1234-1234-1234-123456789012',
     'admin@love4detailing.com',
     crypt('admin123', gen_salt('bf')),
     NOW(),
@@ -206,7 +206,7 @@ VALUES (
 -- Create corresponding user record
 INSERT INTO users (id, email, full_name, phone, role, is_active, email_verified_at)
 VALUES (
-    'admin-user-id-12345',
+    '12345678-1234-1234-1234-123456789012',
     'admin@love4detailing.com',
     'System Administrator',
     '0123456789',
@@ -222,7 +222,7 @@ VALUES (
 -- Create sample customer rewards for the admin user
 INSERT INTO customer_rewards (user_id, customer_email, total_points, points_lifetime, current_tier)
 VALUES (
-    'admin-user-id-12345',
+    '12345678-1234-1234-1234-123456789012',
     'admin@love4detailing.com',
     0,
     0,

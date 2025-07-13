@@ -104,46 +104,5 @@ GRANT EXECUTE ON FUNCTION create_anonymous_booking(text, text, text, uuid, uuid,
 -- Add comment for documentation
 COMMENT ON FUNCTION create_anonymous_booking IS 'Creates a booking for anonymous users with proper slot availability validation';
 
--- Function to generate initial available slots
-DO $$
-DECLARE
-    v_start_date DATE := CURRENT_DATE;
-    v_end_date DATE := CURRENT_DATE + INTERVAL '30 days';
-    v_current_date DATE := v_start_date;
-    v_slot_start TIME;
-    v_slot_end TIME;
-    v_slot_duration INTERVAL := '2 hours';
-BEGIN
-    -- Generate slots for each day
-    WHILE v_current_date <= v_end_date LOOP
-        -- Skip Sundays (day of week 0)
-        IF EXTRACT(DOW FROM v_current_date) != 0 THEN
-            v_slot_start := '09:00:00';
-            
-            -- Generate slots throughout the day
-            WHILE v_slot_start <= '15:00:00' LOOP  -- Last slot starts at 3 PM
-                v_slot_end := v_slot_start + v_slot_duration;
-                
-                INSERT INTO available_slots (
-                    slot_date,
-                    start_time,
-                    end_time,
-                    max_bookings,
-                    current_bookings,
-                    is_blocked
-                ) VALUES (
-                    v_current_date,
-                    v_slot_start,
-                    v_slot_end,
-                    1,  -- One booking per slot
-                    0,  -- No current bookings
-                    FALSE
-                );
-                
-                v_slot_start := v_slot_start + v_slot_duration;
-            END LOOP;
-        END IF;
-        
-        v_current_date := v_current_date + INTERVAL '1 day';
-    END LOOP;
-END $$; 
+-- Available slots are already generated in the seed data migration
+-- This comment replaces the duplicate slot generation code 

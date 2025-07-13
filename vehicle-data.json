@@ -1,0 +1,3416 @@
+[
+    {
+      "make": "Alfa Romeo",
+      "model": "Giulia",
+      "trim": "Ti",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Giulia",
+      "trim": "Veloce",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Giulia",
+      "trim": "Competizione",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Junior",
+      "trim": "Sprint",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Stelvio",
+      "trim": "Sprint",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Stelvio",
+      "trim": "Ti",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Stelvio",
+      "trim": "Veloce",
+      "size": "L"
+    },
+    {
+      "make": "Alfa Romeo",
+      "model": "Tonale",
+      "trim": "Sprint",
+      "size": "L"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "DB12",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "DB12 Volante",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "DBX707",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "Valhalla",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "Valkyrie",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "Vanquish",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Aston Martin",
+      "model": "Vantage",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "A1",
+      "trim": "Advanced",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "A1",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "A1",
+      "trim": "S line",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "A3",
+      "trim": "Advanced",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "A3",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "A3",
+      "trim": "S line",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "A4",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A4",
+      "trim": "Black Edition",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A4",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A4",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A5",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A5",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A5",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A6",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A6",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A6",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A7",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A7",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "A7",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q2",
+      "trim": "Advanced",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "Q2",
+      "trim": "S line",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "Q2",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "Audi",
+      "model": "Q3",
+      "trim": "Advanced",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "Q3",
+      "trim": "S line",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "Q3",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "Q4 e-tron",
+      "trim": "Advanced",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "Q4 e-tron",
+      "trim": "S line",
+      "size": "M"
+    },
+    {
+      "make": "Audi",
+      "model": "Q5",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q5",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q5",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q6 e-tron",
+      "trim": "Advanced",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q6 e-tron",
+      "trim": "S line",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "Q7",
+      "trim": "Advanced",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "Q7",
+      "trim": "S line",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "Q7",
+      "trim": "Sport",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "Q8",
+      "trim": "Advanced",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "Q8",
+      "trim": "S line",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "Q8",
+      "trim": "Sport",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "R8",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "RS3",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "RS4",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "RS5",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "RS6",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "RS7",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "RSQ8",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Audi",
+      "model": "S3",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "S4",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "S5",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "SQ5",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Audi",
+      "model": "TT RS",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga",
+      "trim": "Azure",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga",
+      "trim": "GT",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga",
+      "trim": "Mulliner",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga",
+      "trim": "Speed",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga EWB",
+      "trim": "Azure",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Bentayga EWB",
+      "trim": "Mulliner",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GT",
+      "trim": "Azure",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GT",
+      "trim": "Mulliner",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GT",
+      "trim": "Speed",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GTC",
+      "trim": "Azure",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GTC",
+      "trim": "Mulliner",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Continental GTC",
+      "trim": "Speed",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Flying Spur",
+      "trim": "Azure",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Flying Spur",
+      "trim": "Mulliner",
+      "size": "XL"
+    },
+    {
+      "make": "Bentley",
+      "model": "Flying Spur",
+      "trim": "Speed",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "1 Series",
+      "trim": "M Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "1 Series",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "1 Series",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series",
+      "trim": "M Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series Active Tourer",
+      "trim": "M Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series Active Tourer",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "2 Series Active Tourer",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "3 Series",
+      "trim": "M Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "3 Series",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "3 Series",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "4 Series",
+      "trim": "M Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "4 Series",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "4 Series",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "5 Series",
+      "trim": "M Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "5 Series",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "5 Series",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "7 Series",
+      "trim": "M Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "7 Series",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "7 Series",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "i4 M50",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "iX",
+      "trim": "M Sport",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "iX",
+      "trim": "SE",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "iX",
+      "trim": "Sport",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "iX M60",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "M135i",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M140i",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M2",
+      "trim": "Competition",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M235i",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M3",
+      "trim": "Competition",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M340i",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M4",
+      "trim": "Competition",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M440i",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "M5",
+      "trim": "Competition",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "M8",
+      "trim": "Competition",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "X1",
+      "trim": "M Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X1",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X1",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X1",
+      "trim": "xDrive",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X2",
+      "trim": "M Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X2",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X2",
+      "trim": "Sport",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X2",
+      "trim": "xDrive",
+      "size": "S"
+    },
+    {
+      "make": "BMW",
+      "model": "X3",
+      "trim": "M Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X3",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X3",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X3",
+      "trim": "xDrive",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X4",
+      "trim": "M Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X4",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X4",
+      "trim": "Sport",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X4",
+      "trim": "xDrive",
+      "size": "M"
+    },
+    {
+      "make": "BMW",
+      "model": "X5",
+      "trim": "M Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X5",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X5",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X5",
+      "trim": "xDrive",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X6",
+      "trim": "M Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X6",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X6",
+      "trim": "Sport",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X6",
+      "trim": "xDrive",
+      "size": "L"
+    },
+    {
+      "make": "BMW",
+      "model": "X7",
+      "trim": "M Sport",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "X7",
+      "trim": "SE",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "X7",
+      "trim": "Sport",
+      "size": "XL"
+    },
+    {
+      "make": "BMW",
+      "model": "X7",
+      "trim": "xDrive",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "12Cilindri",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "296 GTB",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "296 GTS",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "812 GTS",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "F8 Spider",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "F8 Tributo",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "F80",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "Purosangue",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "Roma",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "Roma Spider",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "SF90 Spider",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ferrari",
+      "model": "SF90 Stradale",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "Active",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "ST-Line",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "ST-Line X",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "Titanium",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "trim": "Trend",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "Active",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "ST",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "ST-Line",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "ST-Line X",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "Style",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "Titanium",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "Trend",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "Active",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "ST",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "ST-Line",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "ST-Line X",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "Titanium",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "trim": "Trend",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Galaxy",
+      "trim": "Titanium",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Kuga",
+      "trim": "Active",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Kuga",
+      "trim": "ST-Line",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Kuga",
+      "trim": "ST-Line X",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Kuga",
+      "trim": "Titanium",
+      "size": "M"
+    },
+    {
+      "make": "Ford",
+      "model": "Mondeo",
+      "trim": "ST-Line",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mondeo",
+      "trim": "Titanium",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang",
+      "trim": "GT",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang Mach-E",
+      "trim": "GT",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang Mach-E",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang Mach-E",
+      "trim": "Select",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang Shelby",
+      "trim": "GT350",
+      "size": "XL"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang Shelby",
+      "trim": "GT500",
+      "size": "XL"
+    },
+    {
+      "make": "Ford",
+      "model": "Puma",
+      "trim": "Active",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Puma",
+      "trim": "ST",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Puma",
+      "trim": "ST-Line",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Puma",
+      "trim": "ST-Line X",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Puma",
+      "trim": "Titanium",
+      "size": "S"
+    },
+    {
+      "make": "Ford",
+      "model": "Ranger",
+      "trim": "Limited",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Ranger",
+      "trim": "Raptor",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Ranger",
+      "trim": "Wildtrak",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "Ranger",
+      "trim": "XLT",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "S-Max",
+      "trim": "ST-Line",
+      "size": "L"
+    },
+    {
+      "make": "Ford",
+      "model": "S-Max",
+      "trim": "Titanium",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i10",
+      "trim": "Advance",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i10",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i10",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i10",
+      "trim": "Ultimate",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "Advance",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "N",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "N Line",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "SE",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "trim": "Ultimate",
+      "size": "S"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "Advance",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "N",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "N Line",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "N Performance",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "i30",
+      "trim": "Ultimate",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 5",
+      "trim": "Advance",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 5",
+      "trim": "N",
+      "size": "XL"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 5",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 5",
+      "trim": "Ultimate",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 6",
+      "trim": "Advance",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 6",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Ioniq 6",
+      "trim": "Ultimate",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Kona",
+      "trim": "Advance",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Kona",
+      "trim": "N Line",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Kona",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Kona",
+      "trim": "SE",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Kona",
+      "trim": "Ultimate",
+      "size": "M"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Santa Fe",
+      "trim": "Premium",
+      "size": "XL"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Santa Fe",
+      "trim": "Ultimate",
+      "size": "XL"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "trim": "Advance",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "trim": "N Line",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "trim": "Ultimate",
+      "size": "L"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Veloster N",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Jaguar",
+      "model": "F-Pace",
+      "trim": "P250",
+      "size": "L"
+    },
+    {
+      "make": "Jaguar",
+      "model": "F-Pace",
+      "trim": "P400",
+      "size": "L"
+    },
+    {
+      "make": "Jaguar",
+      "model": "F-Pace",
+      "trim": "R-Dynamic",
+      "size": "L"
+    },
+    {
+      "make": "Jaguar",
+      "model": "F-Pace",
+      "trim": "SVR",
+      "size": "L"
+    },
+    {
+      "make": "Jaguar",
+      "model": "Type 00",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "2",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "3",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "4",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "GT",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "GT-Line",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "trim": "GT-Line S",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "2",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "3",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "4",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "GT",
+      "size": "XL"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "GT-Line",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV6",
+      "trim": "GT-Line S",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "EV9",
+      "trim": "3",
+      "size": "XL"
+    },
+    {
+      "make": "Kia",
+      "model": "EV9",
+      "trim": "4",
+      "size": "XL"
+    },
+    {
+      "make": "Kia",
+      "model": "EV9",
+      "trim": "GT-Line",
+      "size": "XL"
+    },
+    {
+      "make": "Kia",
+      "model": "EV9",
+      "trim": "GT-Line S",
+      "size": "XL"
+    },
+    {
+      "make": "Kia",
+      "model": "Niro",
+      "trim": "2",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Niro",
+      "trim": "3",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Niro",
+      "trim": "4",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Niro",
+      "trim": "GT-Line",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Niro",
+      "trim": "GT-Line S",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Picanto",
+      "trim": "2",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Picanto",
+      "trim": "3",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Picanto",
+      "trim": "GT-Line",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Picanto",
+      "trim": "GT-Line S",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "ProCeed",
+      "trim": "GT",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "ProCeed",
+      "trim": "GT-Line",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "ProCeed",
+      "trim": "GT-Line S",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Rio",
+      "trim": "2",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Rio",
+      "trim": "3",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Rio",
+      "trim": "GT-Line",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Rio",
+      "trim": "GT-Line S",
+      "size": "S"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "trim": "2",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "trim": "3",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "trim": "4",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "trim": "GT-Line",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "trim": "GT-Line S",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "trim": "2",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "trim": "3",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "trim": "4",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "trim": "GT-Line",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "trim": "GT-Line S",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Stinger",
+      "trim": "GT",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Stinger",
+      "trim": "GT-S",
+      "size": "L"
+    },
+    {
+      "make": "Kia",
+      "model": "Stonic",
+      "trim": "2",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Stonic",
+      "trim": "3",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Stonic",
+      "trim": "GT-Line",
+      "size": "M"
+    },
+    {
+      "make": "Kia",
+      "model": "Stonic",
+      "trim": "GT-Line S",
+      "size": "M"
+    },
+    {
+      "make": "Lamborghini",
+      "model": "Revuelto",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Lamborghini",
+      "model": "Temerario",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Lamborghini",
+      "model": "Urus SE",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 110",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 110",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 110",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 110",
+      "trim": "X",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 110",
+      "trim": "X-Dynamic",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 130",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 130",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 130",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 130",
+      "trim": "X",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 130",
+      "trim": "X-Dynamic",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 90",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 90",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 90",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 90",
+      "trim": "X",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Defender 90",
+      "trim": "X-Dynamic",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery Sport",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery Sport",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Discovery Sport",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover",
+      "trim": "Autobiography",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover",
+      "trim": "SV",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Evoque",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Evoque",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Evoque",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Sport",
+      "trim": "Autobiography",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Sport",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Sport",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Sport",
+      "trim": "SVR",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Velar",
+      "trim": "HSE",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Velar",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Velar",
+      "trim": "SE",
+      "size": "L"
+    },
+    {
+      "make": "Lotus",
+      "model": "Eletre",
+      "trim": "R",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Eletre",
+      "trim": "S",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Emeya",
+      "trim": "R",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Emeya",
+      "trim": "S",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Emira",
+      "trim": "First Edition",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Emira",
+      "trim": "V6",
+      "size": "XL"
+    },
+    {
+      "make": "Lotus",
+      "model": "Evija",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranCabrio",
+      "trim": "Folgore",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranCabrio",
+      "trim": "Modena",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranCabrio",
+      "trim": "Trofeo",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranTurismo",
+      "trim": "Folgore",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranTurismo",
+      "trim": "Modena",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "GranTurismo",
+      "trim": "Trofeo",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "Grecale",
+      "trim": "Folgore",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "Grecale",
+      "trim": "GT",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "Grecale",
+      "trim": "Modena",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "Grecale",
+      "trim": "Trofeo",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "MC20",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Maserati",
+      "model": "MC20 Cielo",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "McLaren",
+      "model": "750S",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "McLaren",
+      "model": "Artura",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "McLaren",
+      "model": "GTS",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "McLaren",
+      "model": "W1",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "A-Class",
+      "trim": "AMG Line",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "A-Class",
+      "trim": "Exclusive",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "A-Class",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "A35",
+      "trim": "4MATIC",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "A45 S",
+      "trim": "4MATIC+",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "AMG GT",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "C-Class",
+      "trim": "AMG Line",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "C-Class",
+      "trim": "Exclusive",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "C-Class",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "C43",
+      "trim": "4MATIC",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "C63 S",
+      "trim": "E Performance",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLA",
+      "trim": "AMG Line",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLA",
+      "trim": "Exclusive",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLA",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLA35",
+      "trim": "4MATIC",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLA45 S",
+      "trim": "4MATIC+",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLS",
+      "trim": "AMG Line",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "CLS",
+      "trim": "Premium Plus",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "E-Class",
+      "trim": "AMG Line",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "E-Class",
+      "trim": "Exclusive",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "E-Class",
+      "trim": "Pinnacle",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "E-Class",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "E63 S",
+      "trim": "4MATIC+",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQA",
+      "trim": "AMG Line",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQA",
+      "trim": "Exclusive",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQA",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQB",
+      "trim": "AMG Line",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQB",
+      "trim": "Exclusive",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQB",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQE",
+      "trim": "AMG Line",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQE",
+      "trim": "Exclusive",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQE",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQS",
+      "trim": "AMG Line",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQS",
+      "trim": "Exclusive",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "EQS",
+      "trim": "Pinnacle",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "G-Class",
+      "trim": "AMG Line",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "G-Class",
+      "trim": "Exclusive",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLA",
+      "trim": "AMG Line",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLA",
+      "trim": "Exclusive",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLA",
+      "trim": "Premium",
+      "size": "S"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLB",
+      "trim": "AMG Line",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLB",
+      "trim": "Exclusive",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLB",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLC",
+      "trim": "AMG Line",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLC",
+      "trim": "Exclusive",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLC",
+      "trim": "Premium",
+      "size": "M"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLE",
+      "trim": "AMG Line",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLE",
+      "trim": "Exclusive",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLE",
+      "trim": "Premium",
+      "size": "L"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLS",
+      "trim": "AMG Line",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLS",
+      "trim": "Exclusive",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GLS",
+      "trim": "Premium",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "GT Black Series",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "S-Class",
+      "trim": "AMG Line",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "S-Class",
+      "trim": "Exclusive",
+      "size": "XL"
+    },
+    {
+      "make": "Mercedes-Benz",
+      "model": "S-Class",
+      "trim": "Pinnacle",
+      "size": "XL"
+    },
+    {
+      "make": "Nissan",
+      "model": "370Z",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "370Z",
+      "trim": "NISMO",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "Ariya",
+      "trim": "Advance",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "Ariya",
+      "trim": "Evolve",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "Ariya",
+      "trim": "N-Trek",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "Ariya",
+      "trim": "Tekna",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "GT-R",
+      "trim": "NISMO",
+      "size": "XL"
+    },
+    {
+      "make": "Nissan",
+      "model": "GT-R",
+      "trim": "Premium",
+      "size": "XL"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "Acenta Premium",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "N-Connecta",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "N-Design",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "NISMO",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "Tekna",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "Tekna+",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "trim": "Visia",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Leaf",
+      "trim": "Acenta",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Leaf",
+      "trim": "N-Connecta",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Leaf",
+      "trim": "Tekna",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Micra",
+      "trim": "Acenta",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Micra",
+      "trim": "N-Sport",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Micra",
+      "trim": "Tekna",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Micra",
+      "trim": "Visia",
+      "size": "S"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "Acenta Premium",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "N-Connecta",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "N-Design",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "Tekna",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "Tekna+",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "trim": "Visia",
+      "size": "M"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "trim": "Acenta Premium",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "trim": "N-Connecta",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "trim": "N-Trek",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "trim": "Tekna",
+      "size": "L"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "trim": "Tekna+",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "Carrera",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "Carrera S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "GT3",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "GT3 RS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "Turbo",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "911",
+      "trim": "Turbo S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "E-Hybrid",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "GTS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "T-Hybrid GTS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "Turbo",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "Turbo S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Macan",
+      "trim": "Electric",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Macan",
+      "trim": "GTS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Macan",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Macan",
+      "trim": "Turbo",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Panamera",
+      "trim": "E-Hybrid",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Panamera",
+      "trim": "GTS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Panamera",
+      "trim": "S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Panamera",
+      "trim": "Turbo",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Panamera",
+      "trim": "Turbo S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Taycan",
+      "trim": "4S",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Taycan",
+      "trim": "GTS",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Taycan",
+      "trim": "Turbo",
+      "size": "L"
+    },
+    {
+      "make": "Porsche",
+      "model": "Taycan",
+      "trim": "Turbo S",
+      "size": "L"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Cullinan",
+      "trim": "Black Badge",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Cullinan",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Ghost",
+      "trim": "Black Badge",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Ghost",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Phantom",
+      "trim": "Extended",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Phantom",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Spectre",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Rolls-Royce",
+      "model": "Spectre",
+      "trim": "Black Badge",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "Aygo X",
+      "trim": "Design",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "Aygo X",
+      "trim": "Excel",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "Aygo X",
+      "trim": "Icon",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "trim": "Design",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "trim": "Excel",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "trim": "GR Sport",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "trim": "Icon",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "trim": "Design",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "trim": "Excel",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "trim": "GR Sport",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "trim": "Icon",
+      "size": "M"
+    },
+    {
+      "make": "Toyota",
+      "model": "GR Corolla",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "GR Supra",
+      "trim": "2.0",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "GR Supra",
+      "trim": "3.0",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "GR Yaris",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "GR86",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Highlander",
+      "trim": "Design",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "Highlander",
+      "trim": "Excel",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "Highlander",
+      "trim": "Icon",
+      "size": "XL"
+    },
+    {
+      "make": "Toyota",
+      "model": "Hilux",
+      "trim": "GR Sport",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Hilux",
+      "trim": "Icon",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Hilux",
+      "trim": "Invincible",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Land Cruiser",
+      "trim": "Active",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Land Cruiser",
+      "trim": "Invincible",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Prius",
+      "trim": "Design",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Prius",
+      "trim": "Excel",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "RAV4",
+      "trim": "Design",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "RAV4",
+      "trim": "Excel",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "RAV4",
+      "trim": "GR Sport",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "RAV4",
+      "trim": "Icon",
+      "size": "L"
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "trim": "Design",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "trim": "Excel",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "trim": "GR Sport",
+      "size": "S"
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "trim": "Icon",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Astra",
+      "trim": "Design",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Astra",
+      "trim": "GS Line",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Astra",
+      "trim": "Ultimate",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Astra VXR",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Corsa",
+      "trim": "Design",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Corsa",
+      "trim": "GS Line",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Corsa",
+      "trim": "Ultimate",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Corsa VXR",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Crossland",
+      "trim": "Design",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Crossland",
+      "trim": "GS Line",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Crossland",
+      "trim": "Ultimate",
+      "size": "S"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Grandland",
+      "trim": "Design",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Grandland",
+      "trim": "GS Line",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Grandland",
+      "trim": "Ultimate",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Insignia",
+      "trim": "Design",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Insignia",
+      "trim": "GS Line",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Insignia",
+      "trim": "Ultimate",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Insignia VXR",
+      "trim": "",
+      "size": "L"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Mokka",
+      "trim": "Design",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Mokka",
+      "trim": "GS Line",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "Mokka",
+      "trim": "Ultimate",
+      "size": "M"
+    },
+    {
+      "make": "Vauxhall",
+      "model": "VXR8 GTS",
+      "trim": "",
+      "size": "XL"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Arteon",
+      "trim": "Life",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Arteon",
+      "trim": "R",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Arteon",
+      "trim": "R-Line",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Arteon",
+      "trim": "Style",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "GTI",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "GTI Clubsport",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "Life",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "R",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "R-Line",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.3",
+      "trim": "Life",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.3",
+      "trim": "Style",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.4",
+      "trim": "Life",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.4",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.5",
+      "trim": "Life",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.5",
+      "trim": "Style",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.7",
+      "trim": "Life",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "ID.7",
+      "trim": "Style",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Passat",
+      "trim": "Life",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Passat",
+      "trim": "R-Line",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Passat",
+      "trim": "Style",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Polo",
+      "trim": "GTI",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Polo",
+      "trim": "Life",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Polo",
+      "trim": "R-Line",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Polo",
+      "trim": "Style",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Cross",
+      "trim": "Life",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Cross",
+      "trim": "R-Line",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Cross",
+      "trim": "Style",
+      "size": "S"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Roc",
+      "trim": "Life",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Roc",
+      "trim": "R",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Roc",
+      "trim": "R-Line",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "T-Roc",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tayron",
+      "trim": "Life",
+      "size": "XL"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tayron",
+      "trim": "R-Line",
+      "size": "XL"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tayron",
+      "trim": "Style",
+      "size": "XL"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tiguan",
+      "trim": "Life",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tiguan",
+      "trim": "R-Line",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tiguan",
+      "trim": "Style",
+      "size": "M"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Touareg",
+      "trim": "R",
+      "size": "L"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Touareg",
+      "trim": "R-Line",
+      "size": "L"
+    }
+  ]

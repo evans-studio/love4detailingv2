@@ -1,112 +1,187 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search') || '';
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    // Use service role key for admin access
+    const serviceSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    // Check admin access
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: userData } = await supabase
+    // Get all customers with basic info
+    const { data: customers, error } = await serviceSupabase
       .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+      .select(`
+        id,
+        full_name,
+        email,
+        phone,
+        role,
+        email_verified_at,
+        created_at,
+        last_login_at,
+        updated_at,
+        is_active
+      `)
+      .order('created_at', { ascending: false })
 
-    if (userData?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    if (error) {
+      console.error('Error fetching customers:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // Build query
-    let query = supabase
-      .from('users')
-      .select('*')
-      .neq('role', 'admin')
-      .order('created_at', { ascending: false });
-
-    // Add search filter if provided
-    if (search) {
-      query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
-    }
-
-    // Add pagination
-    query = query.range(offset, offset + limit - 1);
-
-    const { data: users, error: usersError } = await query;
-
-    if (usersError) throw usersError;
-
-    // Get aggregated stats for each customer
-    const customersWithStats = await Promise.all((users || []).map(async (user) => {
-      const [
-        { count: bookingsCount },
-        { count: vehiclesCount },
-        { data: bookings },
-        { data: rewardData }
-      ] = await Promise.all([
-        supabase.from('bookings').select('*', { count: 'exact' }).eq('user_id', user.id),
-        supabase.from('vehicles').select('*', { count: 'exact' }).eq('user_id', user.id),
-        supabase.from('bookings')
-          .select('total_price_pence, created_at')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false }),
-        supabase.from('rewards')
-          .select('points, tier')
-          .eq('user_id', user.id)
-          .single()
-      ]);
-
-      const totalSpent = (bookings || []).reduce((sum, b) => sum + (b.total_price_pence || 0), 0);
-      const lastBooking = bookings && bookings.length > 0 ? bookings[0].created_at : null;
-
-      return {
-        ...user,
-        bookings_count: bookingsCount || 0,
-        vehicles_count: vehiclesCount || 0,
-        total_spent_pence: totalSpent,
-        last_booking_date: lastBooking,
-        reward_points: rewardData?.points || 0,
-        reward_tier: rewardData?.tier || 'Bronze',
-      };
-    }));
-
-    // Get total count for pagination
-    let countQuery = supabase
-      .from('users')
-      .select('*', { count: 'exact' })
-      .neq('role', 'admin');
-
-    if (search) {
-      countQuery = countQuery.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
-    }
-
-    const { count: totalCount } = await countQuery;
-
-    return NextResponse.json({
-      customers: customersWithStats,
-      pagination: {
-        total: totalCount || 0,
-        limit,
-        offset,
-        hasMore: (offset + limit) < (totalCount || 0)
+    // Get booking statistics for all customers
+    const customerStats = new Map()
+    const vehicleStats = new Map()
+    
+    if (customers && customers.length > 0) {
+      const customerIds = customers.map(c => c.id)
+      
+      // Get booking statistics
+      const { data: bookingStats, error: statsError } = await serviceSupabase
+        .from('bookings')
+        .select(`
+          user_id,
+          status,
+          total_price_pence,
+          service_price_pence,
+          created_at
+        `)
+        .in('user_id', customerIds)
+      
+      // Get vehicle counts
+      const { data: vehicleCounts, error: vehicleError } = await serviceSupabase
+        .from('vehicles')
+        .select(`
+          user_id,
+          id
+        `)
+        .in('user_id', customerIds)
+        .eq('is_active', true)
+      
+      if (!statsError && bookingStats) {
+        // Calculate stats for each customer
+        customerIds.forEach(customerId => {
+          const customerBookings = bookingStats.filter(b => b.user_id === customerId)
+          const completedBookings = customerBookings.filter(b => b.status === 'completed')
+          const cancelledBookings = customerBookings.filter(b => b.status === 'cancelled')
+          const totalSpent = completedBookings.reduce((sum, b) => 
+            sum + (b.total_price_pence || b.service_price_pence || 0), 0)
+          
+          const firstBooking = customerBookings.length > 0 
+            ? customerBookings
+                .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0]
+                .created_at
+            : null
+          
+          const lastBooking = customerBookings.length > 0 
+            ? customerBookings
+                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+                .created_at
+            : null
+          
+          customerStats.set(customerId, {
+            total_bookings: customerBookings.length,
+            completed_bookings: completedBookings.length,
+            cancelled_bookings: cancelledBookings.length,
+            total_spent_pence: totalSpent,
+            avg_booking_value_pence: completedBookings.length > 0 ? totalSpent / completedBookings.length : 0,
+            first_booking_date: firstBooking,
+            last_booking_date: lastBooking
+          })
+        })
       }
-    });
+      
+      if (!vehicleError && vehicleCounts) {
+        // Calculate vehicle counts for each customer
+        customerIds.forEach(customerId => {
+          const customerVehicles = vehicleCounts.filter(v => v.user_id === customerId)
+          vehicleStats.set(customerId, customerVehicles.length)
+        })
+      }
+    }
+
+    // Calculate reward tier based on total spent
+    const calculateTier = (totalSpent: number) => {
+      if (totalSpent >= 50000) return 'gold'    // £500+
+      if (totalSpent >= 20000) return 'silver'  // £200+
+      return 'bronze'
+    }
+
+    // Calculate reward points (simple: 1 point per £1 spent)
+    const calculatePoints = (totalSpent: number) => {
+      return Math.floor(totalSpent / 100)
+    }
+
+    // Transform customers data
+    const transformedCustomers = customers?.map(customer => {
+      const stats = customerStats.get(customer.id) || {
+        total_bookings: 0,
+        completed_bookings: 0,
+        cancelled_bookings: 0,
+        total_spent_pence: 0,
+        avg_booking_value_pence: 0,
+        first_booking_date: null,
+        last_booking_date: null
+      }
+      
+      const vehicleCount = vehicleStats.get(customer.id) || 0
+      const tier = calculateTier(stats.total_spent_pence)
+      const points = calculatePoints(stats.total_spent_pence)
+      
+      return {
+        id: customer.id,
+        full_name: customer.full_name,
+        email: customer.email,
+        phone: customer.phone,
+        role: customer.role,
+        email_verified: !!customer.email_verified_at, // Convert to boolean
+        created_at: customer.created_at,
+        last_sign_in_at: customer.last_login_at,
+        // Statistics
+        total_bookings: stats.total_bookings,
+        completed_bookings: stats.completed_bookings,
+        cancelled_bookings: stats.cancelled_bookings,
+        total_spent_pence: stats.total_spent_pence,
+        avg_booking_value_pence: stats.avg_booking_value_pence,
+        first_booking_date: stats.first_booking_date,
+        last_booking_date: stats.last_booking_date,
+        vehicle_count: vehicleCount,
+        reward_points: points,
+        reward_tier: tier,
+        // Status - use database is_active field primarily, with login fallback
+        is_active: customer.is_active !== false && (customer.last_login_at ? 
+          (Date.now() - new Date(customer.last_login_at).getTime()) < (90 * 24 * 60 * 60 * 1000) : // 90 days
+          true), // If never logged in but active, show as active
+        last_activity_date: customer.last_login_at
+      }
+    }) || []
+
+    // Calculate overall statistics
+    const overallStats = {
+      total_customers: transformedCustomers.length,
+      active_customers: transformedCustomers.filter(c => c.is_active).length,
+      verified_customers: transformedCustomers.filter(c => c.email_verified).length,
+      total_bookings: transformedCustomers.reduce((sum, c) => sum + c.total_bookings, 0),
+      total_revenue_pence: transformedCustomers.reduce((sum, c) => sum + c.total_spent_pence, 0),
+      avg_customer_value_pence: transformedCustomers.length > 0 
+        ? transformedCustomers.reduce((sum, c) => sum + c.total_spent_pence, 0) / transformedCustomers.length
+        : 0,
+      top_tier_customers: transformedCustomers.filter(c => c.reward_tier === 'gold').length
+    }
+
+    return NextResponse.json({ 
+      data: {
+        customers: transformedCustomers,
+        stats: overallStats
+      }
+    })
   } catch (error) {
-    console.error('Error fetching customers:', error);
+    console.error('API /admin/customers error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch customers' },
+      { error: 'Internal server error' },
       { status: 500 }
-    );
+    )
   }
 }

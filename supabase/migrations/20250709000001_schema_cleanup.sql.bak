@@ -1,0 +1,31 @@
+-- Schema Cleanup Migration
+-- Generated: 2025-07-09T21:29:12.012Z
+-- Purpose: Remove unused columns and tables identified in analysis
+
+-- Remove unused columns
+
+-- Clean up users table
+ALTER TABLE users DROP COLUMN IF EXISTS marketing_opt_in;
+ALTER TABLE users DROP COLUMN IF EXISTS preferred_communication;
+ALTER TABLE users DROP COLUMN IF EXISTS service_preferences;
+
+-- Clean up vehicles table
+ALTER TABLE vehicles DROP COLUMN IF EXISTS special_requirements;
+ALTER TABLE vehicles DROP COLUMN IF EXISTS vehicle_type;
+
+-- Remove unused tables
+DROP TABLE IF EXISTS vehicle_photos CASCADE;
+DROP TABLE IF EXISTS booking_locks CASCADE;
+DROP TABLE IF EXISTS api_rate_limits CASCADE;
+DROP TABLE IF EXISTS booking_notes CASCADE;
+
+-- Update comments
+COMMENT ON TABLE users IS 'Core user accounts - cleaned up unused columns';
+COMMENT ON TABLE vehicles IS 'Vehicle information - cleaned up unused columns';
+COMMENT ON TABLE bookings IS 'Core booking records - no changes';
+COMMENT ON TABLE available_slots IS 'Time slot availability - no changes';
+COMMENT ON TABLE services IS 'Service definitions - no changes';
+COMMENT ON TABLE service_pricing IS 'Service pricing by vehicle size - no changes';
+COMMENT ON TABLE customer_rewards IS 'Customer loyalty system - no changes';
+COMMENT ON TABLE reward_transactions IS 'Reward point transactions - no changes';
+COMMENT ON TABLE vehicle_model_registry IS 'Vehicle size detection - no changes';

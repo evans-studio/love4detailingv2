@@ -1,0 +1,524 @@
+-- Enhanced Schedule System Stored Procedures
+-- Implementation of core business logic for professional time slot management
+
+-- Function: Get available slots for a specific date range
+CREATE OR REPLACE FUNCTION get_enhanced_available_slots(
+    p_date_start DATE,
+    p_date_end DATE DEFAULT NULL,
+    p_service_id UUID DEFAULT NULL,
+    p_vehicle_size vehicle_size DEFAULT NULL
+) RETURNS TABLE (
+    slot_id UUID,
+    slot_date DATE,
+    start_time TIME,
+    end_time TIME,
+    duration_minutes INTEGER,
+    available_capacity INTEGER,
+    total_capacity INTEGER,
+    availability_status TEXT,
+    slot_category TEXT,
+    custom_label TEXT,
+    is_standard_slot BOOLEAN,
+    display_order INTEGER,
+    template_name TEXT,
+    pricing_info JSONB
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_end_date DATE;
+    v_service_duration INTEGER;
+BEGIN
+    -- Set default end date if not provided
+    v_end_date := COALESCE(p_date_end, p_date_start);
+    
+    -- Get service duration if service_id provided
+    IF p_service_id IS NOT NULL THEN
+        SELECT base_duration_minutes INTO v_service_duration
+        FROM services WHERE id = p_service_id;
+    END IF;
+    
+    RETURN QUERY
+    SELECT 
+        s.id as slot_id,
+        s.slot_date,
+        s.start_time,
+        s.end_time,
+        COALESCE(ss.duration_minutes, 120) as duration_minutes,
+        s.available_capacity,
+        s.total_capacity,
+        CASE 
+            WHEN s.is_blocked THEN 'unavailable'
+            WHEN s.available_capacity <= 0 THEN 'booked'
+            WHEN s.available_capacity = 1 AND s.total_capacity > 1 THEN 'last_available'
+            WHEN s.available_capacity > 0 THEN 'available'
+            ELSE 'unavailable'
+        END as availability_status,
+        CASE 
+            WHEN ss.is_standard_slot THEN 'standard'
+            WHEN s.available_capacity = 1 AND s.total_capacity > 1 THEN 'popular'
+            ELSE 'regular'
+        END as slot_category,
+        ss.custom_label,
+        COALESCE(ss.is_standard_slot, false) as is_standard_slot,
+        COALESCE(ss.display_order, 0) as display_order,
+        st.name as template_name,
+        CASE 
+            WHEN p_service_id IS NOT NULL AND p_vehicle_size IS NOT NULL THEN
+                (SELECT jsonb_build_object(
+                    'base_price_pence', sp.price_pence,
+                    'duration_minutes', sp.duration_minutes,
+                    'vehicle_size', sp.vehicle_size
+                ) FROM service_pricing sp 
+                WHERE sp.service_id = p_service_id 
+                AND sp.vehicle_size = p_vehicle_size 
+                AND sp.is_active = true)
+            ELSE NULL
+        END as pricing_info
+    FROM available_slots s
+    LEFT JOIN schedule_slots ss ON s.template_id = ss.template_id 
+        AND extract(dow from s.slot_date) = ss.day_of_week
+        AND s.start_time = ss.start_time
+    LEFT JOIN schedule_templates st ON s.template_id = st.id
+    WHERE s.slot_date >= p_date_start 
+        AND s.slot_date <= v_end_date
+        AND NOT s.is_blocked
+        AND s.available_capacity > 0
+        AND (s.booking_window_start IS NULL OR s.booking_window_start <= now())
+        AND (s.booking_window_end IS NULL OR s.booking_window_end >= now())
+        AND (v_service_duration IS NULL OR COALESCE(ss.duration_minutes, 120) >= v_service_duration)
+    ORDER BY s.slot_date, s.start_time;
+END;
+$$;
+
+-- Function: Create or update time slot template
+CREATE OR REPLACE FUNCTION manage_time_slot(
+    p_action TEXT, -- 'create', 'update', 'delete', 'activate', 'deactivate'
+    p_slot_id UUID DEFAULT NULL,
+    p_template_id UUID DEFAULT NULL,
+    p_day_of_week INTEGER DEFAULT NULL,
+    p_start_time TIME DEFAULT NULL,
+    p_end_time TIME DEFAULT NULL,
+    p_duration_minutes INTEGER DEFAULT 120,
+    p_max_bookings INTEGER DEFAULT 1,
+    p_is_standard_slot BOOLEAN DEFAULT false,
+    p_custom_label TEXT DEFAULT NULL,
+    p_slot_type TEXT DEFAULT 'regular',
+    p_display_order INTEGER DEFAULT 0,
+    p_admin_user_id UUID DEFAULT NULL
+) RETURNS TABLE (
+    slot_id UUID,
+    action_performed TEXT,
+    success BOOLEAN,
+    message TEXT
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_slot_id UUID;
+    v_result_message TEXT;
+    v_is_admin BOOLEAN;
+BEGIN
+    -- Check if user is admin
+    SELECT EXISTS(
+        SELECT 1 FROM users 
+        WHERE id = p_admin_user_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) INTO v_is_admin;
+    
+    IF NOT v_is_admin THEN
+        RETURN QUERY SELECT NULL::UUID, p_action, false, 'Unauthorized: Admin privileges required';
+        RETURN;
+    END IF;
+    
+    CASE p_action
+        WHEN 'create' THEN
+            -- Validate required fields
+            IF p_template_id IS NULL OR p_day_of_week IS NULL OR p_start_time IS NULL OR p_end_time IS NULL THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Missing required fields for slot creation';
+                RETURN;
+            END IF;
+            
+            -- Check for time conflicts
+            IF EXISTS(
+                SELECT 1 FROM schedule_slots 
+                WHERE template_id = p_template_id 
+                AND day_of_week = p_day_of_week 
+                AND ((p_start_time >= start_time AND p_start_time < end_time) 
+                     OR (p_end_time > start_time AND p_end_time <= end_time)
+                     OR (p_start_time <= start_time AND p_end_time >= end_time))
+                AND is_active = true
+            ) THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Time slot conflicts with existing slot';
+                RETURN;
+            END IF;
+            
+            -- Create new slot
+            INSERT INTO schedule_slots (
+                template_id, day_of_week, start_time, end_time, duration_minutes,
+                max_bookings, is_active, is_standard_slot, custom_label, slot_type, display_order
+            ) VALUES (
+                p_template_id, p_day_of_week, p_start_time, p_end_time, p_duration_minutes,
+                p_max_bookings, true, p_is_standard_slot, p_custom_label, p_slot_type, p_display_order
+            ) RETURNING id INTO v_slot_id;
+            
+            v_result_message := 'Time slot created successfully';
+            
+        WHEN 'update' THEN
+            IF p_slot_id IS NULL THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Slot ID required for update';
+                RETURN;
+            END IF;
+            
+            -- Update existing slot
+            UPDATE schedule_slots SET
+                day_of_week = COALESCE(p_day_of_week, day_of_week),
+                start_time = COALESCE(p_start_time, start_time),
+                end_time = COALESCE(p_end_time, end_time),
+                duration_minutes = COALESCE(p_duration_minutes, duration_minutes),
+                max_bookings = COALESCE(p_max_bookings, max_bookings),
+                is_standard_slot = COALESCE(p_is_standard_slot, is_standard_slot),
+                custom_label = COALESCE(p_custom_label, custom_label),
+                slot_type = COALESCE(p_slot_type, slot_type),
+                display_order = COALESCE(p_display_order, display_order),
+                updated_at = now()
+            WHERE id = p_slot_id;
+            
+            v_slot_id := p_slot_id;
+            v_result_message := 'Time slot updated successfully';
+            
+        WHEN 'delete' THEN
+            IF p_slot_id IS NULL THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Slot ID required for deletion';
+                RETURN;
+            END IF;
+            
+            -- Soft delete by deactivating
+            UPDATE schedule_slots SET 
+                is_active = false,
+                updated_at = now()
+            WHERE id = p_slot_id;
+            
+            v_slot_id := p_slot_id;
+            v_result_message := 'Time slot deleted successfully';
+            
+        WHEN 'activate' THEN
+            IF p_slot_id IS NULL THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Slot ID required for activation';
+                RETURN;
+            END IF;
+            
+            UPDATE schedule_slots SET 
+                is_active = true,
+                updated_at = now()
+            WHERE id = p_slot_id;
+            
+            v_slot_id := p_slot_id;
+            v_result_message := 'Time slot activated successfully';
+            
+        WHEN 'deactivate' THEN
+            IF p_slot_id IS NULL THEN
+                RETURN QUERY SELECT NULL::UUID, p_action, false, 'Slot ID required for deactivation';
+                RETURN;
+            END IF;
+            
+            UPDATE schedule_slots SET 
+                is_active = false,
+                updated_at = now()
+            WHERE id = p_slot_id;
+            
+            v_slot_id := p_slot_id;
+            v_result_message := 'Time slot deactivated successfully';
+            
+        ELSE
+            RETURN QUERY SELECT NULL::UUID, p_action, false, 'Invalid action specified';
+            RETURN;
+    END CASE;
+    
+    RETURN QUERY SELECT v_slot_id, p_action, true, v_result_message;
+END;
+$$;
+
+-- Function: Book a time slot with capacity management
+CREATE OR REPLACE FUNCTION book_time_slot(
+    p_slot_id UUID,
+    p_booking_id UUID,
+    p_booking_date DATE,
+    p_session_id TEXT DEFAULT NULL
+) RETURNS TABLE (
+    success BOOLEAN,
+    message TEXT,
+    slot_booking_id UUID,
+    available_capacity INTEGER
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_slot_booking_id UUID;
+    v_current_capacity INTEGER;
+    v_max_capacity INTEGER;
+    v_is_blocked BOOLEAN;
+    v_slot_date DATE;
+BEGIN
+    -- Get current slot information
+    SELECT available_capacity, total_capacity, is_blocked, slot_date 
+    INTO v_current_capacity, v_max_capacity, v_is_blocked, v_slot_date
+    FROM available_slots 
+    WHERE id = p_slot_id;
+    
+    -- Check if slot exists
+    IF v_current_capacity IS NULL THEN
+        RETURN QUERY SELECT false, 'Slot not found', NULL::UUID, 0;
+        RETURN;
+    END IF;
+    
+    -- Check if slot is blocked
+    IF v_is_blocked THEN
+        RETURN QUERY SELECT false, 'Slot is not available for booking', NULL::UUID, v_current_capacity;
+        RETURN;
+    END IF;
+    
+    -- Check if slot has capacity
+    IF v_current_capacity <= 0 THEN
+        RETURN QUERY SELECT false, 'Slot is fully booked', NULL::UUID, v_current_capacity;
+        RETURN;
+    END IF;
+    
+    -- Check if booking already exists for this slot
+    IF EXISTS(
+        SELECT 1 FROM slot_bookings 
+        WHERE slot_id = p_slot_id 
+        AND booking_id = p_booking_id 
+        AND status = 'active'
+    ) THEN
+        RETURN QUERY SELECT false, 'Booking already exists for this slot', NULL::UUID, v_current_capacity;
+        RETURN;
+    END IF;
+    
+    -- Create booking lock if session provided
+    IF p_session_id IS NOT NULL THEN
+        INSERT INTO booking_locks (session_id, slot_id, expires_at)
+        VALUES (p_session_id, p_slot_id, now() + interval '10 minutes')
+        ON CONFLICT (session_id, slot_id) 
+        DO UPDATE SET expires_at = now() + interval '10 minutes';
+    END IF;
+    
+    -- Create slot booking
+    INSERT INTO slot_bookings (slot_id, booking_id, booking_date, status)
+    VALUES (p_slot_id, p_booking_id, p_booking_date, 'active')
+    RETURNING id INTO v_slot_booking_id;
+    
+    -- Update available capacity
+    UPDATE available_slots 
+    SET available_capacity = available_capacity - 1,
+        current_bookings = current_bookings + 1,
+        updated_at = now()
+    WHERE id = p_slot_id;
+    
+    -- Get updated capacity
+    SELECT available_capacity INTO v_current_capacity
+    FROM available_slots WHERE id = p_slot_id;
+    
+    RETURN QUERY SELECT true, 'Slot booked successfully', v_slot_booking_id, v_current_capacity;
+END;
+$$;
+
+-- Function: Cancel a slot booking
+CREATE OR REPLACE FUNCTION cancel_slot_booking(
+    p_slot_booking_id UUID,
+    p_reason TEXT DEFAULT NULL
+) RETURNS TABLE (
+    success BOOLEAN,
+    message TEXT,
+    available_capacity INTEGER
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_slot_id UUID;
+    v_current_capacity INTEGER;
+    v_booking_status TEXT;
+BEGIN
+    -- Get slot booking information
+    SELECT slot_id, status INTO v_slot_id, v_booking_status
+    FROM slot_bookings 
+    WHERE id = p_slot_booking_id;
+    
+    -- Check if booking exists
+    IF v_slot_id IS NULL THEN
+        RETURN QUERY SELECT false, 'Slot booking not found', 0;
+        RETURN;
+    END IF;
+    
+    -- Check if booking is already cancelled
+    IF v_booking_status = 'cancelled' THEN
+        RETURN QUERY SELECT false, 'Booking is already cancelled', 0;
+        RETURN;
+    END IF;
+    
+    -- Cancel the booking
+    UPDATE slot_bookings 
+    SET status = 'cancelled',
+        updated_at = now()
+    WHERE id = p_slot_booking_id;
+    
+    -- Update available capacity
+    UPDATE available_slots 
+    SET available_capacity = available_capacity + 1,
+        current_bookings = current_bookings - 1,
+        updated_at = now()
+    WHERE id = v_slot_id;
+    
+    -- Get updated capacity
+    SELECT available_capacity INTO v_current_capacity
+    FROM available_slots WHERE id = v_slot_id;
+    
+    RETURN QUERY SELECT true, 'Booking cancelled successfully', v_current_capacity;
+END;
+$$;
+
+-- Function: Generate available slots from template for date range
+CREATE OR REPLACE FUNCTION generate_available_slots_from_template(
+    p_template_id UUID,
+    p_start_date DATE,
+    p_end_date DATE,
+    p_override_capacity INTEGER DEFAULT NULL
+) RETURNS TABLE (
+    slots_created INTEGER,
+    date_range_start DATE,
+    date_range_end DATE,
+    success BOOLEAN,
+    message TEXT
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_current_date DATE;
+    v_day_of_week INTEGER;
+    v_slots_created INTEGER := 0;
+    v_slot_record RECORD;
+BEGIN
+    -- Validate template exists
+    IF NOT EXISTS(SELECT 1 FROM schedule_templates WHERE id = p_template_id AND is_active = true) THEN
+        RETURN QUERY SELECT 0, p_start_date, p_end_date, false, 'Template not found or inactive';
+        RETURN;
+    END IF;
+    
+    -- Loop through each date in the range
+    v_current_date := p_start_date;
+    
+    WHILE v_current_date <= p_end_date LOOP
+        -- Get day of week (0 = Sunday, 1 = Monday, etc.)
+        v_day_of_week := extract(dow from v_current_date);
+        
+        -- Get all active slots for this day from template
+        FOR v_slot_record IN 
+            SELECT * FROM schedule_slots 
+            WHERE template_id = p_template_id 
+            AND day_of_week = v_day_of_week 
+            AND is_active = true
+        LOOP
+            -- Insert available slot if it doesn't already exist
+            INSERT INTO available_slots (
+                template_id, slot_date, start_time, end_time, 
+                available_capacity, total_capacity, max_bookings, 
+                current_bookings, is_blocked
+            ) VALUES (
+                p_template_id, v_current_date, v_slot_record.start_time, v_slot_record.end_time,
+                COALESCE(p_override_capacity, v_slot_record.max_bookings), 
+                COALESCE(p_override_capacity, v_slot_record.max_bookings),
+                COALESCE(p_override_capacity, v_slot_record.max_bookings),
+                0, false
+            ) ON CONFLICT (template_id, slot_date, start_time) 
+            DO UPDATE SET
+                available_capacity = COALESCE(p_override_capacity, excluded.max_bookings),
+                total_capacity = COALESCE(p_override_capacity, excluded.max_bookings),
+                max_bookings = COALESCE(p_override_capacity, excluded.max_bookings),
+                updated_at = now();
+            
+            v_slots_created := v_slots_created + 1;
+        END LOOP;
+        
+        v_current_date := v_current_date + 1;
+    END LOOP;
+    
+    RETURN QUERY SELECT v_slots_created, p_start_date, p_end_date, true, 
+                       format('Generated %s slots for date range', v_slots_created);
+END;
+$$;
+
+-- Function: Get slot status with real-time information
+CREATE OR REPLACE FUNCTION get_slot_status(
+    p_slot_id UUID
+) RETURNS TABLE (
+    slot_id UUID,
+    slot_date DATE,
+    start_time TIME,
+    end_time TIME,
+    availability_status TEXT,
+    available_capacity INTEGER,
+    total_capacity INTEGER,
+    current_bookings INTEGER,
+    is_blocked BOOLEAN,
+    block_reason TEXT,
+    booking_window_open BOOLEAN,
+    time_until_slot INTERVAL
+) LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_slot_record RECORD;
+    v_slot_datetime TIMESTAMP;
+BEGIN
+    -- Get slot information
+    SELECT * INTO v_slot_record
+    FROM available_slots 
+    WHERE id = p_slot_id;
+    
+    -- Check if slot exists
+    IF v_slot_record.id IS NULL THEN
+        RETURN;
+    END IF;
+    
+    -- Calculate slot datetime
+    v_slot_datetime := v_slot_record.slot_date + v_slot_record.start_time;
+    
+    RETURN QUERY
+    SELECT 
+        v_slot_record.id,
+        v_slot_record.slot_date,
+        v_slot_record.start_time,
+        v_slot_record.end_time,
+        CASE 
+            WHEN v_slot_record.is_blocked THEN 'unavailable'
+            WHEN v_slot_record.available_capacity <= 0 THEN 'booked'
+            WHEN v_slot_record.available_capacity = 1 AND v_slot_record.total_capacity > 1 THEN 'last_available'
+            WHEN v_slot_record.available_capacity > 0 THEN 'available'
+            ELSE 'unavailable'
+        END,
+        v_slot_record.available_capacity,
+        v_slot_record.total_capacity,
+        v_slot_record.current_bookings,
+        v_slot_record.is_blocked,
+        v_slot_record.block_reason,
+        CASE 
+            WHEN v_slot_record.booking_window_start IS NULL AND v_slot_record.booking_window_end IS NULL THEN true
+            WHEN v_slot_record.booking_window_start IS NOT NULL AND v_slot_record.booking_window_end IS NOT NULL THEN
+                (now() >= v_slot_record.booking_window_start AND now() <= v_slot_record.booking_window_end)
+            WHEN v_slot_record.booking_window_start IS NOT NULL THEN now() >= v_slot_record.booking_window_start
+            WHEN v_slot_record.booking_window_end IS NOT NULL THEN now() <= v_slot_record.booking_window_end
+            ELSE true
+        END,
+        v_slot_datetime - now();
+END;
+$$;
+
+-- Grant execute permissions
+GRANT EXECUTE ON FUNCTION get_enhanced_available_slots TO authenticated;
+GRANT EXECUTE ON FUNCTION get_enhanced_available_slots TO anon;
+GRANT EXECUTE ON FUNCTION manage_time_slot TO authenticated;
+GRANT EXECUTE ON FUNCTION book_time_slot TO authenticated;
+GRANT EXECUTE ON FUNCTION cancel_slot_booking TO authenticated;
+GRANT EXECUTE ON FUNCTION generate_available_slots_from_template TO authenticated;
+GRANT EXECUTE ON FUNCTION get_slot_status TO authenticated;
+GRANT EXECUTE ON FUNCTION get_slot_status TO anon;

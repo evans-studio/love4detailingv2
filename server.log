@@ -1,0 +1,94 @@
+
+> love4detailing-v2@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+   ▲ Next.js 14.1.0
+   - Local:        http://localhost:3001
+   - Environments: .env.local, .env
+
+ ✓ Ready in 1028ms
+ ✓ Compiled /api/health in 196ms (38 modules)
+ ✓ Compiled /api/admin/bookings/dashboard in 96ms (41 modules)
+🔍 Admin booking dashboard GET called
+🔍 Fetching dashboard data with params: {
+  admin_id: '044d17da-308a-4afa-9abe-0d4604fe8bc8',
+  date_filter: '2025-01-13',
+  status_filter: null
+}
+(node:30138) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+📅 Found slots for date: 2025-01-13 0
+✅ No slots found for date: 2025-01-13
+ ✓ Compiled /api/admin/analytics in 138ms (146 modules)
+🔍 Analytics API: Starting authentication check
+👤 User check: {
+  hasUser: false,
+  userId: undefined,
+  userEmail: undefined,
+  userError: 'Auth session missing!'
+}
+🔑 Session details: {
+  hasSession: false,
+  sessionUserId: undefined,
+  sessionUserEmail: undefined
+}
+❌ Authentication failed: Auth session missing!
+ ✓ Compiled /api/admin/customers in 29ms (148 modules)
+ ✓ Compiled /api/admin/services in 27ms (148 modules)
+🔍 Admin services API called
+✅ Found 2 services
+ ✓ Compiled /api/admin/bookings/dashboard in 17ms (150 modules)
+🔍 Admin booking dashboard GET called
+🔍 Fetching dashboard data with params: {
+  admin_id: 'invalid-id',
+  date_filter: 'invalid-date',
+  status_filter: null
+}
+❌ Error fetching slots for date: {
+  code: '22007',
+  details: null,
+  hint: null,
+  message: 'invalid input syntax for type date: "invalid-date"'
+}
+🔍 Admin services POST called
+❌ Admin services POST error: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:5731:19)
+    at successSteps (node:internal/deps/undici/undici:5712:27)
+    at fullyReadBody (node:internal/deps/undici/undici:4609:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async consumeBody (node:internal/deps/undici/undici:5721:7)
+    at async POST (webpack-internal:///(rsc)/./src/app/api/admin/services/route.ts:92:22)
+    at async /Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:63809
+    at async eU.execute (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:53964)
+    at async eU.handle (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:65062)
+    at async doRender (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:1333:42)
+    at async cacheEntry.responseCache.get.routeKind (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:1555:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:1463:28)
+    at async DevServer.renderPageComponent (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:1856:24)
+    at async DevServer.renderToResponseImpl (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:1894:32)
+    at async DevServer.pipeImpl (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:911:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/next-server.js:271:17)
+    at async DevServer.handleRequestImpl (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/base-server.js:807:17)
+    at async /Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/dev/next-dev-server.js:331:20
+    at async Span.traceAsyncFn (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/trace/trace.js:151:20)
+    at async DevServer.handleRequest (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/dev/next-dev-server.js:328:24)
+    at async invokeRender (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/lib/router-server.js:163:21)
+    at async handleRequest (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/lib/router-server.js:342:24)
+    at async requestHandlerImpl (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/lib/router-server.js:366:13)
+    at async Server.requestListener (/Users/paulevans/Documents/Studio work/Client work/LOVE4DETAILING [Zell]/love4detailing-v2/node_modules/next/dist/server/lib/start-server.js:140:13)
+ ✓ Compiled /api/admin/bookings in 49ms (39 modules)
+🔍 Admin bookings API called
+✅ Service role client created
+🔍 Querying bookings with relationships...
+✅ Fetched 4 bookings from database
+✅ Returning 4 filtered bookings
+ ✓ Compiled /api/admin/vehicles in 29ms (41 modules)
+Error fetching vehicles: {
+  code: 'PGRST200',
+  details: "Searched for a foreign key relationship between 'vehicles' and 'users' in the schema 'public', but no matches were found.",
+  hint: null,
+  message: "Could not find a relationship between 'vehicles' and 'users' in the schema cache"
+}
+[?25h

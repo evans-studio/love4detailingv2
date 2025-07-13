@@ -1,0 +1,540 @@
+-- Admin Dashboard Stored Procedures
+-- Implementation of admin.md Phase 1 requirements
+
+-- 1. Schedule Management Procedures
+
+-- Update admin weekly schedule
+CREATE OR REPLACE FUNCTION update_admin_schedule(
+    p_admin_id UUID,
+    p_schedule_data JSONB
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_day_config JSONB;
+    v_day_of_week INTEGER;
+    v_result JSONB := '{"success": true, "updated_days": []}';
+    v_updated_days JSONB := '[]';
+BEGIN
+    -- Verify admin user
+    IF NOT EXISTS (
+        SELECT 1 FROM users 
+        WHERE id = p_admin_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) THEN
+        RETURN '{"success": false, "error": "Invalid admin user"}';
+    END IF;
+
+    -- Process each day configuration
+    FOR v_day_config IN SELECT value FROM jsonb_array_elements(p_schedule_data->'days')
+    LOOP
+        v_day_of_week := (v_day_config->>'day_of_week')::INTEGER;
+        
+        -- Upsert schedule configuration
+        INSERT INTO admin_schedule_config (
+            admin_user_id,
+            day_of_week,
+            is_working_day,
+            start_time,
+            end_time,
+            max_slots_per_hour,
+            slot_duration_minutes,
+            break_start_time,
+            break_end_time
+        ) VALUES (
+            p_admin_id,
+            v_day_of_week,
+            (v_day_config->>'is_working_day')::BOOLEAN,
+            CASE 
+                WHEN v_day_config->>'start_time' IS NOT NULL 
+                THEN (v_day_config->>'start_time')::TIME 
+                ELSE NULL 
+            END,
+            CASE 
+                WHEN v_day_config->>'end_time' IS NOT NULL 
+                THEN (v_day_config->>'end_time')::TIME 
+                ELSE NULL 
+            END,
+            COALESCE((v_day_config->>'max_slots_per_hour')::INTEGER, 1),
+            COALESCE((v_day_config->>'slot_duration_minutes')::INTEGER, 120),
+            CASE 
+                WHEN v_day_config->>'break_start_time' IS NOT NULL 
+                THEN (v_day_config->>'break_start_time')::TIME 
+                ELSE NULL 
+            END,
+            CASE 
+                WHEN v_day_config->>'break_end_time' IS NOT NULL 
+                THEN (v_day_config->>'break_end_time')::TIME 
+                ELSE NULL 
+            END
+        )
+        ON CONFLICT (admin_user_id, day_of_week) 
+        DO UPDATE SET
+            is_working_day = EXCLUDED.is_working_day,
+            start_time = EXCLUDED.start_time,
+            end_time = EXCLUDED.end_time,
+            max_slots_per_hour = EXCLUDED.max_slots_per_hour,
+            slot_duration_minutes = EXCLUDED.slot_duration_minutes,
+            break_start_time = EXCLUDED.break_start_time,
+            break_end_time = EXCLUDED.break_end_time,
+            updated_at = NOW();
+
+        v_updated_days := v_updated_days || to_jsonb(v_day_of_week);
+    END LOOP;
+
+    -- Update result
+    v_result := jsonb_set(v_result, '{updated_days}', v_updated_days);
+
+    -- Log the activity
+    INSERT INTO admin_activity_log (
+        admin_user_id,
+        action_type,
+        target_type,
+        action_description,
+        details
+    ) VALUES (
+        p_admin_id,
+        'schedule_update',
+        'schedule',
+        'Weekly schedule updated',
+        jsonb_build_object(
+            'updated_days', v_updated_days,
+            'total_days', jsonb_array_length(v_updated_days)
+        )
+    );
+
+    -- Refresh available slots based on new schedule
+    PERFORM refresh_available_slots_from_schedule(p_admin_id);
+
+    RETURN v_result;
+END;
+$$;
+
+-- Get admin schedule
+CREATE OR REPLACE FUNCTION get_admin_schedule(
+    p_admin_id UUID
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_schedule JSONB;
+BEGIN
+    -- Verify admin user
+    IF NOT EXISTS (
+        SELECT 1 FROM users 
+        WHERE id = p_admin_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) THEN
+        RETURN '{"success": false, "error": "Invalid admin user"}';
+    END IF;
+
+    -- Get schedule configuration
+    SELECT jsonb_build_object(
+        'success', true,
+        'schedule', jsonb_agg(
+            jsonb_build_object(
+                'day_of_week', day_of_week,
+                'day_name', CASE day_of_week
+                    WHEN 0 THEN 'Sunday'
+                    WHEN 1 THEN 'Monday'
+                    WHEN 2 THEN 'Tuesday'
+                    WHEN 3 THEN 'Wednesday'
+                    WHEN 4 THEN 'Thursday'
+                    WHEN 5 THEN 'Friday'
+                    WHEN 6 THEN 'Saturday'
+                END,
+                'is_working_day', is_working_day,
+                'start_time', start_time::TEXT,
+                'end_time', end_time::TEXT,
+                'max_slots_per_hour', max_slots_per_hour,
+                'slot_duration_minutes', slot_duration_minutes,
+                'break_start_time', break_start_time::TEXT,
+                'break_end_time', break_end_time::TEXT,
+                'updated_at', updated_at
+            ) ORDER BY day_of_week
+        )
+    ) INTO v_schedule
+    FROM admin_schedule_config
+    WHERE admin_user_id = p_admin_id;
+
+    RETURN COALESCE(v_schedule, '{"success": true, "schedule": []}');
+END;
+$$;
+
+-- 2. Booking Management Procedures
+
+-- Get admin booking dashboard
+CREATE OR REPLACE FUNCTION get_admin_booking_dashboard(
+    p_admin_id UUID,
+    p_date_filter DATE DEFAULT CURRENT_DATE,
+    p_status_filter TEXT DEFAULT NULL
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_result JSONB;
+    v_today_bookings JSONB;
+    v_upcoming_bookings JSONB;
+    v_stats JSONB;
+BEGIN
+    -- Verify admin user
+    IF NOT EXISTS (
+        SELECT 1 FROM users 
+        WHERE id = p_admin_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) THEN
+        RETURN '{"success": false, "error": "Invalid admin user"}';
+    END IF;
+
+    -- Get today's bookings
+    SELECT jsonb_agg(
+        jsonb_build_object(
+            'id', b.id,
+            'booking_reference', b.booking_reference,
+            'scheduled_date', b.scheduled_date,
+            'scheduled_time', b.scheduled_time,
+            'status', b.status,
+            'total_price_pence', b.total_price_pence,
+            'customer', jsonb_build_object(
+                'id', u.id,
+                'full_name', u.full_name,
+                'email', u.email,
+                'phone', u.phone
+            ),
+            'service', jsonb_build_object(
+                'id', s.id,
+                'name', s.name,
+                'duration_minutes', b.estimated_duration_minutes
+            ),
+            'vehicle', jsonb_build_object(
+                'id', v.id,
+                'make', v.make,
+                'model', v.model,
+                'size', v.size,
+                'reg_number', v.reg_number
+            ),
+            'address', jsonb_build_object(
+                'full_address', b.service_address,
+                'postcode', b.service_postcode
+            ),
+            'special_instructions', b.special_instructions,
+            'created_at', b.created_at,
+            'updated_at', b.updated_at
+        ) ORDER BY b.scheduled_time
+    ) INTO v_today_bookings
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN services s ON b.service_id = s.id
+    JOIN vehicles v ON b.vehicle_id = v.id
+    WHERE b.scheduled_date = p_date_filter
+    AND (p_status_filter IS NULL OR b.status = p_status_filter)
+    AND b.status NOT IN ('cancelled', 'deleted');
+
+    -- Get upcoming bookings (next 7 days)
+    SELECT jsonb_agg(
+        jsonb_build_object(
+            'id', b.id,
+            'booking_reference', b.booking_reference,
+            'scheduled_date', b.scheduled_date,
+            'scheduled_time', b.scheduled_time,
+            'status', b.status,
+            'customer_name', u.full_name,
+            'service_name', s.name,
+            'vehicle_display', v.make || ' ' || v.model
+        ) ORDER BY b.scheduled_date, b.scheduled_time
+    ) INTO v_upcoming_bookings
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    JOIN services s ON b.service_id = s.id
+    JOIN vehicles v ON b.vehicle_id = v.id
+    WHERE b.scheduled_date > p_date_filter 
+    AND b.scheduled_date <= p_date_filter + INTERVAL '7 days'
+    AND b.status NOT IN ('cancelled', 'deleted')
+    LIMIT 10;
+
+    -- Get daily stats
+    SELECT jsonb_build_object(
+        'total_bookings', COUNT(*),
+        'confirmed_bookings', COUNT(*) FILTER (WHERE status = 'confirmed'),
+        'completed_bookings', COUNT(*) FILTER (WHERE status = 'completed'),
+        'pending_bookings', COUNT(*) FILTER (WHERE status = 'pending'),
+        'total_revenue_pence', COALESCE(SUM(total_price_pence) FILTER (WHERE status = 'completed'), 0),
+        'avg_booking_value_pence', COALESCE(AVG(total_price_pence) FILTER (WHERE status IN ('confirmed', 'completed')), 0)
+    ) INTO v_stats
+    FROM bookings
+    WHERE scheduled_date = p_date_filter
+    AND status NOT IN ('cancelled', 'deleted');
+
+    -- Combine results
+    v_result := jsonb_build_object(
+        'success', true,
+        'date_filter', p_date_filter,
+        'today_bookings', COALESCE(v_today_bookings, '[]'),
+        'upcoming_bookings', COALESCE(v_upcoming_bookings, '[]'),
+        'daily_stats', v_stats,
+        'generated_at', NOW()
+    );
+
+    RETURN v_result;
+END;
+$$;
+
+-- Update booking status with admin context
+CREATE OR REPLACE FUNCTION admin_update_booking_status(
+    p_admin_id UUID,
+    p_booking_id UUID,
+    p_new_status TEXT,
+    p_notes TEXT DEFAULT NULL
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_booking_ref TEXT;
+    v_customer_name TEXT;
+    v_old_status TEXT;
+    v_result JSONB;
+BEGIN
+    -- Verify admin user
+    IF NOT EXISTS (
+        SELECT 1 FROM users 
+        WHERE id = p_admin_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) THEN
+        RETURN '{"success": false, "error": "Invalid admin user"}';
+    END IF;
+
+    -- Validate status
+    IF p_new_status NOT IN ('pending', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show') THEN
+        RETURN '{"success": false, "error": "Invalid booking status"}';
+    END IF;
+
+    -- Get current booking info
+    SELECT b.booking_reference, u.full_name, b.status
+    INTO v_booking_ref, v_customer_name, v_old_status
+    FROM bookings b
+    JOIN users u ON b.user_id = u.id
+    WHERE b.id = p_booking_id;
+
+    IF NOT FOUND THEN
+        RETURN '{"success": false, "error": "Booking not found"}';
+    END IF;
+
+    -- Update booking status
+    UPDATE bookings 
+    SET 
+        status = p_new_status,
+        updated_at = NOW(),
+        admin_notes = CASE 
+            WHEN p_notes IS NOT NULL 
+            THEN COALESCE(admin_notes, '') || CHR(10) || '[' || NOW()::TEXT || '] ' || p_notes 
+            ELSE admin_notes 
+        END
+    WHERE id = p_booking_id;
+
+    -- Log the activity
+    INSERT INTO admin_activity_log (
+        admin_user_id,
+        action_type,
+        target_type,
+        target_id,
+        target_reference,
+        action_description,
+        details
+    ) VALUES (
+        p_admin_id,
+        'status_change',
+        'booking',
+        p_booking_id,
+        v_booking_ref,
+        'Booking status changed from ' || v_old_status || ' to ' || p_new_status,
+        jsonb_build_object(
+            'old_status', v_old_status,
+            'new_status', p_new_status,
+            'customer_name', v_customer_name,
+            'notes', p_notes
+        )
+    );
+
+    -- Create notification for customer if status change is significant
+    IF p_new_status IN ('confirmed', 'completed', 'cancelled') THEN
+        -- This would integrate with notification system
+        NULL; -- Placeholder for notification logic
+    END IF;
+
+    v_result := jsonb_build_object(
+        'success', true,
+        'booking_id', p_booking_id,
+        'old_status', v_old_status,
+        'new_status', p_new_status,
+        'message', 'Booking status updated successfully'
+    );
+
+    RETURN v_result;
+END;
+$$;
+
+-- 3. Customer Management Procedures
+
+-- Get customer profile with admin context
+CREATE OR REPLACE FUNCTION get_customer_profile_admin(
+    p_admin_id UUID,
+    p_customer_id UUID
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_result JSONB;
+    v_customer JSONB;
+    v_vehicles JSONB;
+    v_bookings JSONB;
+    v_stats JSONB;
+BEGIN
+    -- Verify admin user
+    IF NOT EXISTS (
+        SELECT 1 FROM users 
+        WHERE id = p_admin_id 
+        AND role IN ('admin', 'staff', 'super_admin')
+    ) THEN
+        RETURN '{"success": false, "error": "Invalid admin user"}';
+    END IF;
+
+    -- Get customer profile
+    SELECT jsonb_build_object(
+        'id', id,
+        'full_name', full_name,
+        'email', email,
+        'phone', phone,
+        'role', role,
+        'is_active', is_active,
+        'email_verified_at', email_verified_at,
+        'profile_complete', profile_complete,
+        'user_journey', user_journey,
+        'registration_date', registration_date,
+        'last_login', last_login
+    ) INTO v_customer
+    FROM users
+    WHERE id = p_customer_id;
+
+    IF v_customer IS NULL THEN
+        RETURN '{"success": false, "error": "Customer not found"}';
+    END IF;
+
+    -- Get customer vehicles
+    SELECT jsonb_agg(
+        jsonb_build_object(
+            'id', id,
+            'make', make,
+            'model', model,
+            'year', year,
+            'reg_number', reg_number,
+            'size', size,
+            'size_confirmed', size_confirmed,
+            'is_active', is_active,
+            'created_at', created_at
+        ) ORDER BY created_at DESC
+    ) INTO v_vehicles
+    FROM vehicles
+    WHERE user_id = p_customer_id;
+
+    -- Get recent bookings
+    SELECT jsonb_agg(
+        jsonb_build_object(
+            'id', b.id,
+            'booking_reference', b.booking_reference,
+            'scheduled_date', b.scheduled_date,
+            'scheduled_time', b.scheduled_time,
+            'status', b.status,
+            'total_price_pence', b.total_price_pence,
+            'service_name', s.name,
+            'vehicle_display', v.make || ' ' || v.model,
+            'created_at', b.created_at
+        ) ORDER BY b.created_at DESC
+    ) INTO v_bookings
+    FROM bookings b
+    JOIN services s ON b.service_id = s.id
+    JOIN vehicles v ON b.vehicle_id = v.id
+    WHERE b.user_id = p_customer_id
+    LIMIT 20;
+
+    -- Get customer statistics
+    SELECT jsonb_build_object(
+        'total_bookings', COUNT(*),
+        'completed_bookings', COUNT(*) FILTER (WHERE status = 'completed'),
+        'cancelled_bookings', COUNT(*) FILTER (WHERE status = 'cancelled'),
+        'total_spent_pence', COALESCE(SUM(total_price_pence) FILTER (WHERE status = 'completed'), 0),
+        'avg_booking_value_pence', COALESCE(AVG(total_price_pence) FILTER (WHERE status = 'completed'), 0),
+        'last_booking_date', MAX(scheduled_date) FILTER (WHERE status = 'completed'),
+        'first_booking_date', MIN(scheduled_date),
+        'favourite_service', (
+            SELECT s.name
+            FROM bookings b2
+            JOIN services s ON b2.service_id = s.id
+            WHERE b2.user_id = p_customer_id
+            AND b2.status = 'completed'
+            GROUP BY s.id, s.name
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+        )
+    ) INTO v_stats
+    FROM bookings
+    WHERE user_id = p_customer_id;
+
+    -- Log the access
+    INSERT INTO admin_activity_log (
+        admin_user_id,
+        action_type,
+        target_type,
+        target_id,
+        target_reference,
+        action_description
+    ) VALUES (
+        p_admin_id,
+        'customer_contact',
+        'customer',
+        p_customer_id,
+        (v_customer->>'full_name'),
+        'Viewed customer profile'
+    );
+
+    v_result := jsonb_build_object(
+        'success', true,
+        'customer', v_customer,
+        'vehicles', COALESCE(v_vehicles, '[]'),
+        'recent_bookings', COALESCE(v_bookings, '[]'),
+        'statistics', v_stats
+    );
+
+    RETURN v_result;
+END;
+$$;
+
+-- 4. Utility function to refresh available slots from schedule
+CREATE OR REPLACE FUNCTION refresh_available_slots_from_schedule(
+    p_admin_id UUID
+) RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    -- This would integrate with the existing slot generation system
+    -- For now, just a placeholder that could trigger slot recalculation
+    
+    -- Log the refresh
+    INSERT INTO admin_activity_log (
+        admin_user_id,
+        action_type,
+        target_type,
+        action_description
+    ) VALUES (
+        p_admin_id,
+        'schedule_update',
+        'schedule',
+        'Available slots refreshed from schedule'
+    );
+END;
+$$;

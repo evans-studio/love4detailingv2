@@ -1,176 +1,284 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { vehicleSchema } from '@/lib/validation/vehicle';
-import type { Database } from '@/types/supabase';
+import { useState, useCallback } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Loader2, Car } from 'lucide-react'
+import { useVehicles } from '@/hooks/useVehicles'
+import { VehicleDropdowns } from './VehicleDropdowns'
 
-interface VehicleFormProps {
-  onSuccess: () => void;
-  onCancel: () => void;
-  onError: (error: string) => void;
+interface Vehicle {
+  id?: string
+  registration: string
+  make: string
+  model: string
+  year: number
+  color?: string
+  size?: 'small' | 'medium' | 'large' | 'extra_large'
+  vehicle_type?: string
+  special_requirements?: string
+  notes?: string
 }
 
-type VehicleFormData = {
-  registration: string;
-  make: string;
-  model: string;
-  year: string;
-  color: string;
-};
+interface VehicleFormProps {
+  vehicle?: Vehicle
+  onSuccess: () => void
+  onCancel: () => void
+  onDataChange?: (data: Vehicle) => void // For booking flow context
+}
 
-export function VehicleForm({ onSuccess, onCancel, onError }: VehicleFormProps) {
-  const [loading, setLoading] = useState(false);
-  const supabase = createClientComponentClient<Database>();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<VehicleFormData>({
-    resolver: zodResolver(vehicleSchema),
-  });
+export function VehicleForm({ vehicle, onSuccess, onCancel, onDataChange }: VehicleFormProps) {
+  const { createVehicle, updateVehicle } = useVehicles()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [detectedSize, setDetectedSize] = useState<string | null>(null)
 
-  const onSubmit = async (data: VehicleFormData) => {
-    setLoading(true);
+  const [formData, setFormData] = useState<Vehicle>({
+    registration: vehicle?.registration || '',
+    make: vehicle?.make || '',
+    model: vehicle?.model || '',
+    year: vehicle?.year || new Date().getFullYear(),
+    color: vehicle?.color || '',
+    vehicle_type: vehicle?.vehicle_type || 'car',
+    special_requirements: vehicle?.special_requirements || '',
+    notes: vehicle?.notes || '',
+  })
+
+  const isEditing = !!vehicle?.id
+
+  const handleInputChange = (field: keyof Vehicle, value: string | number) => {
+    const newData = { ...formData, [field]: value }
+    setFormData(newData)
+    setError(null)
+    
+    // Call onDataChange for booking flow context
+    if (onDataChange) {
+      onDataChange(newData)
+    }
+  }
+
+  const handleMakeChange = useCallback((make: string) => {
+    const newData = { ...formData, make }
+    setFormData(newData)
+    setError(null)
+    
+    // Call onDataChange for booking flow context
+    if (onDataChange) {
+      onDataChange(newData)
+    }
+  }, [formData, onDataChange])
+
+  const handleModelChange = useCallback((model: string) => {
+    const newData = { ...formData, model }
+    setFormData(newData)
+    setError(null)
+    
+    // Call onDataChange for booking flow context
+    if (onDataChange) {
+      onDataChange(newData)
+    }
+  }, [formData, onDataChange])
+
+  const handleSizeDetected = useCallback((size: string) => {
+    setDetectedSize(size)
+    const newData = { ...formData, size: size as any }
+    setFormData(newData)
+    
+    // Call onDataChange for booking flow context
+    if (onDataChange) {
+      onDataChange(newData)
+    }
+  }, [formData, onDataChange])
+
+  const validateForm = (): string | null => {
+    if (!formData.registration.trim()) return 'Registration is required'
+    if (!formData.make.trim()) return 'Make is required'
+    if (!formData.model.trim()) return 'Model is required'
+    if (!formData.year || formData.year < 1900 || formData.year > new Date().getFullYear() + 1) {
+      return 'Please enter a valid year'
+    }
+    return null
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
+
+    const validationError = validateForm()
+    if (validationError) {
+      setError(validationError)
+      setIsLoading(false)
+      return
+    }
 
     try {
-      // Get the current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
-      if (!user) throw new Error('Not authenticated');
-
-      // Check for duplicate registration under this user
-      const { data: existingVehicle } = await supabase
-        .from('vehicles')
-        .select('id')
-        .eq('registration', data.registration.toUpperCase())
-        .eq('user_id', user.id)
-        .single();
-
-      if (existingVehicle) {
-        onError('You already have a vehicle with this registration');
-        return;
+      const vehicleData = {
+        ...formData,
+        registration: formData.registration.toUpperCase().trim(),
+        make: formData.make.trim(),
+        model: formData.model.trim(),
       }
 
-      // Insert the vehicle
-      const { error: insertError } = await supabase
-        .from('vehicles')
-        .insert({
-          user_id: user.id,
-          registration: data.registration.toUpperCase(),
-          make: data.make,
-          model: data.model,
-          year: data.year,
-          color: data.color,
-        });
+      let result
+      if (isEditing) {
+        result = await updateVehicle(vehicle.id!, vehicleData)
+      } else {
+        result = await createVehicle(vehicleData)
+      }
 
-      if (insertError) throw insertError;
-
-      onSuccess();
-    } catch (err) {
-      console.error('Error adding vehicle:', err);
-      onError('Failed to add vehicle');
+      if (result.error) {
+        setError(result.error)
+      } else {
+        onSuccess()
+      }
+    } catch (error) {
+      setError('An unexpected error occurred')
     } finally {
-      setLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
-          Registration <span className="text-[#BA0C2F]">*</span>
-        </label>
-        <Input
-          {...register('registration')}
-          placeholder="Enter registration"
-          className="uppercase"
-        />
-        {errors.registration && (
-          <p className="mt-1 text-sm text-[#BA0C2F]">
-            {errors.registration.message}
-          </p>
-        )}
-      </div>
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Car className="h-5 w-5" />
+          {isEditing ? 'Edit Vehicle' : 'Add New Vehicle'}
+        </CardTitle>
+        <CardDescription>
+          {isEditing 
+            ? 'Update your vehicle information' 
+            : 'Add a vehicle to your garage for faster bookings'
+          }
+        </CardDescription>
+      </CardHeader>
 
-      <div>
-        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
-          Make <span className="text-[#BA0C2F]">*</span>
-        </label>
-        <Input
-          {...register('make')}
-          placeholder="Enter make"
-        />
-        {errors.make && (
-          <p className="mt-1 text-sm text-[#BA0C2F]">
-            {errors.make.message}
-          </p>
-        )}
-      </div>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-      <div>
-        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
-          Model <span className="text-[#BA0C2F]">*</span>
-        </label>
-        <Input
-          {...register('model')}
-          placeholder="Enter model"
-        />
-        {errors.model && (
-          <p className="mt-1 text-sm text-[#BA0C2F]">
-            {errors.model.message}
-          </p>
-        )}
-      </div>
+          {/* Registration */}
+          <div className="space-y-2">
+            <Label htmlFor="registration">
+              Registration Number <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="registration"
+              type="text"
+              placeholder="e.g. AB12 CDE"
+              value={formData.registration}
+              onChange={(e) => handleInputChange('registration', e.target.value.toUpperCase())}
+              required
+              disabled={isLoading}
+              className="uppercase"
+            />
+          </div>
 
-      <div>
-        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
-          Year <span className="text-[#8B8B8B]">(Optional)</span>
-        </label>
-        <Input
-          {...register('year')}
-          placeholder="Enter year"
-        />
-        {errors.year && (
-          <p className="mt-1 text-sm text-[#BA0C2F]">
-            {errors.year.message}
-          </p>
-        )}
-      </div>
+          {/* Make and Model Dropdowns */}
+          <VehicleDropdowns
+            selectedMake={formData.make}
+            selectedModel={formData.model}
+            onMakeChange={handleMakeChange}
+            onModelChange={handleModelChange}
+            onSizeDetected={handleSizeDetected}
+            disabled={isLoading}
+          />
 
-      <div>
-        <label className="block text-sm font-medium text-[#C7C7C7] mb-1">
-          Color <span className="text-[#8B8B8B]">(Optional)</span>
-        </label>
-        <Input
-          {...register('color')}
-          placeholder="Enter color"
-        />
-        {errors.color && (
-          <p className="mt-1 text-sm text-[#BA0C2F]">
-            {errors.color.message}
-          </p>
-        )}
-      </div>
+          {/* Year and Color */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year">Year</Label>
+              <Input
+                id="year"
+                type="number"
+                min="1900"
+                max={new Date().getFullYear() + 1}
+                value={formData.year}
+                onChange={(e) => handleInputChange('year', parseInt(e.target.value))}
+                disabled={isLoading}
+              />
+            </div>
 
-      <div className="flex justify-end space-x-2">
+            <div className="space-y-2">
+              <Label htmlFor="color">Color</Label>
+              <Input
+                id="color"
+                type="text"
+                placeholder="e.g. Black"
+                value={formData.color}
+                onChange={(e) => handleInputChange('color', e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+
+          {/* Special Requirements */}
+          <div className="space-y-2">
+            <Label htmlFor="special_requirements">Special Requirements</Label>
+            <Input
+              id="special_requirements"
+              type="text"
+              placeholder="e.g. Low suspension, ceramic coating"
+              value={formData.special_requirements}
+              onChange={(e) => handleInputChange('special_requirements', e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Notes */}
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Input
+              id="notes"
+              type="text"
+              placeholder="Any additional notes about this vehicle"
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+        </form>
+      </CardContent>
+
+      <CardFooter className="flex gap-2">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={loading}
+          disabled={isLoading}
+          className="flex-1"
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Vehicle'}
+
+        <Button
+          type="submit"
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isEditing ? 'Updating...' : 'Adding...'}
+            </>
+          ) : (
+            <>
+              {isEditing ? 'Update Vehicle' : 'Add Vehicle'}
+            </>
+          )}
         </Button>
-      </div>
-    </form>
-  );
-} 
+      </CardFooter>
+    </Card>
+  )
+}

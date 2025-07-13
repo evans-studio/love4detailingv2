@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Homepage Services</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .service { border: 1px solid #ccc; margin: 10px 0; padding: 15px; border-radius: 8px; }
+        .loading { color: #666; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Love4Detailing Services Test</h1>
+    <div id="status"></div>
+    <div id="services-container"></div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const servicesContainer = document.getElementById('services-container');
+        
+        async function testServices() {
+            try {
+                statusDiv.innerHTML = '<div class="loading">🔍 Loading services...</div>';
+                
+                const response = await fetch('/api/services');
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    statusDiv.innerHTML = `<div class="success">✅ Found ${result.data.length} services</div>`;
+                    
+                    if (result.data.length > 0) {
+                        result.data.forEach(service => {
+                            const serviceDiv = document.createElement('div');
+                            serviceDiv.className = 'service';
+                            serviceDiv.innerHTML = `
+                                <h3>${service.name}</h3>
+                                <p><strong>Price:</strong> ${service.pricing_summary.formatted_range}</p>
+                                <p><strong>Duration:</strong> ${service.base_duration_minutes} minutes</p>
+                                <p><strong>Description:</strong> ${service.description}</p>
+                                <p><strong>Features:</strong> ${service.features.length} features</p>
+                                <p><strong>Vehicle Sizes:</strong> ${service.pricing_summary.vehicle_sizes.join(', ')}</p>
+                            `;
+                            servicesContainer.appendChild(serviceDiv);
+                        });
+                    } else {
+                        servicesContainer.innerHTML = '<p>No services found</p>';
+                    }
+                } else {
+                    statusDiv.innerHTML = `<div class="error">❌ API Error: ${result.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test on load
+        testServices();
+    </script>
+</body>
+</html>

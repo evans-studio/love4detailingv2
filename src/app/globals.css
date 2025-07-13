@@ -2,74 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Enable smooth scrolling for anchor links */
+/* Premium smooth scrolling implementation */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* Account for dynamic header */
+}
+
+/* Dynamic header animation support */
+.header-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hardware acceleration for smooth performance */
+* {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Dropdown animations */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdown-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+
+.dropdown-enter {
+  animation: dropdown-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdown-exit {
+  animation: dropdown-out 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Momentum scrolling for mobile */
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
 }
 
 /* Import react-day-picker styles */
 .rdp {
   --rdp-cell-size: 40px;
-  --rdp-accent-color: rgb(79, 70, 229);
-  --rdp-background-color: rgb(243, 244, 246);
-  --rdp-accent-color-dark: rgb(67, 56, 202);
-  --rdp-background-color-dark: rgb(31, 41, 55);
+  --rdp-accent-color: #9747FF;
+  --rdp-background-color: #262626;
+  --rdp-accent-color-dark: #9747FF;
+  --rdp-background-color-dark: #262626;
   --rdp-outline: 2px solid var(--rdp-accent-color);
   --rdp-outline-selected: 2px solid var(--rdp-accent-color);
   margin: 1em;
+  background-color: var(--rdp-background-color);
+  color: #F8F4EB;
 }
 
 .rdp-day_selected,
 .rdp-day_selected:focus-visible,
 .rdp-day_selected:hover {
   background-color: var(--rdp-accent-color);
-  color: white;
+  color: #F8F4EB;
+}
+
+.rdp-day {
+  color: #F8F4EB;
+}
+
+.rdp-day:hover {
+  background-color: rgba(151, 71, 255, 0.1);
+  color: #9747FF;
+}
+
+.rdp-head_cell {
+  color: #C7C7C7;
+}
+
+.rdp-caption {
+  color: #F8F4EB;
+}
+
+.rdp-nav_button {
+  color: #C7C7C7;
+}
+
+.rdp-nav_button:hover {
+  background-color: rgba(151, 71, 255, 0.1);
+  color: #9747FF;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 267 100% 64%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 267 100% 64%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 267 100% 64%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 267 100% 64%;
+    /* Love4Detailing Glass-Morphism Theme */
+    --background: transparent;
+    --foreground: rgba(255, 255, 255, 1);
+    --primary: #9747FF;
+    --primary-foreground: rgba(255, 255, 255, 1);
+    --card: rgba(255, 255, 255, 0.1);
+    --card-foreground: rgba(255, 255, 255, 1);
+    --popover: rgba(255, 255, 255, 0.1);
+    --popover-foreground: rgba(255, 255, 255, 1);
+    --secondary: rgba(255, 255, 255, 0.15);
+    --secondary-foreground: rgba(255, 255, 255, 1);
+    --muted: rgba(255, 255, 255, 0.6);
+    --muted-foreground: rgba(255, 255, 255, 0.7);
+    --accent: rgba(255, 255, 255, 0.1);
+    --accent-foreground: rgba(255, 255, 255, 1);
+    --destructive: #BA0C2F;
+    --destructive-foreground: rgba(255, 255, 255, 1);
+    --border: rgba(255, 255, 255, 0.2);
+    --input: rgba(255, 255, 255, 0.1);
+    --ring: rgba(255, 255, 255, 0.5);
+    --radius: 0.75rem;
+    
+    /* State colors */
+    --success: #28C76F;
+    --warning: #FFA726;
+    --info: #29B6F6;
   }
 }
 
@@ -103,7 +169,7 @@ html {
 
 /* Focus Styles */
 :focus-visible {
-  @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  @apply outline-none ring-2 ring-primary ring-offset-2;
 }
 
 /* Loading States */
@@ -116,40 +182,131 @@ html {
   @apply transition-all duration-300 ease-in-out;
 }
 
-/* Animations */
+/* Premium animations with hardware acceleration */
 @keyframes float {
   0% {
-    transform: translateY(0px);
+    transform: translateY(0px) translateZ(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-10px) translateZ(0);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0px) translateZ(0);
+  }
+}
+
+@keyframes premium-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(151, 71, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(151, 71, 255, 0.5), 0 0 40px rgba(151, 71, 255, 0.2);
+  }
+}
+
+@keyframes smooth-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes smooth-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+/* Premium Button Animations */
+@keyframes button-glow {
+  0% {
+    box-shadow: 0 4px 15px rgba(151, 71, 255, 0.25);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(151, 71, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 15px rgba(151, 71, 255, 0.25);
   }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-premium-glow {
+  animation: premium-glow 2s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+.animate-button-glow {
+  animation: button-glow 2s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+/* Smooth fade-in animations */
+.fade-in-on-scroll {
+  opacity: 0;
+  transform: translateY(30px) translateZ(0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.animate-smooth-fade-in {
+  opacity: 1 !important;
+  transform: translateY(0) translateZ(0) !important;
+}
+
+/* Premium hover effects */
+.premium-hover-scale {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.premium-hover-scale:hover {
+  transform: scale(1.05) translateZ(0);
 }
 
 /* GSAP Animation Classes */
 .fade-in {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(20px) translateZ(0);
 }
 
 .slide-in-left {
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateX(-20px) translateZ(0);
 }
 
 .slide-in-right {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(20px) translateZ(0);
 }
 
 .scale-in {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.95) translateZ(0);
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
 } 

@@ -1,0 +1,7 @@
+
+          -- Add size_confirmed column to vehicles table
+          ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS size_confirmed boolean DEFAULT false;
+          
+          -- Update existing vehicles to have size_confirmed = false
+          UPDATE vehicles SET size_confirmed = false WHERE size_confirmed IS NULL;
+        

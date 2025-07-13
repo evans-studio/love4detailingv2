@@ -57,7 +57,7 @@ npm run test:email        # Test email functionality
 1. **Smart Vehicle Management**: Local JSON-based vehicle size logic, dynamic pricing, and multi-vehicle profiles
 2. **Flexible Booking System**: Multi-step flow, time slot management, anonymous booking support
 3. **Rewards/Loyalty System**: Three-tier program with points and benefits
-4. **Admin Dashboard**: Comprehensive booking and user management
+4. **Admin Dashboard**: Comprehensive booking and user management + flexible working days and hours
 
 ### Database Design
 - **Core Tables**: users, vehicles, vehicle_sizes, bookings, time_slots, rewards, reward_transactions
@@ -183,4 +183,3 @@ These are available but not currently in use:
 - **Supabase Schema Cache**: Run `npx supabase db reset` to refresh schema when new columns cause 42703 errors
 - **RLS Errors**: Confirm active session and proper role match before querying
 - **Component Not Rendering**: Confirm route exists and layout includes `AuthProvider`
-

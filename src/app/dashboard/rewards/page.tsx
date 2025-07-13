@@ -1,300 +1,390 @@
-'use client';
+'use client'
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ProgressRing } from '@/components/ui/progressRing';
-import { RewardsHistory } from '@/components/rewards/RewardsHistory';
-import { RewardsService } from '@/lib/services/rewards';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import {
-  Gift,
-  Sparkles,
-  Star,
-  Trophy,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import type { UserRewards } from '@/types';
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/lib/auth/context'
+import EnhancedCustomerDashboardLayout from "@/components/dashboard/EnhancedCustomerDashboardLayout"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { 
+  Gift, 
+  Star, 
+  Trophy, 
+  Crown, 
+  Calendar, 
+  DollarSign,
+  ArrowRight,
+  CheckCircle,
+  Lock
+} from 'lucide-react'
 
-// Move to constants file
-const REWARDS_TIERS = [
-  {
+interface RewardTransaction {
+  id: string
+  type: 'earned' | 'redeemed'
+  points: number
+  description: string
+  date: string
+  booking_reference?: string
+}
+
+interface RewardBenefit {
+  id: string
+  name: string
+  description: string
+  required_tier: 'bronze' | 'silver' | 'gold'
+  points_cost?: number
+  icon: React.ComponentType<{ className?: string }>
+  available: boolean
+}
+
+const REWARD_TIERS = {
+  bronze: {
     name: 'Bronze',
-    points: 0,
-    icon: Star,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
-    benefits: [
-      'Earn 1 point per £1 spent',
-      'Birthday special offer',
-      'Monthly newsletter',
-    ],
-  },
-  {
-    name: 'Silver',
-    points: 500,
-    icon: Sparkles,
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-50',
-    benefits: [
-      'Earn 1.5 points per £1 spent',
-      'Priority booking',
-      'Exclusive discounts',
-      'Quarterly detail report',
-    ],
-  },
-  {
-    name: 'Gold',
-    points: 1000,
     icon: Trophy,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50',
-    benefits: [
-      'Earn 2 points per £1 spent',
-      'VIP booking slots',
-      'Free upgrades',
-      'Annual detail package',
-      'Direct support line',
-    ],
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-100',
+    borderColor: 'border-amber-200',
+    minPoints: 0,
+    maxPoints: 499,
+    benefits: ['5% service discount', 'Priority booking', 'Service reminders']
   },
-];
+  silver: {
+    name: 'Silver',
+    icon: Star,
+    color: 'text-white',
+    bgColor: 'bg-white/15',
+    borderColor: 'border-white/30',
+    minPoints: 500,
+    maxPoints: 999,
+    benefits: ['10% service discount', 'Free car air freshener', 'Monthly care tips', 'Priority support']
+  },
+  gold: {
+    name: 'Gold',
+    icon: Crown,
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-100',
+    borderColor: 'border-yellow-200',
+    minPoints: 1000,
+    maxPoints: Infinity,
+    benefits: ['15% service discount', 'Free premium wax', 'VIP booking slots', 'Personal detailer', 'Birthday bonus']
+  }
+}
+
+const REWARD_BENEFITS: RewardBenefit[] = [
+  {
+    id: '1',
+    name: 'Free Car Air Freshener',
+    description: 'Premium car air freshener with next service',
+    required_tier: 'silver',
+    points_cost: 100,
+    icon: Gift,
+    available: true
+  },
+  {
+    id: '2',
+    name: 'Service Upgrade',
+    description: 'Upgrade to premium service package',
+    required_tier: 'silver',
+    points_cost: 200,
+    icon: Star,
+    available: true
+  },
+  {
+    id: '3',
+    name: 'Free Premium Wax',
+    description: 'Professional ceramic wax application',
+    required_tier: 'gold',
+    points_cost: 300,
+    icon: Crown,
+    available: true
+  },
+  {
+    id: '4',
+    name: '20% Service Discount',
+    description: 'One-time 20% discount on any service',
+    required_tier: 'gold',
+    points_cost: 400,
+    icon: DollarSign,
+    available: true
+  }
+]
 
 export default function RewardsPage() {
-  const [rewards, setRewards] = useState<UserRewards | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const supabase = createClientComponentClient();
+  const { profile, statistics, isLoading } = useAuth()
+  const [rewardTransactions, setRewardTransactions] = useState<RewardTransaction[]>([])
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    fetchRewardTransactions()
+  }, [])
 
-  useEffect(() => {
-    async function loadRewards() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const rewardsService = new RewardsService();
-        const userRewards = await rewardsService.getUserRewards(user.id);
-        setRewards(userRewards);
-      } catch (error) {
-        console.error('Failed to load rewards:', error);
-      } finally {
-        setLoading(false);
+  const fetchRewardTransactions = async () => {
+    try {
+      const response = await fetch('/api/rewards/transactions')
+      if (response.ok) {
+        const { data } = await response.json()
+        setRewardTransactions(data || [])
+      } else {
+        console.error('Failed to fetch reward transactions:', response.status)
       }
+    } catch (error) {
+      console.error('Error fetching reward transactions:', error)
+    } finally {
+      setIsLoadingTransactions(false)
     }
+  }
 
-    loadRewards();
-  }, [supabase]);
+  const redeemReward = async (rewardId: string) => {
+    try {
+      const response = await fetch('/api/rewards/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reward_id: rewardId })
+      })
+      
+      if (response.ok) {
+        // Refresh transactions and statistics
+        fetchRewardTransactions()
+        // You might want to refresh the statistics here
+      }
+    } catch (error) {
+      console.error('Error redeeming reward:', error)
+    }
+  }
 
-  if (!mounted) {
+  if (isLoading) {
     return (
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="h-8 w-48 bg-[#262626] rounded mb-2" />
-          <div className="h-4 w-96 bg-[#262626] rounded" />
+      <EnhancedCustomerDashboardLayout title="Rewards & Loyalty" subtitle="Earn points and unlock exclusive benefits">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-        <Card className="mb-8 p-6 bg-[#1E1E1E] border-gray-800">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-6">
-              <div className="h-24 w-24 rounded-full bg-[#262626]" />
-              <div>
-                <div className="h-6 w-32 bg-[#262626] rounded mb-2" />
-                <div className="h-4 w-24 bg-[#262626] rounded" />
-              </div>
-            </div>
-          </div>
+      </EnhancedCustomerDashboardLayout>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <EnhancedCustomerDashboardLayout title="Rewards & Loyalty" subtitle="Earn points and unlock exclusive benefits">
+        <Card className="w-full max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle>Profile Not Found</CardTitle>
+          </CardHeader>
         </Card>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="p-4 bg-[#1E1E1E] border-gray-800">
-              <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 rounded-full bg-[#262626]" />
-                <div>
-                  <div className="h-4 w-24 bg-[#262626] rounded mb-2" />
-                  <div className="h-6 w-16 bg-[#262626] rounded" />
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
+      </EnhancedCustomerDashboardLayout>
+    )
   }
 
-  if (loading) {
-    return <div className="text-[#C7C7C7]">Loading rewards...</div>;
+  const currentTier = (statistics?.reward_tier || 'bronze') as keyof typeof REWARD_TIERS
+  const currentPoints = statistics?.reward_points || 0
+  const tierInfo = REWARD_TIERS[currentTier]
+  const TierIcon = tierInfo.icon
+
+  // Calculate progress to next tier
+  const getNextTierProgress = () => {
+    if (currentTier === 'gold') return 100
+    
+    const nextTier = currentTier === 'bronze' ? 'silver' : 'gold'
+    const nextTierMinPoints = REWARD_TIERS[nextTier].minPoints
+    const currentTierMaxPoints = tierInfo.maxPoints === Infinity ? nextTierMinPoints : tierInfo.maxPoints
+    
+    return Math.min(100, (currentPoints / nextTierMinPoints) * 100)
   }
 
-  if (!rewards) {
-    return <div className="text-[#C7C7C7]">No rewards found</div>;
+  const getPointsToNextTier = () => {
+    if (currentTier === 'gold') return 0
+    
+    const nextTier = currentTier === 'bronze' ? 'silver' : 'gold'
+    const nextTierMinPoints = REWARD_TIERS[nextTier].minPoints
+    
+    return Math.max(0, nextTierMinPoints - currentPoints)
   }
-
-  const userPoints = rewards.currentPoints || 0;
-  
-  const currentTier = REWARDS_TIERS.reduce((prev, curr) => {
-    if (userPoints >= curr.points) return curr;
-    return prev;
-  }, REWARDS_TIERS[0]);
-
-  const nextTier = REWARDS_TIERS[REWARDS_TIERS.indexOf(currentTier) + 1];
-  const pointsToNextTier = nextTier ? nextTier.points - userPoints : 0;
-  
-  // Calculate progress percentage for current tier
-  const progressToNextTier = nextTier
-    ? ((userPoints - currentTier.points) / (nextTier.points - currentTier.points)) * 100
-    : 100;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-[#F2F2F2]">Rewards Program</h1>
-        <p className="text-[#C7C7C7]">
-          Earn points with every service and unlock exclusive benefits.
-        </p>
-      </div>
-
-      {/* Current Status */}
-      <Card className="mb-8 p-6 bg-[#1E1E1E] border-gray-800">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-6">
-            <ProgressRing
-              value={progressToNextTier}
-              size={100}
-              className={currentTier.color}
-            >
-              <currentTier.icon className="w-8 h-8" />
-            </ProgressRing>
-            <div>
-              <h2 className="text-xl font-semibold text-[#F2F2F2]">{currentTier.name} Member</h2>
-              <p className="text-[#C7C7C7]">Current Points: {userPoints}</p>
-              {nextTier && (
-                <p className="text-sm text-[#8B8B8B]">
-                  {pointsToNextTier} points until {nextTier.name}
-                </p>
-              )}
-            </div>
-          </div>
-          {nextTier && (
-            <div className="text-center md:text-right">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#262626] rounded-full shadow-sm">
-                <nextTier.icon className={`w-5 h-5 ${nextTier.color}`} />
-                <span className="text-[#F2F2F2]">Next Tier: {nextTier.name}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
-
-      {/* Points Overview */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
-          <div className="flex items-center space-x-4">
-            <div className="rounded-full bg-[#262626] p-3">
-              <Star className="h-6 w-6 text-[#9146FF]" />
-            </div>
-            <div>
-              <p className="text-sm text-[#8B8B8B]">Current Points</p>
-              <p className="text-2xl font-bold text-[#F2F2F2]">{rewards.currentPoints}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
-          <div className="flex items-center space-x-4">
-            <div className="rounded-full bg-[#262626] p-3">
-              <Trophy className="h-6 w-6 text-[#9146FF]" />
-            </div>
-            <div>
-              <p className="text-sm text-[#8B8B8B]">Lifetime Points</p>
-              <p className="text-2xl font-bold text-[#F2F2F2]">{rewards.lifetimePoints}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 bg-[#1E1E1E] border-gray-800">
-          <div className="flex items-center space-x-4">
-            <div className="rounded-full bg-[#262626] p-3">
-              <Gift className="h-6 w-6 text-[#9146FF]" />
-            </div>
-            <div>
-              <p className="text-sm text-[#8B8B8B]">Available Rewards</p>
-              <p className="text-2xl font-bold text-[#F2F2F2]">{rewards.availableRewards}</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Points History and Tiers Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        {/* Points History */}
-        <div className="lg:col-span-2">
-          <RewardsHistory />
-        </div>
-
-        {/* Current Benefits */}
+    <EnhancedCustomerDashboardLayout title="Rewards & Loyalty" subtitle="Earn points and unlock exclusive benefits">
+      <div className="space-y-6">
+        {/* Page Header */}
         <div>
-          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
-            <h3 className="text-lg font-semibold mb-4 text-[#F2F2F2]">Your Benefits</h3>
-            <ul className="space-y-3">
-              {currentTier.benefits.map((benefit, index) => (
-                <li key={index} className="flex items-center gap-2 text-sm">
-                  <Gift className="w-4 h-4 text-[#9146FF] flex-shrink-0" />
-                  <span className="text-[#C7C7C7]">{benefit}</span>
-                </li>
-              ))}
-            </ul>
+          <h1 className="text-2xl font-bold">Rewards & Loyalty</h1>
+          <p className="text-muted-foreground">Earn points and unlock exclusive benefits</p>
+        </div>
+
+        {/* Current Tier Status */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className={`${tierInfo.bgColor} ${tierInfo.borderColor}`}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TierIcon className={`h-6 w-6 ${tierInfo.color}`} />
+                {tierInfo.name} Member
+              </CardTitle>
+              <CardDescription>
+                Your current loyalty tier
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold mb-2">{currentPoints}</div>
+              <p className="text-sm text-muted-foreground">Total Points</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Next Tier Progress</CardTitle>
+              <CardDescription>
+                {currentTier === 'gold' 
+                  ? 'You\'re at the highest tier!' 
+                  : `${getPointsToNextTier()} points to ${currentTier === 'bronze' ? 'Silver' : 'Gold'}`
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Progress value={getNextTierProgress()} className="mb-2" />
+              <div className="text-sm text-muted-foreground">
+                {currentTier === 'gold' ? '100% Complete' : `${getNextTierProgress().toFixed(0)}% Complete`}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Earning Rate</CardTitle>
+              <CardDescription>
+                Points per service
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold mb-2">1</div>
+              <p className="text-sm text-muted-foreground">Point per £1 spent</p>
+            </CardContent>
           </Card>
         </div>
-      </div>
 
-      {/* Membership Tiers */}
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold mb-6 text-[#F2F2F2]">Membership Tiers</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {REWARDS_TIERS.map((tier) => (
-            <Card
-              key={tier.name}
-              className={`p-6 bg-[#1E1E1E] border-gray-800 ${
-                tier.name === currentTier.name
-                  ? 'ring-2 ring-[#9146FF]'
-                  : ''
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`p-2 rounded-full bg-[#262626]`}>
-                  <tier.icon className={`w-6 h-6 ${tier.color}`} />
+        {/* Tier Benefits */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Your {tierInfo.name} Benefits</CardTitle>
+            <CardDescription>
+              Exclusive perks available to you
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {tierInfo.benefits.map((benefit, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm">{benefit}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#F2F2F2]">{tier.name}</h3>
-              </div>
-              <p className="text-sm text-[#C7C7C7] mb-4">
-                {tier.points.toLocaleString()} points to qualify
-              </p>
-              <ul className="space-y-2">
-                {tier.benefits.map((benefit, index) => (
-                  <li key={index} className="text-sm flex items-center gap-2">
-                    <Gift className="w-4 h-4 text-[#9146FF]" />
-                    <span className="text-[#C7C7C7]">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ))}
-        </div>
-      </section>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Coming Soon */}
-      <Card className="p-6 text-center bg-[#1E1E1E] border-gray-800">
-        <Sparkles className="w-12 h-12 text-[#9146FF] mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2 text-[#F2F2F2]">More Features Coming Soon</h2>
-        <p className="text-[#C7C7C7] mb-4">
-          We're working on exciting new rewards and benefits for our loyal customers.
-        </p>
-        <Button variant="outline">
-          Learn More
-        </Button>
-      </Card>
-    </div>
-  );
-} 
+        {/* Available Rewards */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Available Rewards</CardTitle>
+            <CardDescription>
+              Redeem your points for exclusive rewards
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {REWARD_BENEFITS.map((reward) => {
+                const canRedeem = currentPoints >= (reward.points_cost || 0) && 
+                                REWARD_TIERS[currentTier].minPoints >= REWARD_TIERS[reward.required_tier].minPoints
+                const RewardIcon = reward.icon
+
+                return (
+                  <Card key={reward.id} className={`${canRedeem ? 'border-primary/20' : 'border-border opacity-60'}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${canRedeem ? 'bg-primary/10' : 'bg-muted'}`}>
+                          <RewardIcon className={`h-5 w-5 ${canRedeem ? 'text-primary' : 'text-muted-foreground'}`} />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">{reward.name}</h3>
+                          <p className="text-xs text-muted-foreground mb-2">{reward.description}</p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="text-xs">
+                                {reward.points_cost} points
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {REWARD_TIERS[reward.required_tier].name}+
+                              </Badge>
+                            </div>
+                            <Button
+                              size="sm"
+                              disabled={!canRedeem}
+                              onClick={() => redeemReward(reward.id)}
+                              className="text-xs"
+                            >
+                              {canRedeem ? 'Redeem' : <Lock className="h-3 w-3" />}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Points History */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Points History</CardTitle>
+            <CardDescription>
+              Your recent reward activities
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingTransactions ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              </div>
+            ) : rewardTransactions.length > 0 ? (
+              <div className="space-y-3">
+                {rewardTransactions.map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-full ${
+                        transaction.type === 'earned' ? 'bg-green-100' : 'bg-blue-100'
+                      }`}>
+                        {transaction.type === 'earned' ? (
+                          <DollarSign className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <Gift className="h-4 w-4 text-blue-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{transaction.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(transaction.date).toLocaleDateString()}
+                          {transaction.booking_reference && ` • Booking ${transaction.booking_reference}`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`font-semibold ${
+                      transaction.type === 'earned' ? 'text-green-600' : 'text-blue-600'
+                    }`}>
+                      {transaction.type === 'earned' ? '+' : '-'}{transaction.points}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Gift className="h-12 w-12 mx-auto mb-4 text-muted" />
+                <p>No reward activity yet</p>
+                <p className="text-sm mt-2">Complete bookings to start earning points!</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </EnhancedCustomerDashboardLayout>
+  )
+}

@@ -1,0 +1,208 @@
+-- Create unmatched_vehicles table to track unknown vehicles for admin review
+-- This addresses Issue #002: Unknown vehicle size detection fallback system
+
+CREATE TABLE IF NOT EXISTS unmatched_vehicles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    make TEXT NOT NULL,
+    model TEXT NOT NULL,
+    trim TEXT,
+    year INTEGER,
+    detected_size vehicle_size NOT NULL,
+    detection_source TEXT NOT NULL,
+    admin_reviewed BOOLEAN DEFAULT FALSE,
+    admin_verified_size vehicle_size,
+    admin_notes TEXT,
+    times_requested INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Ensure we don't duplicate entries
+    UNIQUE(make, model, COALESCE(trim, ''), COALESCE(year, 0))
+);
+
+-- Enable RLS
+ALTER TABLE unmatched_vehicles ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies
+CREATE POLICY "unmatched_vehicles_admin_access" ON unmatched_vehicles FOR ALL TO authenticated
+USING (
+    EXISTS (
+        SELECT 1 FROM users 
+        WHERE users.id = auth.uid() 
+        AND users.role IN ('admin', 'super_admin')
+    )
+);
+
+-- Create policy for the system to insert unmatched vehicles (service_role)
+CREATE POLICY "unmatched_vehicles_service_insert" ON unmatched_vehicles FOR INSERT TO service_role
+USING (true);
+
+-- Grant permissions
+GRANT ALL ON unmatched_vehicles TO authenticated;
+GRANT ALL ON unmatched_vehicles TO service_role;
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_unmatched_vehicles_make_model ON unmatched_vehicles(make, model);
+CREATE INDEX IF NOT EXISTS idx_unmatched_vehicles_reviewed ON unmatched_vehicles(admin_reviewed);
+CREATE INDEX IF NOT EXISTS idx_unmatched_vehicles_created_at ON unmatched_vehicles(created_at);
+
+-- Function to handle duplicate unmatched vehicles (increment counter instead of error)
+CREATE OR REPLACE FUNCTION handle_unmatched_vehicle_insert() 
+RETURNS TRIGGER AS $$
+BEGIN
+    -- If we're trying to insert a duplicate, just increment the counter
+    UPDATE unmatched_vehicles 
+    SET 
+        times_requested = times_requested + 1,
+        updated_at = NOW()
+    WHERE make = NEW.make 
+    AND model = NEW.model 
+    AND COALESCE(trim, '') = COALESCE(NEW.trim, '')
+    AND COALESCE(year, 0) = COALESCE(NEW.year, 0);
+    
+    -- If we updated a row, don't insert the new one
+    IF FOUND THEN
+        RETURN NULL;
+    END IF;
+    
+    -- Otherwise, allow the insert
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for the function
+DROP TRIGGER IF EXISTS trigger_handle_unmatched_vehicle_insert ON unmatched_vehicles;
+CREATE TRIGGER trigger_handle_unmatched_vehicle_insert
+    BEFORE INSERT ON unmatched_vehicles
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_unmatched_vehicle_insert();
+
+-- Update the detect_vehicle_size function to properly handle the unmatched vehicles
+CREATE OR REPLACE FUNCTION detect_vehicle_size(
+    p_make TEXT,
+    p_model TEXT,
+    p_year INTEGER DEFAULT NULL,
+    p_trim TEXT DEFAULT NULL
+) RETURNS TABLE (
+    detected_size vehicle_size,
+    source_type TEXT,
+    detection_info JSONB
+) AS $$
+DECLARE
+    v_size vehicle_size;
+    v_source TEXT;
+    v_info JSONB;
+    v_registry_size vehicle_size;
+BEGIN
+    -- Clean and normalize inputs
+    p_make := TRIM(UPPER(p_make));
+    p_model := TRIM(UPPER(p_model));
+    p_trim := CASE WHEN p_trim IS NULL OR TRIM(p_trim) = '' THEN NULL ELSE TRIM(UPPER(p_trim)) END;
+
+    -- First: Check vehicle model registry with exact trim match
+    IF p_trim IS NOT NULL THEN
+        SELECT default_size INTO v_registry_size
+        FROM vehicle_model_registry
+        WHERE UPPER(make) = p_make 
+        AND UPPER(model) = p_model
+        AND UPPER(COALESCE(trim, '')) = p_trim
+        AND verified = TRUE
+        LIMIT 1;
+    END IF;
+
+    -- Second: Check registry without trim if no exact match found
+    IF v_registry_size IS NULL THEN
+        SELECT default_size INTO v_registry_size
+        FROM vehicle_model_registry
+        WHERE UPPER(make) = p_make 
+        AND UPPER(model) = p_model
+        AND verified = TRUE
+        ORDER BY (CASE WHEN trim IS NULL THEN 1 ELSE 2 END) -- Prefer entries without trim as fallback
+        LIMIT 1;
+    END IF;
+
+    IF v_registry_size IS NOT NULL THEN
+        v_size := v_registry_size;
+        v_source := 'registry_exact';
+        v_info := jsonb_build_object(
+            'source', 'vehicle_model_registry',
+            'make', p_make,
+            'model', p_model,
+            'trim', p_trim,
+            'verified', true,
+            'match_type', CASE WHEN p_trim IS NOT NULL THEN 'exact_with_trim' ELSE 'exact_no_trim' END
+        );
+    ELSE
+        -- Third: Use intelligent defaults based on make/model patterns
+        CASE 
+            -- Small vehicles
+            WHEN p_make = 'SMART' OR 
+                 (p_make = 'MINI' AND p_model NOT LIKE '%COUNTRYMAN%') OR
+                 (p_make = 'FIAT' AND p_model IN ('500', 'PANDA')) OR
+                 (p_make = 'TOYOTA' AND p_model IN ('AYGO', 'IQ')) OR
+                 (p_make = 'CITROEN' AND p_model IN ('C1', 'C2')) OR
+                 (p_make = 'PEUGEOT' AND p_model IN ('107', '108')) OR
+                 (p_make = 'FORD' AND p_model = 'KA') OR
+                 (p_make = 'HYUNDAI' AND p_model = 'I10') OR
+                 (p_make = 'KIA' AND p_model = 'PICANTO') OR
+                 (p_make = 'SUZUKI' AND p_model = 'ALTO') OR
+                 (p_make = 'NISSAN' AND p_model = 'MICRA') THEN
+                v_size := 'small';
+                v_source := 'pattern_match';
+
+            -- Large vehicles  
+            WHEN p_make IN ('AUDI', 'BMW', 'MERCEDES', 'MERCEDES-BENZ') AND 
+                 (p_model LIKE '%X%' OR p_model LIKE '%Q%' OR p_model LIKE '%SUV%' OR 
+                  p_model LIKE '%GLE%' OR p_model LIKE '%GLS%' OR p_model LIKE '%ML%') OR
+                 (p_make = 'LAND ROVER') OR
+                 (p_make = 'RANGE ROVER') OR
+                 (p_make = 'VOLVO' AND p_model LIKE '%XC%') OR
+                 (p_make = 'JEEP') OR
+                 (p_model LIKE '%ESTATE%' OR p_model LIKE '%TOURING%') OR
+                 (p_make = 'TOYOTA' AND p_model = 'RAV4') OR
+                 (p_make = 'HONDA' AND p_model = 'CR-V') OR
+                 (p_make = 'NISSAN' AND p_model = 'QASHQAI') OR
+                 (p_make = 'FORD' AND p_model = 'KUGA') OR
+                 (p_make = 'HYUNDAI' AND p_model = 'TUCSON') OR
+                 (p_make = 'KIA' AND p_model = 'SPORTAGE') THEN
+                v_size := 'large';
+                v_source := 'pattern_match';
+
+            -- Extra large vehicles
+            WHEN p_make IN ('BENTLEY', 'ROLLS-ROYCE', 'LAMBORGHINI', 'FERRARI', 'ASTON MARTIN', 'MASERATI', 'LOTUS') OR
+                 (p_make = 'BMW' AND p_model IN ('X5', 'X6', 'X7', 'I7', '7 SERIES')) OR
+                 (p_make = 'MERCEDES-BENZ' AND (p_model LIKE '%S-CLASS%' OR p_model LIKE '%GLS%')) OR
+                 (p_make = 'AUDI' AND p_model IN ('Q7', 'Q8', 'A8')) OR
+                 (p_model LIKE '%VAN%' OR p_model LIKE '%TRUCK%' OR p_model LIKE '%TRANSIT%' OR p_model LIKE '%SPRINTER%') THEN
+                v_size := 'extra_large';
+                v_source := 'pattern_match';
+
+            -- Default to medium for everything else
+            ELSE
+                v_size := 'medium';
+                v_source := 'default_fallback';
+        END CASE;
+
+        -- Log unknown vehicle for admin review (will use trigger to handle duplicates)
+        INSERT INTO unmatched_vehicles (make, model, trim, year, detected_size, detection_source, created_at)
+        VALUES (p_make, p_model, p_trim, p_year, v_size, v_source, NOW());
+
+        v_info := jsonb_build_object(
+            'source', v_source,
+            'make', p_make,
+            'model', p_model,
+            'trim', p_trim,
+            'year', p_year,
+            'pattern_matched', CASE WHEN v_source = 'pattern_match' THEN true ELSE false END,
+            'logged_for_review', true,
+            'fallback_applied', true
+        );
+    END IF;
+
+    RETURN QUERY SELECT v_size, v_source, v_info;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant permissions for updated function
+GRANT EXECUTE ON FUNCTION detect_vehicle_size(TEXT, TEXT, INTEGER, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION detect_vehicle_size(TEXT, TEXT, INTEGER, TEXT) TO service_role;

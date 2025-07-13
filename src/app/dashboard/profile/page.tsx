@@ -1,216 +1,467 @@
-import { Metadata } from 'next';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import {
-  UserCircleIcon,
-  KeyIcon,
-  BellIcon,
-  TruckIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline';
+'use client'
 
-export const metadata: Metadata = {
-  title: 'My Profile - Love4Detailing',
-  description: 'Manage your account settings and saved vehicles.',
-};
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Calendar, 
+  Car, 
+  Star, 
+  CreditCard,
+  Edit,
+  Save,
+  X,
+  Loader2,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react'
+import EnhancedCustomerDashboardLayout from "@/components/dashboard/EnhancedCustomerDashboardLayout"
 
-async function getProfileData() {
-  const supabase = createServerComponentClient({ cookies });
+interface ProfileData {
+  id: string
+  email: string
+  fullName: string
+  phone: string
+  address: string
+  city: string
+  postcode: string
+  memberSince: string
+  stats: {
+    totalBookings: number
+    confirmedBookings: number
+    totalSpent: number
+    totalSpentFormatted: string
+    totalVehicles: number
+    rewardPoints: number
+    rewardTier: string
+  }
+}
+
+export default function CustomerProfilePage() {
+  const [profile, setProfile] = useState<ProfileData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
   
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    address: '',
+    city: '',
+    postcode: ''
+  })
 
-  // Get user profile
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+  const fetchProfile = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch('/api/user/profile')
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const result = await response.json()
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      
+      const profileData = result.data
+      setProfile(profileData)
+      setFormData({
+        fullName: profileData.fullName || '',
+        phone: profileData.phone || '',
+        address: profileData.address || '',
+        city: profileData.city || '',
+        postcode: profileData.postcode || ''
+      })
+      
+    } catch (err) {
+      console.error('Error fetching profile:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load profile')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  // Get saved vehicles
-  const { data: vehicles } = await supabase
-    .from('vehicles')
-    .select('*')
-    .eq('userId', user.id)
-    .order('created_at', { ascending: false });
+  const handleSave = async () => {
+    try {
+      setSaving(true)
+      setError(null)
+      setSuccess(null)
+      
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const result = await response.json()
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      
+      setSuccess('Profile updated successfully!')
+      setEditing(false)
+      
+      // Refresh profile data
+      await fetchProfile()
+      
+    } catch (err) {
+      console.error('Error saving profile:', err)
+      setError(err instanceof Error ? err.message : 'Failed to save profile')
+    } finally {
+      setSaving(false)
+    }
+  }
 
-  return {
-    profile: profile || {},
-    vehicles: vehicles || [],
-  };
-}
+  const handleCancel = () => {
+    if (profile) {
+      setFormData({
+        fullName: profile.fullName || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        postcode: profile.postcode || ''
+      })
+    }
+    setEditing(false)
+    setError(null)
+    setSuccess(null)
+  }
 
-function VehicleCard({ vehicle }: { vehicle: any }) {
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const getTierColor = (tier: string) => {
+    switch (tier.toLowerCase()) {
+      case 'bronze': return 'bg-amber-100 text-amber-800 border-amber-200'
+      case 'silver': return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'gold': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'platinum': return 'bg-purple-100 text-purple-800 border-purple-200'
+      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+    }
+  }
+
+  useEffect(() => {
+    fetchProfile()
+  }, [])
+
+  if (loading) {
+    return (
+      <EnhancedCustomerDashboardLayout title="My Profile" subtitle="Manage your account information and preferences">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Loading your profile...</p>
+          </CardContent>
+        </Card>
+      </EnhancedCustomerDashboardLayout>
+    )
+  }
+
+  if (error && !profile) {
+    return (
+      <EnhancedCustomerDashboardLayout title="My Profile" subtitle="Manage your account information and preferences">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </EnhancedCustomerDashboardLayout>
+    )
+  }
+
   return (
-    <Card className="p-6 bg-[#1E1E1E] border-gray-800">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="font-semibold text-[#F2F2F2]">{vehicle.make} {vehicle.model}</h3>
-          <p className="text-sm text-[#C7C7C7]">{vehicle.registration}</p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          asChild
-        >
-          <Link href={`/dashboard/profile/vehicles/${vehicle.id}`}>
-            Edit
-          </Link>
-        </Button>
-      </div>
-      <div className="space-y-2">
-        <p className="text-sm text-[#C7C7C7]">
-          <span className="text-[#8B8B8B]">Year:</span> {vehicle.year}
-        </p>
-        <p className="text-sm text-[#C7C7C7]">
-          <span className="text-[#8B8B8B]">Color:</span> {vehicle.color}
-        </p>
-        <p className="text-sm text-[#C7C7C7]">
-          <span className="text-[#8B8B8B]">Size:</span>{' '}
-          <span className="capitalize">{vehicle.size}</span>
-        </p>
-      </div>
-    </Card>
-  );
-}
-
-export default async function ProfilePage() {
-  const { profile, vehicles } = await getProfileData();
-
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-[#F2F2F2]">My Profile</h1>
-        <p className="text-[#C7C7C7]">
-          Manage your account settings and saved vehicles.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Settings */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Personal Information */}
-          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-3">
-                <UserCircleIcon className="w-6 h-6 text-[#8B8B8B]" />
-                <div>
-                  <h2 className="text-xl font-semibold text-[#F2F2F2]">Personal Information</h2>
-                  <p className="text-sm text-[#C7C7C7]">Update your personal details</p>
-                </div>
-              </div>
-              <Button asChild>
-                <Link href="/dashboard/profile/edit">
-                  Edit
-                </Link>
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-[#8B8B8B]">Name</p>
-                <p className="font-medium text-[#F2F2F2]">
-                  {profile.firstName} {profile.lastName}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-[#8B8B8B]">Email</p>
-                <p className="font-medium text-[#F2F2F2]">{profile.email}</p>
-              </div>
-              <div>
-                <p className="text-sm text-[#8B8B8B]">Phone</p>
-                <p className="font-medium text-[#F2F2F2]">{profile.phone}</p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Security */}
-          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
-            <div className="flex items-center gap-3 mb-6">
-              <KeyIcon className="w-6 h-6 text-[#8B8B8B]" />
-              <div>
-                <h2 className="text-xl font-semibold text-[#F2F2F2]">Security</h2>
-                <p className="text-sm text-[#C7C7C7]">Manage your password and security settings</p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                asChild
-              >
-                <Link href="/dashboard/profile/change-password">
-                  Change Password
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                asChild
-              >
-                <Link href="/dashboard/profile/two-factor">
-                  Two-Factor Authentication
-                </Link>
-              </Button>
-            </div>
-          </Card>
-
-          {/* Notifications */}
-          <Card className="p-6 bg-[#1E1E1E] border-gray-800">
-            <div className="flex items-center gap-3 mb-6">
-              <BellIcon className="w-6 h-6 text-[#8B8B8B]" />
-              <div>
-                <h2 className="text-xl font-semibold text-[#F2F2F2]">Notifications</h2>
-                <p className="text-sm text-[#C7C7C7]">Choose what updates you want to receive</p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              asChild
-            >
-              <Link href="/dashboard/profile/notifications">
-                Manage Notification Preferences
-              </Link>
-            </Button>
-          </Card>
-        </div>
-
-        {/* Vehicles */}
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <TruckIcon className="w-6 h-6 text-[#8B8B8B]" />
-              <h2 className="text-xl font-semibold text-[#F2F2F2]">Saved Vehicles</h2>
-            </div>
-            <Button asChild>
-              <Link href="/dashboard/profile/vehicles/new">
-                <PlusIcon className="w-4 h-4 mr-2" />
-                Add Vehicle
-              </Link>
-            </Button>
+    <EnhancedCustomerDashboardLayout title="My Profile" subtitle="Manage your account information and preferences">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">My Profile</h1>
+            <p className="text-muted-foreground">
+              Manage your account information and preferences
+            </p>
           </div>
-
-          <div className="space-y-4">
-            {vehicles.length > 0 ? (
-              vehicles.map((vehicle: any) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))
+          <div className="flex items-center gap-2">
+            {!editing ? (
+              <Button onClick={() => setEditing(true)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
             ) : (
-              <Card className="p-6 text-center bg-[#1E1E1E] border-gray-800">
-                <p className="text-[#C7C7C7] mb-4">No vehicles saved yet</p>
-                <Button asChild>
-                  <Link href="/dashboard/profile/vehicles/new">
-                    Add Your First Vehicle
-                  </Link>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancel}
+                  disabled={saving}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
                 </Button>
-              </Card>
+                <Button 
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Save Changes
+                </Button>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Success/Error Messages */}
+        {success && (
+          <Alert>
+            <CheckCircle className="h-4 w-4" />
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {profile && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Profile Information */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Basic Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Personal Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="fullName">Full Name</Label>
+                      <Input
+                        id="fullName"
+                        value={formData.fullName}
+                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                        disabled={!editing}
+                        className={!editing ? 'bg-muted' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        disabled={!editing}
+                        className={!editing ? 'bg-muted' : ''}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      disabled={!editing}
+                      className={!editing ? 'bg-muted' : ''}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="city">City</Label>
+                      <Input
+                        id="city"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        disabled={!editing}
+                        className={!editing ? 'bg-muted' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="postcode">Postcode</Label>
+                      <Input
+                        id="postcode"
+                        value={formData.postcode}
+                        onChange={(e) => handleInputChange('postcode', e.target.value)}
+                        disabled={!editing}
+                        className={!editing ? 'bg-muted' : ''}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Account Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5" />
+                    Account Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>Email Address</Label>
+                    <Input
+                      value={profile.email}
+                      disabled
+                      className="bg-muted"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Email address cannot be changed
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <Label>Member Since</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        {new Date(profile.memberSince).toLocaleDateString('en-GB', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Statistics and Rewards */}
+            <div className="space-y-6">
+              {/* Account Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Account Statistics</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-primary">
+                        {profile.stats.totalBookings}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Total Bookings</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-600">
+                        {profile.stats.confirmedBookings}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Confirmed</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-600">
+                        {profile.stats.totalVehicles}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Vehicles</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-purple-600">
+                        {profile.stats.totalSpentFormatted}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Total Spent</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rewards */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5" />
+                    Rewards Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center">
+                    <Badge className={getTierColor(profile.stats.rewardTier)}>
+                      {profile.stats.rewardTier.charAt(0).toUpperCase() + profile.stats.rewardTier.slice(1)} Member
+                    </Badge>
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-primary">
+                      {profile.stats.rewardPoints}
+                    </p>
+                    <p className="text-sm text-muted-foreground">Points Available</p>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.location.href = '/dashboard/rewards'}
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    View Rewards
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.location.href = '/dashboard/vehicles'}
+                  >
+                    <Car className="h-4 w-4 mr-2" />
+                    Manage Vehicles
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.location.href = '/dashboard/bookings'}
+                  >
+                    <Calendar className="h-4 w-4 mr-2" />
+                    View Bookings
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.location.href = '/dashboard/settings'}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Account Settings
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  );
-} 
+    </EnhancedCustomerDashboardLayout>
+  )
+}

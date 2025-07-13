@@ -1884,21 +1884,21 @@
     "size": "L"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover",
-    "trim": "Autobiography",
-    "size": "L"
+    "make": "Range Rover",
+    "model": "Autobiography",
+    "trim": "",
+    "size": "XL"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover",
-    "trim": "HSE",
-    "size": "L"
+    "make": "Range Rover",
+    "model": "HSE",
+    "trim": "",
+    "size": "XL"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover",
-    "trim": "SE",
+    "make": "Range Rover",
+    "model": "SE",
+    "trim": "",
     "size": "L"
   },
   {
@@ -1908,14 +1908,14 @@
     "size": "L"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover Evoque",
-    "trim": "HSE",
+    "make": "Range Rover",
+    "model": "Evoque",
+    "trim": "",
     "size": "L"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover Evoque",
+    "make": "Range Rover",
+    "model": "Evoque",
     "trim": "S",
     "size": "L"
   },
@@ -1926,9 +1926,9 @@
     "size": "L"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover Sport",
-    "trim": "Autobiography",
+    "make": "Range Rover ",
+    "model": "Autobiography",
+    "trim": "Sport",
     "size": "L"
   },
   {
@@ -1944,27 +1944,15 @@
     "size": "L"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover Sport",
-    "trim": "SVR",
-    "size": "L"
+    "make": "Range Rover",
+    "model": "SVR",
+    "trim": "",
+    "size": "XL"
   },
   {
-    "make": "Land Rover",
-    "model": "Range Rover Velar",
-    "trim": "HSE",
-    "size": "L"
-  },
-  {
-    "make": "Land Rover",
-    "model": "Range Rover Velar",
-    "trim": "S",
-    "size": "L"
-  },
-  {
-    "make": "Land Rover",
-    "model": "Range Rover Velar",
-    "trim": "SE",
+    "make": "Range Rover",
+    "model": "Velar",
+    "trim": "",
     "size": "L"
   },
   {

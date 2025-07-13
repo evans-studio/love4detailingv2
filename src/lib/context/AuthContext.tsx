@@ -3,10 +3,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { User as UserType } from '@/types';
 
 interface AuthContextType {
-  user: UserType | null;
+  user: User | null;
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
@@ -18,23 +17,14 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children, initialUser = null }: { children: React.ReactNode; initialUser?: UserType | null }) {
-  const [user, setUser] = useState<UserType | null>(initialUser);
+export function AuthProvider({ children, initialUser = null }: { children: React.ReactNode; initialUser?: User | null }) {
+  const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(!initialUser);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClientComponentClient();
 
-  const mapSupabaseUser = (supabaseUser: User | null): UserType | null => {
-    if (!supabaseUser) return null;
-    return {
-      id: supabaseUser.id,
-      email: supabaseUser.email!,
-      firstName: supabaseUser.user_metadata?.first_name || '',
-      lastName: supabaseUser.user_metadata?.last_name || '',
-      phone: supabaseUser.user_metadata?.phone || null,
-      createdAt: supabaseUser.created_at,
-      updatedAt: supabaseUser.updated_at || supabaseUser.created_at
-    };
+  const mapSupabaseUser = (supabaseUser: User | null): User | null => {
+    return supabaseUser;
   };
 
   useEffect(() => {
@@ -108,7 +98,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
         email,
         password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?next=/dashboard`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         },
       });
 
@@ -143,18 +133,9 @@ export function AuthProvider({ children, initialUser = null }: { children: React
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://love4detailingv2.vercel.app'}/auth/callback?type=recovery`,
       });
 
-      if (error) {
-        // Handle specific error types with better messages
-        if (error.message?.includes('rate limit') || error.message?.includes('too many')) {
-          throw new Error('Email rate limit exceeded. Please wait a few minutes before requesting another password reset.');
-        } else if (error.message?.includes('Error sending') || error.message?.includes('email')) {
-          throw new Error('Email service temporarily unavailable. Please try again later or contact support.');
-        }
-        throw error;
-      }
+      if (error) throw error;
     } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : 'Failed to reset password';
-      setError(errorMessage);
+      setError(e instanceof Error ? e.message : 'Failed to reset password');
       throw e;
     } finally {
       setLoading(false);
@@ -182,14 +163,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
 
       if (error) throw error;
 
-      // Update local user state
-      setUser(prev => prev ? {
-        ...prev,
-        firstName: data.firstName || prev.firstName,
-        lastName: data.lastName || prev.lastName,
-        phone: data.phone || prev.phone,
-        updatedAt: new Date().toISOString()
-      } : null);
+      // Profile updated in database - user state stays as is since Supabase User type is readonly
 
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to update profile');
