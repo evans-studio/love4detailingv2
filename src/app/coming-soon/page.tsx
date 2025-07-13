@@ -170,9 +170,16 @@ export default function ComingSoonPage() {
                 <span className="text-foreground text-sm font-medium">Coming Soon</span>
               </div>
               
-              <h2 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Love 4 Detailing
-              </h2>
+              <div className="mb-6">
+                <Image
+                  src="/logo.png"
+                  alt="Love4Detailing - Premium Mobile Car Detailing"
+                  width={400}
+                  height={120}
+                  className="h-20 md:h-24 w-auto mx-auto object-contain filter drop-shadow-lg"
+                  priority
+                />
+              </div>
               
               <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed font-light">
                 Premium Mobile Car Detailing
