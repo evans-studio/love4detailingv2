@@ -75,7 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const getSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
         setSession(session)
         setUser(session?.user ?? null)
         
@@ -147,7 +148,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (response.ok) {
         const { data } = await response.json()
-        console.log('User statistics loaded:', data)
         setStatistics(data)
       } else {
         console.error('Failed to load user statistics:', response.status)
@@ -183,7 +183,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (response.ok) {
         const { data } = await response.json()
-        console.log('Profile loaded:', data)
         setProfile(data)
         
         // For now, set default permissions based on role
@@ -256,13 +255,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       
       return { error }
     } catch (error) {
+      console.error('Error signing in:', error)
       return { error }
     }
   }

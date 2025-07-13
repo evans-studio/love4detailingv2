@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase/server'
 import { createClient } from '@supabase/supabase-js'
+import { auditLogger } from '@/lib/services/audit-logger'
+import { log } from '@/lib/utils/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -188,3 +190,94 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+// Log user activity tracking events
+async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const supabase = createServerSupabase()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const activities = await request.json()
+    
+    // Ensure activities is an array
+    const activityArray = Array.isArray(activities) ? activities : [activities]
+    
+    // Log context for development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Activity tracking request:', {
+        ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+        userAgent: request.headers.get('user-agent') || undefined,
+        sessionId: user.id
+      })
+    }
+
+    const loggedActivities = []
+
+    for (const activity of activityArray) {
+      try {
+        const activityId = `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        auditLogger.logUserActivity(
+          user.id,
+          activity.action || 'custom',
+          {
+            type: activity.type || 'custom',
+            description: activity.description || `${activity.action} - ${activity.label || ''}`,
+            url: activity.url,
+            referrer: activity.referrer,
+            deviceInfo: activity.deviceInfo,
+            locationInfo: activity.locationInfo,
+            duration: activity.duration,
+            data: activity.data,
+            timestamp: activity.timestamp || new Date().toISOString()
+          }
+        )
+
+        loggedActivities.push({ id: activityId, originalActivity: activity })
+
+      } catch (error) {
+        log.error('Error logging individual activity', error as Error, {
+          component: 'user-activity-api',
+          userId: user.id,
+          activity: activity
+        })
+      }
+    }
+
+    log.info('User activities logged', {
+      component: 'user-activity-api',
+      userId: user.id,
+      metadata: {
+        activitiesCount: activityArray.length,
+        successCount: loggedActivities.length
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        logged: loggedActivities.length,
+        total: activityArray.length,
+        activities: loggedActivities
+      }
+    })
+
+  } catch (error) {
+    log.error('User activity API error', error as Error, {
+      component: 'user-activity-api'
+    })
+    
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Internal server error' 
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export { POST }

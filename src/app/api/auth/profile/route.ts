@@ -8,10 +8,7 @@ export async function GET(request: NextRequest) {
     // Get user from session
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     
-    console.log('Auth user:', user?.id, user?.email)
-    
     if (userError || !user) {
-      console.log('Auth error:', userError)
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -44,16 +41,6 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching user profile:', error)
-      console.log('Looking for user ID:', user.id)
-      console.log('Available users in database:')
-      
-      // Show all users to debug
-      const { data: allUsers } = await serviceSupabase
-        .from('users')
-        .select('id, email, role')
-      
-      console.log('All users:', allUsers)
-      
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 

@@ -347,8 +347,26 @@ class ErrorBoundaryClass extends Component<
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo })
     
-    // Log error for monitoring
-    console.error('Error caught by boundary:', error, errorInfo)
+    // Enhanced logging with structured format
+    const eventId = `error_${Date.now()}_${Math.random().toString(36).substring(7)}`
+    
+    // Import logger dynamically to avoid SSR issues
+    import('@/lib/utils/logger').then(({ log }) => {
+      log.critical('React Error Boundary caught error', error, {
+        component: this.props.isolate ? 'IsolatedErrorBoundary' : 'GlobalErrorBoundary',
+        metadata: {
+          eventId,
+          errorType: error.name,
+          componentStack: errorInfo.componentStack,
+          errorBoundaryStack: errorInfo.errorBoundaryStack,
+          userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
+          url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+          timestamp: new Date().toISOString(),
+          errorCode: (error as AppError).code || 'UNKNOWN',
+          recoverable: (error as AppError).recoverable !== false
+        }
+      })
+    })
     
     // Report to error tracking service (e.g., Sentry)
     if (typeof window !== 'undefined' && (window as any).Sentry) {
@@ -358,6 +376,10 @@ class ErrorBoundaryClass extends Component<
             componentStack: errorInfo.componentStack,
           },
         },
+        tags: {
+          eventId,
+          errorCode: (error as AppError).code || 'UNKNOWN',
+        }
       })
     }
 
@@ -407,8 +429,21 @@ export function useErrorHandler() {
       errorObj.context = context
     }
 
-    // Log error for now (could show toast if store is available)
-    console.error('Error handled:', errorObj)
+    // Enhanced logging with structured format
+    import('@/lib/utils/logger').then(({ log }) => {
+      log.error('useErrorHandler: Error thrown to boundary', errorObj, {
+        component: 'useErrorHandler',
+        metadata: {
+          errorType: errorObj.name,
+          errorCode: errorObj.code || 'UNKNOWN',
+          context: errorObj.context,
+          recoverable: errorObj.recoverable !== false,
+          userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
+          url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+          timestamp: new Date().toISOString()
+        }
+      })
+    })
 
     // Throw error to be caught by error boundary
     throw errorObj

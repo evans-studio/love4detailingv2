@@ -6,14 +6,19 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
 
+
   if (code) {
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
     
     try {
-      await supabase.auth.exchangeCodeForSession(code)
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      
+      if (error) {
+        throw error
+      }
     } catch (error) {
-      console.error('Error exchanging code for session:', error)
+      console.error('Auth callback error:', error)
       return NextResponse.redirect(`${requestUrl.origin}/auth/login?error=callback_error`)
     }
   }

@@ -29,8 +29,10 @@ export function LoginForm() {
     setIsLoading(true)
     setError(null)
 
+
     try {
       const { error } = await signIn(email, password)
+
 
       if (error) {
         setError(error.message || 'Failed to sign in')
@@ -44,6 +46,7 @@ export function LoginForm() {
         }
       }
     } catch (error) {
+      console.error('Login form error:', error)
       setError('An unexpected error occurred')
     } finally {
       setIsLoading(false)

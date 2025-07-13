@@ -74,10 +74,7 @@ export default function BookingRealtimeManager({
 
     console.log('🔌 Setting up real-time booking subscriptions...')
 
-    // Request notification permission
-    if (Notification.permission === 'default') {
-      Notification.requestPermission()
-    }
+    // Note: Don't request notification permission here - should be done on user interaction
 
     // Subscribe to bookings table changes
     const bookingsChannel = supabase

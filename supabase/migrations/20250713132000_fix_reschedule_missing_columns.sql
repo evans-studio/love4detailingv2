@@ -165,29 +165,37 @@ DO $$
 DECLARE
     v_test_result JSONB;
     v_cleanup_slot_id UUID;
+    v_unique_datetime TIMESTAMP;
 BEGIN
-    -- Create a test slot for the reschedule request
+    -- Generate a unique datetime for testing
+    v_unique_datetime := NOW() + INTERVAL '30 days';
+    
+    -- Create a test slot for the reschedule request with unique datetime
     INSERT INTO available_slots (slot_date, start_time, end_time, slot_status)
-    VALUES ('2025-07-16', '10:00:00', '11:00:00', 'available')
+    VALUES (v_unique_datetime::DATE, v_unique_datetime::TIME, (v_unique_datetime + INTERVAL '1 hour')::TIME, 'available')
     RETURNING id INTO v_cleanup_slot_id;
     
     RAISE LOG 'Created test slot: %', v_cleanup_slot_id;
     
-    -- Test the create_reschedule_request function
-    SELECT create_reschedule_request(
-        '72ab19df-60f5-4020-9e3e-a0a274f36260'::UUID,
-        '5a6ffffd-d11f-470d-b65e-2559256a5954'::UUID,
-        '765e6acb-85c1-44a4-ba19-791bb6d24665'::UUID,
-        v_cleanup_slot_id,
-        'Test reschedule request with proper columns'
-    ) INTO v_test_result;
-    
-    RAISE LOG 'Test reschedule request result: %', v_test_result;
-    
-    -- Clean up test data
-    IF (v_test_result->>'success')::BOOLEAN THEN
-        DELETE FROM reschedule_requests WHERE id = (v_test_result->>'request_id')::UUID;
-        RAISE LOG 'Test reschedule request cleaned up';
+    -- Test the create_reschedule_request function only if we have valid test data
+    IF EXISTS (SELECT 1 FROM bookings LIMIT 1) AND EXISTS (SELECT 1 FROM available_slots WHERE id != v_cleanup_slot_id LIMIT 1) THEN
+        SELECT create_reschedule_request(
+            (SELECT id FROM bookings LIMIT 1),
+            (SELECT user_id FROM bookings LIMIT 1),
+            (SELECT id FROM available_slots WHERE id != v_cleanup_slot_id LIMIT 1),
+            v_cleanup_slot_id,
+            'Test reschedule request with proper columns'
+        ) INTO v_test_result;
+        
+        RAISE LOG 'Test reschedule request result: %', v_test_result;
+        
+        -- Clean up test data
+        IF (v_test_result->>'success')::BOOLEAN THEN
+            DELETE FROM reschedule_requests WHERE id = (v_test_result->>'request_id')::UUID;
+            RAISE LOG 'Test reschedule request cleaned up';
+        END IF;
+    ELSE
+        RAISE LOG 'Skipping test - insufficient test data';
     END IF;
     
     DELETE FROM available_slots WHERE id = v_cleanup_slot_id;
