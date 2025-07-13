@@ -636,8 +636,8 @@ export async function POST(request: NextRequest) {
           vehicle_registration: bookingData.vehicle_registration || 'Not provided',
           total_price_pence: await calculatePrice(bookingData.vehicle_size, serviceSupabase),
           special_instructions: bookingData.special_instructions,
-          admin_phone: '07123 456789', // TODO: Get from settings
-          admin_email: 'zell@love4detailing.com'
+          admin_phone: process.env.ADMIN_PHONE || '07123 456789',
+          admin_email: process.env.ADMIN_EMAIL || 'zell@love4detailing.com'
         }
 
         console.log('📧 Email data prepared:', {

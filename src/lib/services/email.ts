@@ -634,7 +634,7 @@ export class EmailService {
 
               <p><strong>Need to make changes?</strong><br>
               Contact us at least 24 hours before your service:<br>
-              📞 Phone: ${data.admin_phone || '07123 456789'}<br>
+              📞 Phone: ${data.admin_phone || process.env.ADMIN_PHONE || '07123 456789'}<br>
               📧 Email: ${data.admin_email || SENDER_EMAIL}</p>
 
               <p>We look forward to making your vehicle shine!</p>
@@ -1155,7 +1155,7 @@ export class EmailService {
 
               <p><strong>We're here if you need us:</strong><br>
               If you have any questions about your cancellation or refund, please don't hesitate to contact us:<br>
-              📞 Phone: ${data.admin_phone || '07123 456789'}<br>
+              📞 Phone: ${data.admin_phone || process.env.ADMIN_PHONE || '07123 456789'}<br>
               📧 Email: ${data.admin_email || SENDER_EMAIL}</p>
 
               <p><strong>We hope to serve you again soon!</strong><br>
@@ -1363,7 +1363,7 @@ export class EmailService {
 
               <p><strong>Need to make another change?</strong><br>
               Contact us at least 24 hours before your service:<br>
-              📞 Phone: ${data.admin_phone || '07123 456789'}<br>
+              📞 Phone: ${data.admin_phone || process.env.ADMIN_PHONE || '07123 456789'}<br>
               📧 Email: ${data.admin_email || SENDER_EMAIL}</p>
 
               <p>Thank you for your flexibility and we look forward to serving you at the new time!</p>

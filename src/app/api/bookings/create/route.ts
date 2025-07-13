@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
           vehicle_registration: transaction.vehicle_data.registration,
           total_price_pence: transaction.pricing?.total_price_pence || 0,
           special_instructions: transaction.booking_data.special_instructions,
-          admin_phone: '07123 456789', // TODO: Get from settings
-          admin_email: 'zell@love4detailing.com'
+          admin_phone: process.env.ADMIN_PHONE || '07123 456789',
+          admin_email: process.env.ADMIN_EMAIL || 'zell@love4detailing.com'
         }
 
         // Send confirmation emails (async, don't wait for completion)
