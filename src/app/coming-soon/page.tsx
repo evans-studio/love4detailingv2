@@ -340,7 +340,7 @@ export default function ComingSoonPage() {
           <div className="max-w-6xl mx-auto text-center">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
               <p className="text-muted-foreground text-sm">
-                © 2025 Love4Detailing. Premium mobile car detailing services coming to South London.
+                © 2025 Love4Detailing. Premium mobile car detailing services launching soon in South London.
               </p>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
