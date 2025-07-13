@@ -39,9 +39,46 @@ const nextConfig = {
     ];
   },
   
-  // Optimize redirects
+  // Development-friendly redirects
   async redirects() {
     return [];
+  },
+  
+  // Development rewrites for localhost
+  async rewrites() {
+    // Only apply domain-specific routing in production
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        beforeFiles: [
+          // Custom domain routing (only in production)
+          {
+            source: '/',
+            destination: '/coming-soon',
+            has: [
+              {
+                type: 'host',
+                value: 'love4detailing.com'
+              }
+            ]
+          },
+          {
+            source: '/',
+            destination: '/coming-soon',
+            has: [
+              {
+                type: 'host',
+                value: 'www.love4detailing.com'
+              }
+            ]
+          }
+        ]
+      };
+    }
+    
+    // In development, no rewrites (full access to all pages)
+    return {
+      beforeFiles: []
+    };
   },
   
   // Configure webpack for better performance
