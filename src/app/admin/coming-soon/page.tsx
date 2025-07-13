@@ -118,11 +118,11 @@ export default function ComingSoonAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-white" />
-            <span className="ml-2 text-white">Loading coming soon data...</span>
+            <RefreshCw className="h-8 w-8 animate-spin text-foreground" />
+            <span className="ml-2 text-foreground">Loading coming soon data...</span>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function ComingSoonAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -142,8 +142,8 @@ export default function ComingSoonAdminPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-white">Coming Soon Signups</h1>
-              <p className="text-white/60">Monitor pre-launch email signups and engagement</p>
+              <h1 className="text-3xl font-bold text-foreground">Coming Soon Signups</h1>
+              <p className="text-muted-foreground">Monitor pre-launch email signups and engagement</p>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -160,8 +160,8 @@ export default function ComingSoonAdminPage() {
 
         {/* Error Alert */}
         {error && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-700">
+          <Alert className="mb-6 bg-destructive/20 border-destructive/30">
+            <AlertDescription className="text-destructive">
               {error}
             </AlertDescription>
           </Alert>
@@ -170,49 +170,49 @@ export default function ComingSoonAdminPage() {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-white/10 border-white/20">
+            <Card className="bg-card/40 border-border backdrop-blur-sm hover:bg-card/50 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-white">Total Signups</CardTitle>
-                <Users className="h-4 w-4 text-purple-400" />
+                <CardTitle className="text-sm font-medium text-foreground">Total Signups</CardTitle>
+                <Users className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{stats.total_signups}</div>
-                <p className="text-xs text-white/60">All time signups</p>
+                <div className="text-2xl font-bold text-foreground">{stats.total_signups}</div>
+                <p className="text-xs text-muted-foreground">All time signups</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/10 border-white/20">
+            <Card className="bg-card/40 border-border backdrop-blur-sm hover:bg-card/50 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-white">This Week</CardTitle>
-                <TrendingUp className="h-4 w-4 text-green-400" />
+                <CardTitle className="text-sm font-medium text-foreground">This Week</CardTitle>
+                <TrendingUp className="h-4 w-4 text-l4d-success" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{stats.recent_signups}</div>
-                <p className="text-xs text-white/60">Last 7 days</p>
+                <div className="text-2xl font-bold text-foreground">{stats.recent_signups}</div>
+                <p className="text-xs text-muted-foreground">Last 7 days</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/10 border-white/20">
+            <Card className="bg-card/40 border-border backdrop-blur-sm hover:bg-card/50 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-white">Today</CardTitle>
-                <Calendar className="h-4 w-4 text-blue-400" />
+                <CardTitle className="text-sm font-medium text-foreground">Today</CardTitle>
+                <Calendar className="h-4 w-4 text-l4d-info" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{stats.today_signups}</div>
-                <p className="text-xs text-white/60">Today's signups</p>
+                <div className="text-2xl font-bold text-foreground">{stats.today_signups}</div>
+                <p className="text-xs text-muted-foreground">Today's signups</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/10 border-white/20">
+            <Card className="bg-card/40 border-border backdrop-blur-sm hover:bg-card/50 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-white">Latest Signup</CardTitle>
-                <Clock className="h-4 w-4 text-orange-400" />
+                <CardTitle className="text-sm font-medium text-foreground">Latest Signup</CardTitle>
+                <Clock className="h-4 w-4 text-l4d-warning" />
               </CardHeader>
               <CardContent>
-                <div className="text-sm font-bold text-white">
+                <div className="text-sm font-bold text-foreground">
                   {stats.latest_signup ? formatDate(stats.latest_signup) : 'No signups yet'}
                 </div>
-                <p className="text-xs text-white/60">Most recent</p>
+                <p className="text-xs text-muted-foreground">Most recent</p>
               </CardContent>
             </Card>
           </div>
@@ -220,9 +220,9 @@ export default function ComingSoonAdminPage() {
 
         {/* Growth Chart */}
         {stats?.daily_growth && (
-          <Card className="bg-white/10 border-white/20 mb-8">
+          <Card className="bg-card/40 border-border backdrop-blur-sm mb-8">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
+              <CardTitle className="text-foreground flex items-center">
                 <BarChart3 className="h-5 w-5 mr-2" />
                 Daily Signup Growth (Last 30 Days)
               </CardTitle>
@@ -232,12 +232,12 @@ export default function ComingSoonAdminPage() {
                 {stats.daily_growth.map((day, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div 
-                      className="bg-purple-500 w-full rounded-t"
+                      className="bg-primary w-full rounded-t"
                       style={{ 
                         height: `${Math.max(4, (day.count / Math.max(...stats.daily_growth.map(d => d.count))) * 200)}px` 
                       }}
                     />
-                    <div className="text-xs text-white/60 mt-1">
+                    <div className="text-xs text-muted-foreground mt-1">
                       {new Date(day.date).getDate()}
                     </div>
                   </div>
@@ -248,32 +248,32 @@ export default function ComingSoonAdminPage() {
         )}
 
         {/* Signups List */}
-        <Card className="bg-white/10 border-white/20">
+        <Card className="bg-card/40 border-border backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-white flex items-center">
+            <CardTitle className="text-foreground flex items-center">
               <Mail className="h-5 w-5 mr-2" />
               Recent Signups
             </CardTitle>
-            <CardDescription className="text-white/60">
+            <CardDescription className="text-muted-foreground">
               Latest email signups from the coming soon page
             </CardDescription>
           </CardHeader>
           <CardContent>
             {signups.length === 0 ? (
-              <div className="text-center py-8 text-white/60">
+              <div className="text-center py-8 text-muted-foreground">
                 No signups yet. Share the coming soon page to start collecting emails!
               </div>
             ) : (
               <div className="space-y-4">
                 {signups.slice(0, 50).map((signup) => (
-                  <div key={signup.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div key={signup.id} className="flex items-center justify-between p-4 bg-card/20 rounded-lg border border-border/50 hover:bg-card/30 transition-all duration-300">
                     <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                         <Mail className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-white font-medium">{signup.email}</div>
-                        <div className="text-white/60 text-sm">
+                        <div className="text-foreground font-medium">{signup.email}</div>
+                        <div className="text-muted-foreground text-sm">
                           {formatDate(signup.created_at)}
                         </div>
                       </div>
@@ -285,7 +285,7 @@ export default function ComingSoonAdminPage() {
                         </Badge>
                       )}
                       {signup.ip_address && (
-                        <div className="flex items-center text-white/60 text-xs">
+                        <div className="flex items-center text-muted-foreground text-xs">
                           <Globe className="w-3 h-3 mr-1" />
                           {signup.ip_address}
                         </div>
@@ -294,7 +294,7 @@ export default function ComingSoonAdminPage() {
                   </div>
                 ))}
                 {signups.length > 50 && (
-                  <div className="text-center py-4 text-white/60">
+                  <div className="text-center py-4 text-muted-foreground">
                     ... and {signups.length - 50} more signups
                   </div>
                 )}
