@@ -2,23 +2,11 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/coming-soon",
-      "has": [
-        {
-          "type": "host",
-          "value": "love4detailing.com"
-        }
-      ]
+      "destination": "/coming-soon"
     },
     {
-      "source": "/",
-      "destination": "/coming-soon",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.love4detailing.com"
-        }
-      ]
+      "source": "/index",
+      "destination": "/coming-soon"
     }
   ]
 }
