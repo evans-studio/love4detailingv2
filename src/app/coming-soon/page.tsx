@@ -17,9 +17,7 @@ import {
   ArrowRight,
   Shield,
   Award,
-  Zap,
-  Calendar,
-  Users
+  Zap
 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -181,7 +179,7 @@ export default function ComingSoonPage() {
               </div>
               
               <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Love4Detailing
+                Love 4 Detailing
                 <br />
                 <span className="text-primary">Booking App Coming Soon</span>
               </h2>
@@ -190,19 +188,32 @@ export default function ComingSoonPage() {
                 We're launching our new booking app to make scheduling your car detailing even easier.
               </p>
 
-              {/* App Features */}
+              {/* Service Area Messaging */}
+              <div className="text-center mb-8">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <p className="text-lg text-primary font-medium">
+                    Serving SW9 and surrounding areas within 17.5 mile radius.
+                  </p>
+                </div>
+                <p className="text-muted-foreground text-sm">
+                  Standard pricing within 10 miles • Extended areas available with travel supplement
+                </p>
+              </div>
+
+              {/* Trust Badges */}
               <div className="flex flex-wrap justify-center gap-4 mb-8">
                 <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Easy Booking
+                  <Shield className="w-4 h-4 mr-2" />
+                  Fully Insured
                 </Badge>
                 <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Users className="w-4 h-4 mr-2" />
-                  Account Management
+                  <Award className="w-4 h-4 mr-2" />
+                  Professional Grade
                 </Badge>
                 <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                  <Star className="w-4 h-4 mr-2" />
-                  Loyalty Rewards
+                  <Zap className="w-4 h-4 mr-2" />
+                  Same Day Service
                 </Badge>
               </div>
 
@@ -260,9 +271,9 @@ export default function ComingSoonPage() {
                 <CardContent className="p-8">
                   <div className="text-center mb-6">
                     <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-foreground mb-2">Get Early Access</h3>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">Get Notified</h3>
                     <p className="text-muted-foreground">
-                      Be the first to know when our new booking app launches
+                      Be the first to know when we launch and get exclusive early access
                     </p>
                   </div>
 
@@ -328,16 +339,16 @@ export default function ComingSoonPage() {
           <div className="max-w-6xl mx-auto text-center">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
               <p className="text-muted-foreground text-sm">
-                © 2025 Love4Detailing. New booking app launching soon for easier scheduling.
+                © 2025 Love4Detailing. Premium mobile car detailing services launching soon in South London.
               </p>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4 text-l4d-success" />
-                  Easy Booking
+                  <Shield className="h-4 w-4 text-l4d-success" />
+                  Fully Insured
                 </span>
                 <span className="flex items-center gap-1">
-                  <Star className="h-4 w-4 text-l4d-success" />
-                  Rewards Program
+                  <Award className="h-4 w-4 text-l4d-success" />
+                  Professional Grade
                 </span>
               </div>
             </div>
